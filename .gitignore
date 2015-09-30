@@ -1,0 +1,13 @@
+/dist/
+/typings/
+
+# for NPM
+node_modules/
+npm-debug.log
+
+# for Mac
+.DS_Store*
+
+# for Editor
+*.swp
+*~

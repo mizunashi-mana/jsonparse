@@ -1,0 +1,15 @@
+# no publish
+src
+
+# documents
+README.md
+LICENSE.txt
+CHANGELOG.md
+
+# resource
+.*
+*lint.json
+dtsm.json
+tsconfig.json
+typings
+gulp*

@@ -1,0 +1,4 @@
+noExternalResolve : true
+declaration       : true
+sortOutput        : true
+typescript        : 'pkg'

@@ -1,0 +1,16 @@
+gulp       :
+  base     : 'gulp'
+  file     : '../gulpfile.coffee'
+  tasks    : 'conf/**/*.coffee'
+  conf     : 'tasks/**/*.cson'
+tsconf     : 'tsconfig.json'
+dtsmconf   : 'dtsm.json'
+srcDir     :
+  base     : 'src'
+  srcTs    : '**/*.ts'
+  typings  : '../typings/**/*.d.ts'
+distDir    :
+  base     : 'dist'
+  jsDir    : 'js'
+  dtsDir   : 'definitions'
+  mapDir   : 'maps'
