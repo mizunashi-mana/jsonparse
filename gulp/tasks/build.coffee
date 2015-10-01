@@ -4,7 +4,7 @@ module.exports = (gulp, $, conf) ->
 
   {paths, tsOptions, runOptions, pkgInfo} = conf
 
-  distMapDir = path.relative paths.distDir.mapDir, paths.distDir.jsDir
+  distMapDir = path.relative paths.distDir.jsDir, paths.distDir.mapDir
 
   tsProject =
     $.typescript.createProject paths.tsconf, tsOptions
@@ -57,14 +57,6 @@ module.exports = (gulp, $, conf) ->
       'lib/typings.d.ts'
     ], {restore: true}
 
-    writeSourceMap = (streamSrc) ->
-      streamSrc
-        .pipe $.if runOptions.sourcemaps, do $.sourcemaps.init
-        .pipe $.if runOptions.sourcemaps
-        , $.sourcemaps.write distMapDir
-          ,
-            sourceRoot: path.join do process.cwd, 'src'
-
     jsStream = merge [
       gulp.src [
         paths.srcDir.srcJs
@@ -83,9 +75,13 @@ module.exports = (gulp, $, conf) ->
       .pipe dtsFilter
 
     merge [
-      writeSourceMap jsStream
+      jsStream
+        .pipe $.if runOptions.sourcemaps
+        , $.sourcemaps.write distMapDir
+          ,
+            sourceRoot: path.join do process.cwd, 'src'
         .pipe gulp.dest paths.distDir.jsDir
-      writeSourceMap dtsStream
+      dtsStream
         .pipe gulp.dest paths.distDir.dtsDir
     ]
 
