@@ -20,8 +20,17 @@ module.exports = (gulp, $, conf) ->
       .pipe do $.tslint
       .pipe $.tslint.report 'verbose'
 
+  gulp.task 'lint:js', ->
+    gulp.src [
+      paths.srcDir.srcJs
+    ]
+      .pipe do $.eslint
+      .pipe do $.eslint.format
+      .pipe do $.eslint.failOnError
+
   gulp.task 'lint', [
     'lint:gulp'
     # 'lint:config'
     'lint:ts'
+    'lint:js'
   ]

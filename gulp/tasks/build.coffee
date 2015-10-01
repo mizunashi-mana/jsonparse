@@ -4,6 +4,8 @@ module.exports = (gulp, $, conf) ->
 
   {paths, tsOptions, runOptions, pkgInfo} = conf
 
+  distMapDir = path.relative paths.distDir.mapDir, paths.distDir.jsDir
+
   tsProject =
     $.typescript.createProject paths.tsconf, tsOptions
 
@@ -14,8 +16,6 @@ module.exports = (gulp, $, conf) ->
     reqSMapFilter = $.filter [
       path.relative paths.srcDir.base, pkgInfo.main
     ], {restore: true}
-
-    distMapDir = path.relative paths.distDir.mapDir, paths.distDir.jsDir
 
     tsResult = gulp.src [
       paths.srcDir.srcTs
@@ -38,10 +38,51 @@ module.exports = (gulp, $, conf) ->
         .pipe gulp.dest paths.distDir.dtsDir
       tsResult.js
         .pipe $.if runOptions.sourcemaps
-          , $.sourcemaps.write distMapDir
+        , $.sourcemaps.write distMapDir
+          ,
+            sourceRoot: path.join process.cwd(), 'src'
+        .pipe gulp.dest paths.distDir.jsDir
+    ]
+
+  gulp.task 'build:tjs', ['build:ts'], ->
+    jsFilter = $.filter [
+      '**/*.js'
+    ], {restore: true, passthrough: false}
+
+    dtsFilter = $.filter [
+      '**/*.d.ts'
+    ]
+
+    writeSourceMap = (streamSrc) ->
+      streamSrc
+        .pipe $.if runOptions.sourcemaps, do $.sourcemaps.init
+        .pipe $.if runOptions.sourcemaps
+        , $.sourcemaps.write distMapDir
+          ,
+            sourceRoot: path.join do process.cwd, 'src'
+
+    jsStream = merge [
+      gulp.src [
+        paths.srcDir.srcJs
+        paths.srcDir.srcDts
+      ], {base: paths.srcDir.base}
+      gulp.src [
+        paths.srcDir.typings
+      ], {base: do process.cwd}
+    ]
+      .pipe jsFilter
+
+    dtsStream = jsFilter.restore
+      .pipe dtsFilter
+
+    merge [
+      writeSourceMap jsStream
+        .pipe gulp.dest paths.distDir.jsDir
+      writeSourceMap dtsStream
+        .pipe gulp.dest paths.distDir.dtsDir
     ]
 
   gulp.task 'build', [
     #'build:doc'
-    'build:ts'
+    'build:tjs'
   ]

@@ -8,6 +8,8 @@ dtsmconf   : 'dtsm.json'
 srcDir     :
   base     : 'src'
   srcTs    : '**/*.ts'
+  srcJs    : '**/*.js'
+  srcDts   : '**/*.d.ts'
   typings  : '../typings/**/*.d.ts'
 distDir    :
   base     : 'dist'
