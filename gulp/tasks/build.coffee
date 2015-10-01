@@ -53,6 +53,10 @@ module.exports = (gulp, $, conf) ->
       '**/*.d.ts'
     ]
 
+    libTypingsFilter = $.filter [
+      'lib/typings.d.ts'
+    ], {restore: true}
+
     writeSourceMap = (streamSrc) ->
       streamSrc
         .pipe $.if runOptions.sourcemaps, do $.sourcemaps.init
@@ -73,6 +77,9 @@ module.exports = (gulp, $, conf) ->
       .pipe jsFilter
 
     dtsStream = jsFilter.restore
+      .pipe libTypingsFilter
+      .pipe $.replace /"(\.{2}\/){2}typings/g, '"../typings'
+      .pipe libTypingsFilter.restore
       .pipe dtsFilter
 
     merge [
