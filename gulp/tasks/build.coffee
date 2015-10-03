@@ -30,7 +30,8 @@ module.exports = (gulp, $, conf) ->
         sourceMapSupport.install();
       ''', {pathModule: path}
       .pipe reqSMapFilter.restore
-      .pipe $.if runOptions.sourcemaps, do $.sourcemaps.init
+      .pipe $.if runOptions.sourcemaps
+      , do $.sourcemaps.init
       .pipe $.typescript tsProject
 
     merge [
@@ -76,6 +77,9 @@ module.exports = (gulp, $, conf) ->
 
     merge [
       jsStream
+        .pipe $.if runOptions.sourcemaps
+        , do $.sourcemaps.init
+        .pipe $.header ''
         .pipe $.if runOptions.sourcemaps
         , $.sourcemaps.write distMapDir
           ,

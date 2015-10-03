@@ -8,7 +8,6 @@
       "static-before-instance": true,
       "variables-before-functions": true
     },
-    "no-any": true,
     "no-arg": true,
     "no-bitwise": true,
     "no-conditional-assignment": true,
