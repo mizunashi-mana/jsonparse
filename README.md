@@ -1,2 +1,2 @@
 # jsonparse
-safe parser of JSON for config parsing like optparse of python
+safe parser of JSON for config parsing like ConfigParser of python
