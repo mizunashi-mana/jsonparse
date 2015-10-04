@@ -1,5 +1,6 @@
 # no publish
 src
+typings
 
 # documents
 README.md
@@ -11,5 +12,4 @@ CHANGELOG.md
 *lint.json
 dtsm.json
 tsconfig.json
-typings
 gulp*

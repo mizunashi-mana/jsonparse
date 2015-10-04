@@ -54,25 +54,15 @@ module.exports = (gulp, $, conf) ->
       '**/*.d.ts'
     ]
 
-    libTypingsFilter = $.filter [
-      'lib/typings.d.ts'
-    ], {restore: true}
-
     jsStream = merge [
       gulp.src [
         paths.srcDir.srcJs
         paths.srcDir.srcDts
       ], {base: paths.srcDir.base}
-      gulp.src [
-        paths.srcDir.typings
-      ], {base: do process.cwd}
     ]
       .pipe jsFilter
 
     dtsStream = jsFilter.restore
-      .pipe libTypingsFilter
-      .pipe $.replace /"(\.{2}\/){2}typings/g, '"../typings'
-      .pipe libTypingsFilter.restore
       .pipe dtsFilter
 
     merge [
@@ -87,6 +77,10 @@ module.exports = (gulp, $, conf) ->
         .pipe gulp.dest paths.distDir.jsDir
       dtsStream
         .pipe gulp.dest paths.distDir.dtsDir
+      gulp.src [
+        paths.srcDir.typings
+      ], {base: do process.cwd}
+        .pipe gulp.dest paths.distDir.base
     ]
 
   gulp.task 'build', [
