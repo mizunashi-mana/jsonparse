@@ -11,7 +11,7 @@ module.exports = (gulp, $, conf) ->
       .pipe $.coffeelint.reporter 'fail'
 
   gulp.task 'lint:config', ->
-    throw Error 'not implement!'
+    throw new Error 'not implement!'
 
   gulp.task 'lint:ts', ->
     gulp.src [

@@ -10,7 +10,7 @@ module.exports = (gulp, $, conf) ->
     $.typescript.createProject paths.tsconf, tsOptions
 
   gulp.task 'build:doc', ->
-    throw Error 'not implement!'
+    throw new Error 'not implement!'
 
   gulp.task 'build:ts', ->
     reqSMapFilter = $.filter [

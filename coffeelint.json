@@ -2,6 +2,10 @@
   "arrow_spacing": {
     "level": "warn"
   },
+  "braces_spacing": {
+    "level": "warn",
+    "spaces": 0
+  },
   "cyclomatic_complexity": {
     "level": "warn",
     "value": 10
