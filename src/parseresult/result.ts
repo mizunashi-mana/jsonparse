@@ -1,4 +1,18 @@
+import {clone} from "../lib/util/util";
+
 export enum ResultType {Success, Failure}
+
+export function id<T>(a: T) {
+  return clone(a, true);
+}
+
+export function prresult<T, U>(n: U, f: (i: T) => U, x: ParseResult<T>): ParseResult<U> {
+  if (x.isSuccess()) {
+    return x.lift(f);
+  } else {
+    return ParseResult.success(n);
+  }
+}
 
 export class ParseResult<T> {
   private t: ResultType;
@@ -56,5 +70,16 @@ export class ParseResult<T> {
 
   lift<U>(f: (t: T) => U) {
     return this.chain((val) => this.of<U>(f(val)));
+  }
+
+  catch(n: T) {
+    return prresult<T, T>(n, id, this);
+  }
+
+  clone() {
+    return this.isSuccess()
+      ? ParseResult.success<T>(this.v)
+      : ParseResult.fail<T>()
+      ;
   }
 }

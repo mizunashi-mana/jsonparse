@@ -2,6 +2,8 @@ import {
   Parser,
 } from "../common";
 
+import {clone} from "../lib/util/util";
+
 import {ParseResult} from "../parseresult/result";
 
 export function hasPropertiesObj<T>(
@@ -12,7 +14,9 @@ export function hasPropertiesObj<T>(
       a: {[key: string]: any},
       b: [string, any]
     ) => {
-      return ParseResult.success(a[b[0]] = b[1]);
+      const result = clone(a);
+      result[b[0]] = b[1];
+      return ParseResult.success(result);
     });
     const result = props
       .map((prop) => {
