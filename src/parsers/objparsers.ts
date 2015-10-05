@@ -1,29 +1,26 @@
 import {
   Parser,
-  ParseResult,
-  makeSuccess,
-  makeFailure,
-  isSuccess,
 } from "../common";
+
+import {ParseResult} from "../parseresult/result";
 
 export function hasPropertiesObj<T>(
   props: [string, Parser<any, any>][]
 ) {
   return new Parser<{[key: string]: any}, T>((obj) => {
-    const result: {[key: string]: any} = {};
-    const fails: ParseResult<any>[] = [];
-    props.forEach((prop) => {
-      const pres = prop[1].parse(obj[prop[0]]);
-      if (isSuccess(pres)) {
-        result[prop[0]] = pres.value;
-      } else {
-        fails.push(pres);
-      }
+    const probjconcat = ParseResult.bind2((
+      a: {[key: string]: any},
+      b: [string, any]
+    ) => {
+      return ParseResult.success(a[b[0]] = b[1]);
     });
-    if (fails.length == 0) {
-      return makeSuccess(<T>result);
-    } else {
-      return makeFailure(<T>{});
-    }
+    const result = props
+      .map((prop) => {
+        return prop[1]
+          .parse(obj[prop[0]])
+          .chain((e) => ParseResult.success(<[string, any]>[prop[0], e]));
+      })
+      .reduce(probjconcat, <{[key: string]: any}>{});
+    return <ParseResult<T>>result;
   });
 }

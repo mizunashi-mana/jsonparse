@@ -2,17 +2,18 @@ import {
   Parser,
   makeSuccess,
   makeFailure,
-  isSuccess,
 } from "../common";
+
+import {ParseResult} from "../parseresult/result";
 
 export class TypeParser<T> extends Parser<Object, T> {}
 
 export function isNumber() {
   return new TypeParser<number>((obj) => {
     if (typeof obj === "number") {
-      return makeSuccess(obj);
+      return makeSuccess<number>(obj);
     } else {
-      return makeFailure(0);
+      return makeFailure<number>();
     }
   });
 }
@@ -20,9 +21,9 @@ export function isNumber() {
 export function isString() {
   return new TypeParser<string>((obj) => {
     if (typeof obj === "string") {
-      return makeSuccess(obj);
+      return makeSuccess<string>(obj);
     } else {
-      return makeFailure("str");
+      return makeFailure<string>();
     }
   });
 }
@@ -30,27 +31,25 @@ export function isString() {
 export function isBoolean() {
   return new TypeParser<boolean>((obj) => {
     if (typeof obj === "boolean") {
-      return makeSuccess(obj);
+      return makeSuccess<boolean>(obj);
     } else {
-      return makeFailure(true);
+      return makeFailure<boolean>();
     }
   });
 }
 
 export function isArray<T>(parser: TypeParser<T>) {
-  const expectValue = [getDefaultValue(parser)];
-
   return new TypeParser<T[]>((obj) => {
     if (obj instanceof Array) {
-      const results = obj.map((e) => parser.parse(e));
-      const failures = results.filter((e) => isSuccess(e));
-      if (failures.length == 0) {
-        return makeSuccess(results.map((e) => e.value));
-      } else {
-        return makeFailure(expectValue);
-      }
+      const prconcat = ParseResult.bind2((a: T[], b: T) => {
+        return ParseResult.success(a.concat([b]));
+      });
+      const results = obj
+        .map((e) => parser.parse(e))
+        .reduce(prconcat, makeSuccess(<T[]>[]));
+      return results;
     } else {
-      return makeFailure(expectValue);
+      return makeFailure<T[]>();
     }
   });
 }
@@ -59,18 +58,9 @@ export function isObject() {
   return new TypeParser<Object>((obj) => {
     if (typeof obj === "object"
      && !(obj instanceof Array)) {
-      return makeSuccess(obj);
+      return makeSuccess<Object>(obj);
     } else {
-      return makeFailure({});
+      return makeFailure<Object>();
     }
   });
-}
-
-export function getDefaultValue<T>(parser: TypeParser<T>): T {
-  const result = parser.parse(undefined);
-  if (result.status) {
-    return result.value;
-  } else {
-    return result.expected;
-  }
 }

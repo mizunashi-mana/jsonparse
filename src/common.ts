@@ -1,28 +1,10 @@
-/// <reference path="./lib/typings.d.ts" />
+import {ParseResult} from "./parseresult/result";
 
-export interface ParseResult<T> {
-  status: boolean;
-  value?: T;
-  expected?: T;
-}
+export const makeSuccess = ParseResult.success;
+export const makeFailure = ParseResult.fail;
 
-export function makeSuccess<T>(val: T): ParseResult<T> {
-  return {
-    status: true,
-    value: val,
-  };
-}
-
-export function makeFailure<T>(exp: T): ParseResult<T> {
-  return {
-    status: false,
-    expected: exp,
-  };
-}
-
-export function isSuccess(res: ParseResult<any>): boolean {
-  return res.status;
-}
+export type mkSType<T> = (val: T) => ParseResult<T>;
+export type mkFType<T> = () => ParseResult<T>;
 
 export type ParseFunc<T, U> = (obj: T) => ParseResult<U>;
 
