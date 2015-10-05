@@ -34,10 +34,11 @@ rules:
   no-self-compare: 1
   no-sequences: 1
   no-throw-literal: 2
-  no-unused-expressions: [2, { allowShortCircuit: true, allowTernary: true }]
+  no-unused-expressions: [1, { allowShortCircuit: true, allowTernary: true }]
   no-useless-call: 1
   no-useless-concat: 1
   no-void: 1
+  quotes: [1, "double", "avoid-escape"]
   vars-on-top: 1
   wrap-iife: [1, "inside"]
   yoda: 1
