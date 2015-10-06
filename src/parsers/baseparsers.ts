@@ -18,6 +18,44 @@ export function orParser<T, U>(parser1: Parser<T, U>, parser2: Parser<T, U>) {
   });
 }
 
+export function andParser<T1, T2, T3>(parser1: Parser<T1, T2>, parser2: Parser<T2, T3>) {
+  return new Parser<T1, T3>((obj) => {
+    return parser1
+      .parse(obj)
+      .chain((val) => parser2.parse(val));
+  });
+}
+
+export function desc(msg: string, expected?: string) {
+  return {
+    msg: msg,
+    expected: expected,
+  };
+}
+
+export function descParser<T, U>(fail: {
+  msg: string;
+  expected?: string;
+}, parser: Parser<T, U>) {
+  return new Parser<T, U>((obj) => {
+    const res = parser.parse(obj);
+    /*
+     * if (!res.isSuccess()) {
+     *   fail(msg, obj);
+     * }
+     */
+    return res;
+  });
+}
+
+export function map<T1, T2, T3>(fn: (obj: T2) => T3, parser: Parser<T1, T2>) {
+  return new Parser<T1, T3>((obj) => {
+    return parser
+      .parse(obj)
+      .lift(fn);
+  });
+}
+
 export function failParser<T>() {
   return new Parser<any, T>((obj) => {
     return makeFailure<T>();

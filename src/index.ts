@@ -1,16 +1,16 @@
+/*
 export {
   Parser,
-  Parser as default,
 } from "./common";
 
-export {
-  orParser as or,
-  successParser as success,
-  failParser as fail,
-  customParser as custom,
+import {
+  orParser,
+  successParser,
+  failParser,
+  customParser,
 } from "./parsers/baseparsers";
 
-export {
+import {
   isBoolean,
   isNumber,
   isString,
@@ -18,6 +18,7 @@ export {
   isArray,
 } from "./parsers/basetypes";
 
-export {
+import {
   hasPropertiesObj,
 } from "./parsers/objparsers";
+*/
