@@ -26,7 +26,7 @@ export function andParser<T1, T2, T3>(parser1: Parser<T1, T2>, parser2: Parser<T
   });
 }
 
-export function desc(msg: string, expected?: string) {
+export function descBuilder(msg: string, expected?: string) {
   return {
     msg: msg,
     expected: expected,
@@ -48,7 +48,7 @@ export function descParser<T, U>(fail: {
   });
 }
 
-export function map<T1, T2, T3>(fn: (obj: T2) => T3, parser: Parser<T1, T2>) {
+export function mapParser<T1, T2, T3>(fn: (obj: T2) => T3, parser: Parser<T1, T2>) {
   return new Parser<T1, T3>((obj) => {
     return parser
       .parse(obj)

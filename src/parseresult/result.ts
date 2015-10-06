@@ -1,17 +1,21 @@
+import {BaseCustomError} from "../lib/customerror/node-customerror";
+
 import {clone} from "../lib/util/util";
 
 export enum ResultType {Success, Failure}
+
+export class ParseResultError extends BaseCustomError {
+  constructor(msg: string) {
+    super(msg);
+  }
+}
 
 export function id<T>(a: T) {
   return clone(a, true);
 }
 
-export function prresult<T, U>(n: U, f: (i: T) => U, x: ParseResult<T>): ParseResult<U> {
-  if (x.isSuccess()) {
-    return x.lift(f);
-  } else {
-    return ParseResult.success(n);
-  }
+export function prresult<T, U>(n: U, f: (i: T) => U, x: ParseResult<T>): U {
+  return x.lift(f).value(n);
 }
 
 export class ParseResult<T> {
@@ -73,13 +77,20 @@ export class ParseResult<T> {
   }
 
   catch(n: T) {
-    return prresult<T, T>(n, id, this);
+    return ParseResult.success<T>(prresult<T, T>(n, id, this));
   }
 
   clone() {
     return this.isSuccess()
       ? ParseResult.success<T>(this.v)
       : ParseResult.fail<T>()
+      ;
+  }
+
+  value(def: T) {
+    return this.isSuccess()
+      ? this.v
+      : def
       ;
   }
 }
