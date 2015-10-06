@@ -1,4 +1,8 @@
 import {
+  BaseCustomError
+} from "./lib/customerror/node-customerror";
+
+import {
   Parser,
   mkSType,
   mkFType,
@@ -26,52 +30,10 @@ import {
   hasPropertiesObj,
 } from "./parsers/objparsers";
 
-function buildConfigParserF<T, U>(pf: () => Parser<T, U>) {
-  return new ConfigParser<T, U>(pf());
-}
-
-export function buildParserBase() {
-  return new ConfigParser(
-    customParser<Object, Object>((obj) => obj)
-  );
-}
-
-export function boolean() {
-  return buildConfigParserF(isBoolean);
-}
-
-export function number() {
-  return buildConfigParserF(isNumber);
-}
-
-export function string() {
-  return buildConfigParserF(isString);
-}
-
-export function array<T>(parser: ConfigParser<Object, T>) {
-  return new ConfigParser(isArray(parser.parser));
-}
-
-export function object() {
-  return buildConfigParserF(isObject);
-}
-
-export function hasProperties(
-  props: [string, ConfigParser<any, any>][]
-) {
-  return new ConfigParser(andParser(
-    isObject(),
-    hasPropertiesObj(
-      props.map((e) => <[string, Parser<any, any>]>[e[0], e[1].parser])
-    )
-  ));
-}
-
-export function custom<T, U>(fn: (
-  onSuccess: mkSType<T>,
-  onFailure: mkFType<T>
-) => ParseFunc<T, U>) {
-  return new ConfigParser(customParser(fn));
+export class ConfigParseError extends BaseCustomError {
+  constructor(msg: string) {
+    super(msg);
+  }
 }
 
 export class ConfigParser<T, U> {
@@ -112,7 +74,40 @@ export class ConfigParser<T, U> {
     if (res.isSuccess()) {
       return res.value(undefined);
     } else {
-      throw new Error("Illegal config!");
+      throw new ConfigParseError("Illegal config!");
     }
   }
+}
+
+function buildConfigParserF<T, U>(pf: () => Parser<T, U>) {
+  return new ConfigParser<T, U>(pf());
+}
+
+export const base = new ConfigParser(customParser<Object, Object>((obj) => obj));
+
+export const boolean = buildConfigParserF(isBoolean);
+export const number = buildConfigParserF(isNumber);
+export const string = buildConfigParserF(isString);
+export const object = buildConfigParserF(isObject);
+
+export function array<T>(parser: ConfigParser<Object, T>) {
+  return new ConfigParser(isArray(parser.parser));
+}
+
+export function hasProperties(
+  props: [string, ConfigParser<any, any>][]
+) {
+  return new ConfigParser(andParser(
+    isObject(),
+    hasPropertiesObj(
+      props.map((e) => <[string, Parser<any, any>]>[e[0], e[1].parser])
+    )
+  ));
+}
+
+export function custom<T, U>(fn: (
+  onSuccess: mkSType<T>,
+  onFailure: mkFType<T>
+) => ParseFunc<T, U>) {
+  return new ConfigParser(customParser(fn));
 }
