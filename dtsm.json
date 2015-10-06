@@ -15,6 +15,12 @@
   "dependencies": {
     "source-map-support/source-map-support.d.ts": {
       "ref": "30387ec3dd6eb426cc48522fd3aef09ada83aa48"
+    },
+    "mocha/mocha.d.ts": {
+      "ref": "6436105ed9e3f9de49ca7e2e010ffe298e884e40"
+    },
+    "chai/chai.d.ts": {
+      "ref": "6436105ed9e3f9de49ca7e2e010ffe298e884e40"
     }
   }
 }
