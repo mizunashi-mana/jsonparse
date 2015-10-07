@@ -1,0 +1,149 @@
+/// <reference path="../../build/lib/typings.d.ts" />
+
+import {assert} from "chai";
+
+import * as jsonparse from "../../build/";
+const {
+  ConfigParseError,
+} = jsonparse;
+
+describe("base parsers test", () => {
+
+  describe("basetype parsers test", () => {
+
+    it("should be through only boolean value by boolean parser", () => {
+      assert.strictEqual(jsonparse.boolean.parse(true), true);
+      assert.throw(() => jsonparse.boolean.parse(1), ConfigParseError);
+    });
+
+    it("should be through only number value by number parser", () => {
+      assert.strictEqual(jsonparse.number.parse(1), 1);
+      assert.throw(() => jsonparse.number.parse("1"), ConfigParseError);
+    });
+
+    it("should be through only string value by string parser", () => {
+      assert.strictEqual(jsonparse.string.parse("str"), "str");
+      assert.throw(() => jsonparse.string.parse(true), ConfigParseError);
+    });
+
+    it("should be through only object value by object parser", () => {
+      assert.deepEqual(jsonparse.object.parse({}), {});
+      assert.deepEqual(jsonparse.object.parse({ a: "a", b: "b" }), { a: "a", b: "b" });
+      assert.throw(() => jsonparse.object.parse([]), ConfigParseError);
+      assert.throw(() => jsonparse.object.parse(""), ConfigParseError);
+    });
+
+    it("should be through only strict array value by array parser", () => {
+      assert.deepEqual(jsonparse.array(jsonparse.string).parse([]), []);
+      assert.deepEqual(jsonparse.array(jsonparse.string).parse(["", "true", "1"]), ["", "true", "1"]);
+      assert.throw(() => jsonparse.array(jsonparse.string).parse(["", true, 1]), ConfigParseError);
+      assert.throw(() => jsonparse.array(jsonparse.string).parse({ "0": "1" }), ConfigParseError);
+      assert.throw(() => jsonparse.array(jsonparse.string).parse({ 0: "1" }), ConfigParseError);
+    });
+
+  });
+
+  describe("base extra parsers test", () => {
+
+    it("should be through only having specify properties by hasProperties parser", function() {
+      const MyObjectParser = jsonparse.hasProperties([
+        ["propB", jsonparse.boolean],
+        ["propN", jsonparse.number],
+        ["propS", jsonparse.string],
+        ["propO", jsonparse.object],
+        ["propAs", jsonparse.array(jsonparse.string)],
+      ]);
+
+      assert.deepEqual(MyObjectParser.parse({
+        "propB": true,
+        "propN": 1,
+        "propS": "str",
+        "propO": {
+          "anything": true
+        },
+        "propAs": ["str1", "str2"],
+      }), {
+          "propB": true,
+          "propN": 1,
+          "propS": "str",
+          "propO": {
+            "anything": true
+          },
+          "propAs": ["str1", "str2"],
+        });
+      assert.deepEqual(MyObjectParser.parse({
+        "propB": true,
+        "propN": 1,
+        "propS": "str",
+        "propO": {
+          "anything": true
+        },
+        "propAs": ["str1", "str2"],
+        "propExtra": "anything!"
+      }), {
+          "propB": true,
+          "propN": 1,
+          "propS": "str",
+          "propO": {
+            "anything": true
+          },
+          "propAs": ["str1", "str2"],
+        });
+      assert.throw(() => MyObjectParser.parse({
+        "propB": true,
+        "propN": 1,
+        "propS": "str",
+        "propO": {
+          "anything": true
+        },
+      }), ConfigParseError);
+      assert.throw(() => MyObjectParser.parse({
+        "propB": true,
+        "propN": true,
+        "propS": "str",
+        "propO": {
+          "anything": true
+        },
+        "propAs": ["str1", "str2"],
+      }), ConfigParseError);
+      assert.throw(() => MyObjectParser.parse({
+        "propB": true,
+        "propN": true,
+        "propS": "str",
+        "propOther": {
+          "anything": true
+        },
+        "propAs": ["str1", "str2"],
+      }), ConfigParseError);
+    });
+
+    it("should be customize by my custom parser", () => {
+      const CustomParser1 = jsonparse.custom((makeSuccess, makeFailure) => {
+        return (obj) => {
+          if (typeof obj === "number") {
+            return makeSuccess(true);
+          } else if (typeof obj === "string") {
+            return makeSuccess(false);
+          }
+          return makeFailure();
+        };
+      });
+      const CustomParser2 = jsonparse.custom((makeSuccess, makeFailure) => {
+        return (obj) => {
+          if (obj === "debug" || obj === "info" || obj === "error") {
+            return makeSuccess(obj);
+          }
+          return makeFailure();
+        };
+      });
+
+      assert.strictEqual(CustomParser1.parse(1), true);
+      assert.strictEqual(CustomParser1.parse("str"), false);
+      assert.throw(() => CustomParser1.parse(true), ConfigParseError);
+      assert.strictEqual(CustomParser2.parse("debug"), "debug");
+      assert.strictEqual(CustomParser2.parse("info"), "info");
+      assert.strictEqual(CustomParser2.parse("error"), "error");
+      assert.throw(() => CustomParser2.parse("not implement"), ConfigParseError);
+    });
+  });
+});

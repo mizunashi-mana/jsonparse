@@ -1,6 +1,7 @@
 module.exports = (gulp, $, conf) ->
   path   = require 'path'
   merge  = require 'merge2'
+  runSequence = require 'run-sequence'
 
   {paths, tsOptions, runOptions, pkgInfo} = conf
 
@@ -13,7 +14,7 @@ module.exports = (gulp, $, conf) ->
   convertPath = (path) ->
     if /^test_.*/.test path.basename
       path.basename =
-        path.basename.replace /^test_(.*)$/, "test_#{path.extname}_$1"
+        path.basename.replace /^test_(.*)$/, "test_#{path.extname.substr(1)}_$1"
 
   gulp.task 'build:test-js', ->
     gulp.src [
@@ -31,6 +32,7 @@ module.exports = (gulp, $, conf) ->
     gulp.src [
       paths.testDir.srcDir.srcTs
       paths.testDir.srcDir.typings
+      paths.testDir.srcDir.libs
     ], {base: paths.testDir.srcDir.base}
       .pipe do $.sourcemaps.init
       .pipe $.rename convertPath

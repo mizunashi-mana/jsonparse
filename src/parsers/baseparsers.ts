@@ -60,7 +60,7 @@ export function catchParser<T, U>(def: U, parser: Parser<T, U>) {
   return new Parser<T, U>((obj) => {
     const res = parser.parse(obj);
     return res.catch(def);
-  })
+  });
 }
 
 export function failParser<T>() {
