@@ -20,3 +20,14 @@ distDir:
     jsDir  : 'js'
     dtsDir : 'definitions'
     mapDir : 'maps'
+testDir:
+  srcDir:
+    base   : 'test'
+    srcTs  : '**/*.ts'
+    srcJs  : '**/*.js'
+    typings: '../typings/**/*.d.ts'
+  distDir:
+    base   : 'test-build'
+    mapDir : 'maps'
+    testTs : '**/test_ts_*.js'
+    testJs : '**/test_js_*.js'

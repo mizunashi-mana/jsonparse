@@ -13,6 +13,7 @@ import {
   orParser,
   andParser,
   mapParser,
+  catchParser,
   customParser,
   descBuilder,
   descParser,
@@ -63,6 +64,10 @@ export class ConfigParser<T, U> {
 
   desc(msg: string) {
     return new ConfigParser(descParser(descBuilder(msg), this.parser));
+  }
+
+  default(def: U) {
+    return new ConfigParser(catchParser(def, this.parser));
   }
 
   get parser(): Parser<T, U> {

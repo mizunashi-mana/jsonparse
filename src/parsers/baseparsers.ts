@@ -56,6 +56,13 @@ export function mapParser<T1, T2, T3>(fn: (obj: T2) => T3, parser: Parser<T1, T2
   });
 }
 
+export function catchParser<T, U>(def: U, parser: Parser<T, U>) {
+  return new Parser<T, U>((obj) => {
+    const res = parser.parse(obj);
+    return res.catch(def);
+  })
+}
+
 export function failParser<T>() {
   return new Parser<any, T>((obj) => {
     return makeFailure<T>();
