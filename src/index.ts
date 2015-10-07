@@ -94,12 +94,12 @@ export function array<T>(parser: ConfigParser<Object, T>) {
   return new ConfigParser(isArray(parser.parser));
 }
 
-export function hasProperties(
+export function hasProperties<T>(
   props: [string, ConfigParser<any, any>][]
 ) {
   return new ConfigParser(andParser(
     isObject(),
-    hasPropertiesObj(
+    hasPropertiesObj<T>(
       props.map((e) => <[string, Parser<any, any>]>[e[0], e[1].parser])
     )
   ));
