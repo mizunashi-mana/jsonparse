@@ -1,5 +1,6 @@
 /dist/
 /typings/
+/build/
 
 # for NPM
 node_modules/

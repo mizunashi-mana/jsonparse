@@ -7,12 +7,16 @@ tsconf     : 'tsconfig.json'
 dtsmconf   : 'dtsm.json'
 srcDir:
   base     : 'src'
+  srcIndex : 'index.ts'
   srcTs    : '**/*.ts'
   srcJs    : '**/*.js'
   srcDts   : '**/*.d.ts'
   typings  : '../typings/**/*.d.ts'
 distDir:
-  base     : 'dist'
-  jsDir    : 'js'
-  dtsDir   : 'definitions'
-  mapDir   : 'maps'
+  prod:
+    base   : 'build'
+  debug:
+    base   : 'dist'
+    jsDir  : 'js'
+    dtsDir : 'definitions'
+    mapDir : 'maps'

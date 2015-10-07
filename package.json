@@ -1,14 +1,14 @@
 {
   "name": "jsonparse",
   "version": "0.0.1",
-  "description": "Safe parser of JSON for config like optparse of python",
-  "main": "src/index.ts",
+  "description": "Safe parser of JSON for config like ConfigParser of python",
+  "main": "./build/index.js",
   "scripts": {
     "prepublish": "gulp build --production",
     "postinstall": "dtsm --config ./dtsm.json install",
     "clean": "gulp clean",
     "lint": "gulp lint",
-    "build": "gulp build",
+    "build": "gulp build --production",
     "test": "gulp test",
     "devBuild": "gulp lint && gulp build --debug",
     "dinstall": "dtsm --config ./dtsm.json install --save",

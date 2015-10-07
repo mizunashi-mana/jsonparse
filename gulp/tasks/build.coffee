@@ -4,7 +4,8 @@ module.exports = (gulp, $, conf) ->
 
   {paths, tsOptions, runOptions, pkgInfo} = conf
 
-  distMapDir = path.relative paths.distDir.jsDir, paths.distDir.mapDir
+  distMapDir = path.relative paths.distDir.debug.jsDir
+    , paths.distDir.debug.mapDir
 
   tsProject =
     $.typescript.createProject paths.tsconf, tsOptions
@@ -14,7 +15,7 @@ module.exports = (gulp, $, conf) ->
 
   gulp.task 'build:ts', ->
     reqSMapFilter = $.filter [
-      path.relative paths.srcDir.base, pkgInfo.main
+      path.relative paths.srcDir.base, paths.srcDir.srcIndex
     ], {restore: true}
 
     tsResult = gulp.src [
@@ -34,16 +35,23 @@ module.exports = (gulp, $, conf) ->
       , do $.sourcemaps.init
       .pipe $.typescript tsProject
 
-    merge [
-      tsResult.dts
-        .pipe gulp.dest paths.distDir.dtsDir
-      tsResult.js
-        .pipe $.if runOptions.sourcemaps
-        , $.sourcemaps.write distMapDir
-          ,
-            sourceRoot: path.join process.cwd(), 'src'
-        .pipe gulp.dest paths.distDir.jsDir
-    ]
+    if runOptions.production
+      merge [
+        tsResult.dts
+        tsResult.js
+      ]
+        .pipe gulp.dest paths.distDir.prod.base
+    else
+      merge [
+        tsResult.dts
+          .pipe gulp.dest paths.distDir.debug.dtsDir
+        tsResult.js
+          .pipe $.if runOptions.sourcemaps
+          , $.sourcemaps.write distMapDir
+            ,
+              sourceRoot: path.join process.cwd(), 'src'
+          .pipe gulp.dest paths.distDir.debug.jsDir
+      ]
 
   gulp.task 'build:tjs', ['build:ts'], ->
     jsFilter = $.filter [
@@ -65,23 +73,30 @@ module.exports = (gulp, $, conf) ->
     dtsStream = jsFilter.restore
       .pipe dtsFilter
 
-    merge [
-      jsStream
-        .pipe $.if runOptions.sourcemaps
-        , do $.sourcemaps.init
-        .pipe $.header ''
-        .pipe $.if runOptions.sourcemaps
-        , $.sourcemaps.write distMapDir
-          ,
-            sourceRoot: path.join do process.cwd, 'src'
-        .pipe gulp.dest paths.distDir.jsDir
-      dtsStream
-        .pipe gulp.dest paths.distDir.dtsDir
-      gulp.src [
-        paths.srcDir.typings
-      ], {base: do process.cwd}
-        .pipe gulp.dest paths.distDir.base
-    ]
+    if runOptions.production
+      merge [
+        dtsStream
+        jsStream
+      ]
+        .pipe gulp.dest paths.distDir.prod.base
+    else
+      merge [
+        jsStream
+          .pipe $.if runOptions.sourcemaps
+          , do $.sourcemaps.init
+          .pipe $.header ''
+          .pipe $.if runOptions.sourcemaps
+          , $.sourcemaps.write distMapDir
+            ,
+              sourceRoot: path.join do process.cwd, 'src'
+          .pipe gulp.dest paths.distDir.debug.jsDir
+        dtsStream
+          .pipe gulp.dest paths.distDir.debug.dtsDir
+        gulp.src [
+          paths.srcDir.typings
+        ], {base: do process.cwd}
+          .pipe gulp.dest paths.distDir.debug.base
+      ]
 
   gulp.task 'build', [
     #'build:doc'
