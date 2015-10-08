@@ -9,8 +9,9 @@
     "clean": "gulp clean",
     "lint": "gulp lint",
     "build": "gulp build --production",
-    "test": "gulp test",
+    "test": "gulp lint && gulp test",
     "devBuild": "gulp lint && gulp build --debug",
+    "devTest": "gulp test",
     "dinstall": "dtsm --config ./dtsm.json install --save",
     "dupdate": "dtsm --config ./dtsm.json update --save"
   },
