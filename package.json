@@ -1,7 +1,7 @@
 {
-  "name": "jsonparse",
+  "name": "sonparser",
   "version": "0.0.1",
-  "description": "Safe parser of JSON for config like ConfigParser of python",
+  "description": "Safe parser of JSON and CSON for config like ConfigParser of python",
   "main": "./build/index.js",
   "scripts": {
     "prepublish": "gulp build --production",
@@ -20,7 +20,11 @@
   },
   "keywords": [
     "json",
-    "parser"
+    "cson",
+    "parser",
+    "parse",
+    "config",
+    "strict"
   ],
   "author": "Mizunashi Mana <mizunashi_mana@mma.club.uec.ac.jp>",
   "license": "MIT",
