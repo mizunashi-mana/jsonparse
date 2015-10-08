@@ -8,9 +8,9 @@ const {
   ConfigParseError,
 } = jsonparse;
 
-describe("config parser test", () => {
+describe("chain parser test", () => {
 
-  describe("base parser methods test", () => {
+  describe("base parsers test", () => {
 
     it("should be using second parser when first parser failed", () => {
       const CustomParser1 = jsonparse.custom<Object, boolean>((makeSuccess, makeFailure) => {
@@ -77,6 +77,10 @@ describe("config parser test", () => {
       assert.throw(() => MyParser.parse(true), ConfigParseError);
     });
 
+  });
+
+  describe("extra parsers test", () => {
+
     it("should be not converted by my description", () => {
       const MyParser = jsonparse.string
         .desc("this should be string value");
@@ -123,25 +127,18 @@ describe("config parser test", () => {
       const MyParser = jsonparse
         .boolean.default(false);
 
-      assert.strictEqual(MyParser
-        .parse(true), true);
-      assert.strictEqual(MyParser
-        .parse(1), false);
+      assert.strictEqual(MyParser.parse(true), true);
+      assert.strictEqual(MyParser.parse(1), false);
     });
 
-  });
+    it("should be optional value for no value received", () => {
+      const MyParser = jsonparse
+        .boolean.option(false);
 
-  describe("parse methods test", () => {
-
-    it("should return result with status", () => {
-      const result1 = jsonparse
-        .boolean.parseWithStatus(true);
-      assert.propertyVal(result1, "status", true);
-      assert.propertyVal(result1, "value", true);
-
-      const result2 = jsonparse
-        .boolean.parseWithStatus(1);
-      assert.propertyVal(result2, "status", false);
+      assert.strictEqual(MyParser.parse(true), true);
+      assert.strictEqual(MyParser.parse(undefined), false);
+      assert.strictEqual(MyParser.parse(null), false);
+      assert.throw(() => MyParser.parse(1), ConfigParseError);
     });
 
   });

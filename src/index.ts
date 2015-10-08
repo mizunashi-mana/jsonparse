@@ -27,6 +27,7 @@ import {
   isString,
   isObject,
   isArray,
+  isNothing,
 } from "./parsers/basetypes";
 
 import {
@@ -79,6 +80,10 @@ export class ConfigParser<T, U> {
 
   default(def: U) {
     return new ConfigParser(setDefaultParser(def, this.parser));
+  }
+
+  option(def: U) {
+    return this.or(new ConfigParser<T, U>(isNothing(def)));
   }
 
   get parser(): Parser<T, U> {
