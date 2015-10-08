@@ -67,6 +67,43 @@ describe("config parser test", () => {
       assert.throw(() => MyParser.parse("str"), ConfigParseError);
     });
 
+    it("should be converted by my function", () => {
+      const MyParser = jsonparse.string
+        .map((str) => str === "true");
+
+      assert.strictEqual(MyParser.parse("true"), true);
+      assert.strictEqual(MyParser.parse("false"), false);
+      assert.throw(() => MyParser.parse({}), ConfigParseError);
+      assert.throw(() => MyParser.parse(true), ConfigParseError);
+    });
+
+    it("should be not converted by my description", () => {
+      const MyParser = jsonparse.string
+        .desc("this should be string value");
+
+      assert.strictEqual(MyParser.parse(""), "");
+      assert.strictEqual(MyParser.parse("str"), "str");
+      assert.throw(() => MyParser.parse({}), ConfigParseError);
+      assert.throw(() => MyParser.parse(true), ConfigParseError);
+    });
+
+    it("should be sent event after converting", () => {
+      const MyParser = jsonparse.string;
+
+      assert.strictEqual(MyParser
+        .then(
+          (obj) => assert.strictEqual(obj, "str"),
+          () => assert(false)
+        )
+        .parse("str"), "str");
+      assert.throw(() => MyParser
+        .then(
+          (obj) => assert(false),
+          () => assert(true)
+        )
+        .parse(1), ConfigParseError);
+    });
+
   });
 
 });
