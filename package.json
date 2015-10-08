@@ -2,7 +2,7 @@
   "name": "sonparser",
   "version": "0.0.2",
   "description": "Safe parser of JSON and CSON for config like ConfigParser of python",
-  "main": "./build/index.js",
+  "main": "./lib/index.js",
   "scripts": {
     "prepublish": "gulp build --production",
     "postinstall": "dtsm --config ./dtsm.json install",
@@ -35,7 +35,6 @@
   "devDependencies": {
     "chai": "^3.3.0",
     "coffee-script": "^1.10.0",
-    "dtsm": "^0.11.0",
     "gulp": "^3.9.0",
     "gulp-coffeelint": "^0.5.0",
     "gulp-eslint": "^1.0.0",
@@ -55,6 +54,7 @@
     "yargs": "^3.27.0"
   },
   "dependencies": {
+    "dtsm": "^0.11.0",
     "cson": "^3.0.2"
   }
 }

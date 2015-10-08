@@ -1,6 +1,6 @@
 /dist/
 /typings/
-/build/
+/lib/
 /test-build/
 
 # for NPM
