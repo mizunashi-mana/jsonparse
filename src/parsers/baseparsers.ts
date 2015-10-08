@@ -48,6 +48,20 @@ export function descParser<T, U>(fail: {
   });
 }
 
+export function receiveParser<T, U>(onSuccess: (obj: U) => any, onFail: () => any, parser: Parser<T, U>) {
+  return new Parser<T, U>((obj) => {
+    const res = parser.parse(obj);
+    if (!res.lift(onSuccess).isSuccess()) {
+      onFail();
+    }
+    return res;
+  });
+}
+
+export function catchParser<T, U>(onFail: () => any, parser: Parser<T, U>) {
+  return receiveParser((obj) => obj, onFail, parser);
+}
+
 export function mapParser<T1, T2, T3>(fn: (obj: T2) => T3, parser: Parser<T1, T2>) {
   return new Parser<T1, T3>((obj) => {
     return parser
@@ -56,7 +70,7 @@ export function mapParser<T1, T2, T3>(fn: (obj: T2) => T3, parser: Parser<T1, T2
   });
 }
 
-export function catchParser<T, U>(def: U, parser: Parser<T, U>) {
+export function setDefaultParser<T, U>(def: U, parser: Parser<T, U>) {
   return new Parser<T, U>((obj) => {
     const res = parser.parse(obj);
     return res.catch(def);
@@ -77,8 +91,8 @@ export function successParser<T>(value: T) {
 
 export function customParser<T, U>(
   fn: (
-    onSuccess: mkSType<T>,
-    onFailure: mkFType<T>
+    onSuccess: mkSType<U>,
+    onFailure: mkFType<U>
   ) => ParseFunc<T, U>
 ) {
   const parseF = fn(makeSuccess, makeFailure);

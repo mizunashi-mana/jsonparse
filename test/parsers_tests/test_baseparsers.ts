@@ -11,6 +11,23 @@ describe("base parsers test", () => {
 
   describe("basetype parsers test", () => {
 
+    it("should be through all by base parser", () => {
+      assert.strictEqual(jsonparse.base.parse(true), true);
+      assert.strictEqual(jsonparse.base.parse(1), 1);
+      assert.strictEqual(jsonparse.base.parse("str"), "str");
+      assert.deepEqual(jsonparse.base.parse({}), {});
+      assert.deepEqual(jsonparse.base.parse({
+        "anything": "ok?",
+        "something": true,
+      }), {
+        "anything": "ok?",
+        "something": true,
+      });
+      assert.deepEqual(jsonparse.base.parse([]), []);
+      assert.deepEqual(jsonparse.base.parse(["", "true", "1", "{}"]), ["", "true", "1", "{}"]);
+      assert.deepEqual(jsonparse.base.parse(["", true, 1, {}]), ["", true, 1, {}]);
+    });
+
     it("should be through only boolean value by boolean parser", () => {
       assert.strictEqual(jsonparse.boolean.parse(true), true);
       assert.throw(() => jsonparse.boolean.parse(1), ConfigParseError);

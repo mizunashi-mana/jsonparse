@@ -24,11 +24,9 @@ testDir:
   srcDir:
     base   : 'test'
     srcTs  : '**/*.ts'
-    srcJs  : '**/*.js'
     typings: '../typings/**/*.d.ts'
     libs   : '../build/**/*.d.ts'
   distDir:
     base   : 'test-build'
     mapDir : 'maps'
-    testTs : '**/test_ts_*.js'
-    testJs : '**/test_js_*.js'
+    testTs : '**/test_*.js'

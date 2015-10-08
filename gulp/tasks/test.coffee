@@ -1,7 +1,5 @@
 module.exports = (gulp, $, conf) ->
   path   = require 'path'
-  merge  = require 'merge2'
-  runSequence = require 'run-sequence'
 
   {paths, tsOptions, runOptions, pkgInfo} = conf
 
@@ -11,31 +9,13 @@ module.exports = (gulp, $, conf) ->
   tsProject =
     $.typescript.createProject paths.tsconf, tsOptions
 
-  convertPath = (path) ->
-    if /^test_.*/.test path.basename
-      path.basename =
-        path.basename.replace /^test_(.*)$/, "test_#{path.extname.substr(1)}_$1"
-
-  gulp.task 'build:test-js', ->
-    gulp.src [
-      paths.testDir.srcDir.srcJs
-    ], {base: paths.testDir.srcDir.base}
-      .pipe do $.sourcemaps.init
-      .pipe $.rename convertPath
-      .pipe $.sourcemaps.write distMapDir
-        ,
-          sourceRoot: path.join do process.cwd
-            , path.basename paths.testDir.srcDir.base
-      .pipe gulp.dest paths.testDir.distDir.base
-
-  gulp.task 'build:test-ts', ->
+  gulp.task 'build:test', ['clean:test'], ->
     gulp.src [
       paths.testDir.srcDir.srcTs
       paths.testDir.srcDir.typings
       paths.testDir.srcDir.libs
     ], {base: paths.testDir.srcDir.base}
       .pipe do $.sourcemaps.init
-      .pipe $.rename convertPath
       .pipe $.typescript tsProject
       .js
       .pipe $.sourcemaps.write distMapDir
@@ -43,8 +23,6 @@ module.exports = (gulp, $, conf) ->
           sourceRoot: path.join do process.cwd
             , path.basename paths.testDir.srcDir.base
       .pipe gulp.dest paths.testDir.distDir.base
-
-  gulp.task 'build:test', ['build:test-js', 'built:test-ts']
 
   gulpMochaTest = (srcs) ->
     gulp.src srcs, {read: false}
@@ -54,15 +32,7 @@ module.exports = (gulp, $, conf) ->
           'source-map-support/register'
         ]
 
-  gulp.task 'test:js', ['build:test-js'], ->
-    gulpMochaTest [
-      paths.testDir.distDir.testJs
-    ]
-
-  gulp.task 'test:ts', ['build:test-ts'], ->
+  gulp.task 'test', ['build:test'], ->
     gulpMochaTest [
       paths.testDir.distDir.testTs
     ]
-
-  gulp.task 'test', ->
-    runSequence 'test:js', 'test:ts'
