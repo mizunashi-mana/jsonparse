@@ -20,6 +20,10 @@ module.exports = (gulp, $, conf) ->
   ], (cb) ->
     rimraf paths.distDir.base, cb
 
+  gulp.task 'clean:test', (cb) ->
+    rimraf paths.testDir.distDir.base, cb
+
   gulp.task 'clean', [
     'clean:dist'
+    'clean:test'
   ]

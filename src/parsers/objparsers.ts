@@ -24,7 +24,8 @@ export function hasPropertiesObj<T>(
           .parse(obj[prop[0]])
           .chain((e) => ParseResult.success(<[string, any]>[prop[0], e]));
       })
-      .reduce(probjconcat, <{[key: string]: any}>{});
-    return <ParseResult<T>>result;
+      .reduce(probjconcat, ParseResult.success(<{[key: string]: any}>{}))
+      .lift((convObj) => <T>convObj);
+    return result;
   });
 }

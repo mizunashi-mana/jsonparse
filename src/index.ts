@@ -13,9 +13,12 @@ import {
   orParser,
   andParser,
   mapParser,
+  receiveParser,
+  catchParser,
   customParser,
   descBuilder,
   descParser,
+  setDefaultParser,
 } from "./parsers/baseparsers";
 
 import {
@@ -65,6 +68,19 @@ export class ConfigParser<T, U> {
     return new ConfigParser(descParser(descBuilder(msg), this.parser));
   }
 
+  then(onSuccess: (obj: U) => any, onFail?: () => any) {
+    const onFailure = typeof onFail === "undefined" ? () => { return; } : onFail;
+    return new ConfigParser(receiveParser(onSuccess, onFailure, this.parser));
+  }
+
+  catch(onFail: () => any) {
+    return new ConfigParser(catchParser(onFail, this.parser));
+  }
+
+  default(def: U) {
+    return new ConfigParser(setDefaultParser(def, this.parser));
+  }
+
   get parser(): Parser<T, U> {
     return this.innerParser;
   }
@@ -76,6 +92,17 @@ export class ConfigParser<T, U> {
     } else {
       throw new ConfigParseError("Illegal config!");
     }
+  }
+
+  parseWithStatus(obj: T): {
+    status: boolean;
+    value?: U
+  } {
+    const res = this.parser.parse(obj);
+    return {
+      status: res.isSuccess(),
+      value: res.value(undefined),
+    };
   }
 }
 
@@ -106,8 +133,8 @@ export function hasProperties<T>(
 }
 
 export function custom<T, U>(fn: (
-  onSuccess: mkSType<T>,
-  onFailure: mkFType<T>
+  onSuccess: mkSType<U>,
+  onFailure: mkFType<U>
 ) => ParseFunc<T, U>) {
   return new ConfigParser(customParser(fn));
 }

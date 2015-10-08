@@ -26,26 +26,41 @@ export function andParser<T1, T2, T3>(parser1: Parser<T1, T2>, parser2: Parser<T
   });
 }
 
-export function descBuilder(msg: string, expected?: string) {
+export function descBuilder(msg: string, expected?: string, failF?: (msg: string, expected?: string) => any) {
   return {
     msg: msg,
     expected: expected,
+    handle: failF,
   };
 }
 
 export function descParser<T, U>(fail: {
   msg: string;
   expected?: string;
+  handle?: (msg: string, expected?: string) => any;
 }, parser: Parser<T, U>) {
   return new Parser<T, U>((obj) => {
     const res = parser.parse(obj);
-    /*
-     * if (!res.isSuccess()) {
-     *   fail(msg, obj);
-     * }
-     */
+    if (typeof fail.handle !== "undefined" && !res.isSuccess()) {
+      fail.handle(fail.msg, fail.expected);
+    }
     return res;
   });
+}
+
+export function receiveParser<T, U>(onSuccess: (obj: U) => any, onFail: () => any, parser: Parser<T, U>) {
+  return new Parser<T, U>((obj) => {
+    const res = parser.parse(obj);
+    res.lift(onSuccess);
+    if (!res.isSuccess()) {
+      onFail();
+    }
+    return res;
+  });
+}
+
+export function catchParser<T, U>(onFail: () => any, parser: Parser<T, U>) {
+  return receiveParser((obj) => obj, onFail, parser);
 }
 
 export function mapParser<T1, T2, T3>(fn: (obj: T2) => T3, parser: Parser<T1, T2>) {
@@ -53,6 +68,13 @@ export function mapParser<T1, T2, T3>(fn: (obj: T2) => T3, parser: Parser<T1, T2
     return parser
       .parse(obj)
       .lift(fn);
+  });
+}
+
+export function setDefaultParser<T, U>(def: U, parser: Parser<T, U>) {
+  return new Parser<T, U>((obj) => {
+    const res = parser.parse(obj);
+    return res.catch(def);
   });
 }
 
@@ -70,8 +92,8 @@ export function successParser<T>(value: T) {
 
 export function customParser<T, U>(
   fn: (
-    onSuccess: mkSType<T>,
-    onFailure: mkFType<T>
+    onSuccess: mkSType<U>,
+    onFailure: mkFType<U>
   ) => ParseFunc<T, U>
 ) {
   const parseF = fn(makeSuccess, makeFailure);
