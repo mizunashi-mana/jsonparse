@@ -3,6 +3,10 @@ import {
 } from "./lib/customerror/node-customerror";
 
 import {
+  parseSONFileSync
+} from "./lib/util/node-util";
+
+import {
   Parser,
   mkSType,
   mkFType,
@@ -109,6 +113,7 @@ export class ConfigParser<T, U> {
       value: res.value(undefined),
     };
   }
+
 }
 
 function buildConfigParserF<T, U>(pf: () => Parser<T, U>) {
@@ -142,4 +147,23 @@ export function custom<T, U>(fn: (
   onFailure: mkFType<U>
 ) => ParseFunc<T, U>) {
   return new ConfigParser(customParser(fn));
+}
+
+export function parseFile<T>(fname: string, parser: ConfigParser<Object, T>): T {
+  const obj = parseSONFileSync(fname);
+  return parser.parse(obj);
+}
+
+export function parseFileWithStatus<T>(fname: string, parser: ConfigParser<Object, T>): {
+  status: boolean;
+  value?: T
+} {
+  try {
+    const obj = parseSONFileSync(fname);
+    return parser.parseWithStatus(obj);
+  } catch (e) {
+    return {
+      status: false,
+    };
+  }
 }

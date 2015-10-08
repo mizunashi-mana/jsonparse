@@ -4,19 +4,23 @@ import * as fs from "fs";
 import * as path from "path";
 import * as CSON from "cson";
 
-export function parseJSONString(jsonStr: string) {
+export function parseJSONString(jsonStr: string): Object {
   return JSON.parse(jsonStr);
 }
 
-export function parseCSONString(csonStr: string) {
-  return CSON.parse(csonStr);
+export function parseCSONString(csonStr: string): Object {
+  const res = CSON.parseCSONString(csonStr);
+  if (res instanceof Error) {
+    throw res;
+  }
+  return res;
 }
 
-export function parseJSONFile(filename: string) {
+export function parseJSONFile(filename: string): Object {
   return parseJSONString(fs.readFileSync(filename).toString());
 }
 
-export function parseCSONFile(filename: string) {
+export function parseCSONFile(filename: string): Object {
   return parseCSONString(fs.readFileSync(filename).toString());
 }
 
@@ -83,7 +87,7 @@ class SONParseResult<L, R> {
 
 }
 
-export function parseSONFileSync(filename: string) {
+export function parseSONFileSync(filename: string): Object {
   const extname = path.extname(filename);
   const fcontent = fs.readFileSync(filename).toString();
   if (extname === ".json") {
@@ -103,7 +107,7 @@ export function parseSONFileSync(filename: string) {
 }
 
 
-export function parseSONFile(fname: string, cb: (e: any, obj: Object) => any) {
+export function parseSONFile(fname: string, cb: (e: any, obj: Object) => any): void {
   fs.readFile(fname, (err: NodeJS.ErrnoException, data: Buffer) => {
     const fcontent = data.toString();
     if (err) {

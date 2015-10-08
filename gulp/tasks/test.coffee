@@ -1,5 +1,6 @@
 module.exports = (gulp, $, conf) ->
   path   = require 'path'
+  merge  = require 'merge2'
 
   {paths, tsOptions, runOptions, pkgInfo} = conf
 
@@ -10,19 +11,25 @@ module.exports = (gulp, $, conf) ->
     $.typescript.createProject paths.tsconf, tsOptions
 
   gulp.task 'build:test', ['clean:test'], ->
-    gulp.src [
-      paths.testDir.srcDir.srcTs
-      paths.testDir.srcDir.typings
-      paths.testDir.srcDir.libs
-    ], {base: paths.testDir.srcDir.base}
-      .pipe do $.sourcemaps.init
-      .pipe $.typescript tsProject
-      .js
-      .pipe $.sourcemaps.write distMapDir
-        ,
-          sourceRoot: path.join do process.cwd
-            , path.basename paths.testDir.srcDir.base
-      .pipe gulp.dest paths.testDir.distDir.base
+    merge [
+      gulp.src [
+        paths.testDir.srcDir.srcTs
+        paths.testDir.srcDir.typings
+        paths.testDir.srcDir.libs
+      ], {base: paths.testDir.srcDir.base}
+        .pipe do $.sourcemaps.init
+        .pipe $.typescript tsProject
+        .js
+        .pipe $.sourcemaps.write distMapDir
+          ,
+            sourceRoot: path.join do process.cwd
+              , path.basename paths.testDir.srcDir.base
+        .pipe gulp.dest paths.testDir.distDir.base
+      gulp.src [
+        paths.testDir.srcDir.datas
+      ], {base: paths.testDir.srcDir.base}
+        .pipe gulp.dest paths.testDir.distDir.base
+    ]
 
   gulpMochaTest = (srcs) ->
     gulp.src srcs, {read: false}
