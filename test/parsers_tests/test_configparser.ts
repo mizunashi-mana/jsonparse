@@ -93,15 +93,40 @@ describe("config parser test", () => {
       assert.strictEqual(MyParser
         .then(
           (obj) => assert.strictEqual(obj, "str"),
-          () => assert(false)
+          () => assert(false, "unexpected call on fail")
         )
         .parse("str"), "str");
       assert.throw(() => MyParser
         .then(
-          (obj) => assert(false),
-          () => assert(true)
+          (obj) => assert(false, "unexpected call on success"),
+          () => assert(true, "called on fail")
         )
         .parse(1), ConfigParseError);
+    });
+
+    it("should be cacthed failed after converting", () => {
+      const MyParser = jsonparse.string;
+
+      assert.strictEqual(MyParser
+        .catch(
+          () => assert(false, "unexpected call on fail")
+        )
+        .parse("str"), "str");
+      assert.throw(() => MyParser
+        .catch(
+          () => assert(true, "called on fail")
+        )
+        .parse(1), ConfigParseError);
+    });
+
+    it("should be set default value on fail after converting", () => {
+      const MyParser = jsonparse
+        .boolean.default(false);
+
+      assert.strictEqual(MyParser
+        .parse(true), true);
+      assert.strictEqual(MyParser
+        .parse(1), false);
     });
 
   });
