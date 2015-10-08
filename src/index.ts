@@ -93,6 +93,17 @@ export class ConfigParser<T, U> {
       throw new ConfigParseError("Illegal config!");
     }
   }
+
+  parseWithStatus(obj: T): {
+    status: boolean;
+    value?: U
+  } {
+    const res = this.parser.parse(obj);
+    return {
+      status: res.isSuccess(),
+      value: res.value(undefined),
+    };
+  }
 }
 
 function buildConfigParserF<T, U>(pf: () => Parser<T, U>) {
