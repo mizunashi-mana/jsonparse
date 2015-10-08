@@ -1,6 +1,6 @@
-# jsonparse
+# node-sonparse
 
-Safe parser of JSON for config parsing like ConfigParser of python.
+Safe parser of JSON and CSON for config parsing like ConfigParser of python.
 
 [![NPM version][npm-image]][npm-url]
 [![Build status][travis-image]][travis-url]
