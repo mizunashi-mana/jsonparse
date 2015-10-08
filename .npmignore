@@ -5,12 +5,10 @@ typings
 
 # documents
 README.md
-LICENSE
 CHANGELOG.md
 
 # resource
 .*
 *lint.json
-dtsm.json
 tsconfig.json
 gulp*
