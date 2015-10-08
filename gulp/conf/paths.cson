@@ -14,7 +14,7 @@ srcDir:
   typings  : '../typings/**/*.d.ts'
 distDir:
   prod:
-    base   : 'build'
+    base   : 'lib'
   debug:
     base   : 'dist'
     jsDir  : 'js'
@@ -25,7 +25,7 @@ testDir:
     base   : 'test'
     srcTs  : '**/*.ts'
     typings: '../typings/**/*.d.ts'
-    libs   : '../build/**/*.d.ts'
+    libs   : '../lib/**/*.d.ts'
   distDir:
     base   : 'test-build'
     mapDir : 'maps'

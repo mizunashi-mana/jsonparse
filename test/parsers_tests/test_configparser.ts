@@ -1,8 +1,8 @@
-/// <reference path="../../build/lib/typings.d.ts" />
+/// <reference path="../../lib/lib/typings.d.ts" />
 
 import {assert} from "chai";
 
-import * as jsonparse from "../../build/";
+import * as jsonparse from "../../lib/";
 const {
   ConfigParser,
   ConfigParseError,
