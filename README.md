@@ -7,6 +7,15 @@ Safe parser of JSON and CSON for config parsing like ConfigParser of python.
 [![License][license-image]][license-url]
 [![Downloads][downloads-image]][downloads-url]
 
+## Status
+
+Current status of code: Developing
+
+So, there are not documents, and not useful.
+I think you should not use this package for your project because I will include big changes recently. 
+
+However, users and reporters are always welcome. And, also developers.
+
 ## License
 
 [MIT](LICENSE)
