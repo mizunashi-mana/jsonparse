@@ -16,6 +16,7 @@ module.exports = (gulp, $, conf) ->
   gulp.task 'lint:ts', ->
     gulp.src [
       paths.srcDir.srcTs
+      paths.testDir.srcDir.srcTs
     ]
       .pipe do $.tslint
       .pipe $.tslint.report 'verbose'

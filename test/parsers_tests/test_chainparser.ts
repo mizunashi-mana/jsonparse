@@ -4,7 +4,6 @@ import {assert} from "chai";
 
 import * as jsonparse from "../../lib/";
 const {
-  ConfigParser,
   ConfigParseError,
 } = jsonparse;
 
@@ -112,14 +111,10 @@ describe("chain parser test", () => {
       const MyParser = jsonparse.string;
 
       assert.strictEqual(MyParser
-        .catch(
-          () => assert(false, "unexpected call on fail")
-        )
+        .catch(() => assert(false, "unexpected call on fail"))
         .parse("str"), "str");
       assert.throw(() => MyParser
-        .catch(
-          () => assert(true, "called on fail")
-        )
+        .catch(() => assert(true, "called on fail"))
         .parse(1), ConfigParseError);
     });
 
