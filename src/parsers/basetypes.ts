@@ -64,3 +64,13 @@ export function isObject() {
     }
   });
 }
+
+export function isNothing<T>(value: T) {
+  return new TypeParser<T>((obj) => {
+    if (typeof obj === "undefined" || obj === null) {
+      return makeSuccess<T>(value);
+    } else {
+      return makeFailure<T>();
+    }
+  });
+}

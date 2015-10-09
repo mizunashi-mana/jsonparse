@@ -26,6 +26,7 @@ testDir:
     srcTs  : '**/*.ts'
     typings: '../typings/**/*.d.ts'
     libs   : '../lib/**/*.d.ts'
+    datas  : '**/data/*'
   distDir:
     base   : 'test-build'
     mapDir : 'maps'
