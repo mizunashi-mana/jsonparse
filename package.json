@@ -1,7 +1,7 @@
 {
   "name": "sonparser",
   "version": "0.0.4",
-  "description": "Safe parser of JSON and CSON for config like ConfigParser of python",
+  "description": "(Now status is not useful! See npm page!) Safe parser of JSON and CSON for config like ConfigParser of python",
   "main": "./lib/index.js",
   "scripts": {
     "prepublish": "gulp build --production",
