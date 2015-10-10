@@ -1,14 +1,6 @@
-import {BaseCustomError} from "../lib/customerror/node-customerror";
-
 import {clone} from "../lib/util/util";
 
 export enum ResultType {Success, Failure}
-
-export class ParseResultError extends BaseCustomError {
-  constructor(msg: string) {
-    super(msg);
-  }
-}
 
 export function id<T>(a: T) {
   return clone(a, true);
