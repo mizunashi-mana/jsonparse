@@ -9,9 +9,8 @@ export type ResultFlagType = {
 };
 export type FailObjType = ParseErrorStocker;
 export type SuccessObjType<S> = {
-  obj: S;
+  value: S;
   flags: ResultFlagType;
-  stocker: ParseErrorStocker;
 };
 
 export function id<T>(a: T) {
@@ -24,9 +23,8 @@ export function exists<T>(a: T) {
 
 export function mapSuccess<S, T>(f: (s: S) => T, v: SuccessObjType<S>) {
   return {
-    obj: f(v.obj),
+    value: f(v.value),
     flags: v.flags,
-    stocker: v.stocker,
   };
 }
 
@@ -104,6 +102,16 @@ export class ParseResult<S> {
       ? this.rv
       : f(this.lv)
     );
+  }
+
+  caseOf<T>(
+    fl: (l: FailObjType) => T,
+    fr: (r: SuccessObjType<S>) => T
+  ): T {
+    return this.isSuccess()
+      ? fl(this.lv)
+      : fr(this.rv)
+      ;
   }
 
   clone() {

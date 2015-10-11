@@ -38,8 +38,8 @@ export class ParseErrorStocker {
     return new ParseErrorStocker(this.innerMsg, this.innerExpected, this.innerChilds.concat(nodes));
   }
 
-  desc(msg: string) {
-    return new ParseErrorStocker(msg, this.innerExpected, this.innerChilds);
+  desc(msg: string, exp?: string) {
+    return new ParseErrorStocker(msg, (typeof exp === "undefined") ? this.innerExpected : exp, this.innerChilds);
   }
 
   report(f: (msg: string, exp: string, childs: ParseErrorNode[]) => any): void {
