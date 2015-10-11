@@ -28,21 +28,6 @@ export function mapSuccess<S, T>(f: (s: S) => T, v: SuccessObjType<S>) {
   };
 }
 
-export function prresult<S>(f?: FailObjType, s?: SuccessObjType<S>) {
-    if (exists(f) && exists(s)) {
-        throw new TypeError("Cannot construct an ParseResult with both a success and a fail");
-    }
-    if (!exists(f) && !exists(s)) {
-        throw new TypeError("Cannot construct an ParseResult with neither a success nor a fail");
-    }
-    if (exists(f) && !exists(s)) {
-        return ParseResult.fail<S>(f);
-    }
-    if (!exists(f) && exists(s)) {
-        return ParseResult.success<S>(s);
-    }
-}
-
 export class ParseResult<S> {
   private t: ResultType;
   private lv: FailObjType;

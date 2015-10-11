@@ -1,10 +1,19 @@
 import {
+  FailObjType,
+  SuccessObjType,
+  ParseResult,
+} from "../parseresult/result2";
+
+import {
+  ParseErrorStocker
+} from "../parseresult/parseerr";
+
+import {
   Parser,
-  ParseFunc,
-  mkSType,
-  mkFType,
   makeSuccess,
   makeFailure,
+  mapParseResult,
+  MapperParseResult,
 } from "../common";
 
 export function orParser<T, U>(parser1: Parser<T, U>, parser2: Parser<T, U>) {
@@ -26,35 +35,33 @@ export function andParser<T1, T2, T3>(parser1: Parser<T1, T2>, parser2: Parser<T
   });
 }
 
-export function descBuilder(msg: string, expected?: string, failF?: (msg: string, expected?: string) => any) {
+export function descBuilder(msg: string, expected?: string) {
   return {
     msg: msg,
     expected: expected,
-    handle: failF,
   };
 }
 
 export function descParser<T, U>(fail: {
   msg: string;
   expected?: string;
-  handle?: (msg: string, expected?: string) => any;
 }, parser: Parser<T, U>) {
   return new Parser<T, U>((obj) => {
     const res = parser.parse(obj);
-    if (typeof fail.handle !== "undefined" && !res.isSuccess()) {
-      fail.handle(fail.msg, fail.expected);
-    }
-    return res;
+    return res.caseOf((l) => ParseResult.fail<U>(
+      l.desc(fail.msg, fail.expected)
+    ), (r) => ParseResult.success(r));
   });
 }
 
-export function receiveParser<T, U>(onSuccess: (obj: U) => any, onFail: () => any, parser: Parser<T, U>) {
+export function receiveParser<T, U>(
+  onSuccess: (obj: SuccessObjType<U>) => any,
+  onFailure: (obj: FailObjType) => any,
+  parser: Parser<T, U>
+) {
   return new Parser<T, U>((obj) => {
     const res = parser.parse(obj);
-    res.lift(onSuccess);
-    if (!res.isSuccess()) {
-      onFail();
-    }
+    res.caseOf(onFailure, onSuccess);
     return res;
   });
 }
@@ -63,7 +70,10 @@ export function catchParser<T, U>(onFail: () => any, parser: Parser<T, U>) {
   return receiveParser((obj) => obj, onFail, parser);
 }
 
-export function mapParser<T1, T2, T3>(fn: (obj: T2) => T3, parser: Parser<T1, T2>) {
+export function mapParser<T1, T2, T3>(
+  fn: (obj: SuccessObjType<T2>) => SuccessObjType<T3>,
+  parser: Parser<T1, T2>
+) {
   return new Parser<T1, T3>((obj) => {
     return parser
       .parse(obj)
@@ -71,31 +81,30 @@ export function mapParser<T1, T2, T3>(fn: (obj: T2) => T3, parser: Parser<T1, T2
   });
 }
 
-export function setDefaultParser<T, U>(def: U, parser: Parser<T, U>) {
-  return new Parser<T, U>((obj) => {
-    const res = parser.parse(obj);
-    return res.catch(def);
-  });
-}
-
 export function failParser<T>() {
   return new Parser<any, T>((obj) => {
-    return makeFailure<T>();
+    return ParseResult.fail<T>(new ParseErrorStocker(
+      "make by fail parser",
+      "unknown"
+    ));
   });
 }
 
 export function successParser<T>(value: T) {
   return new Parser<any, T>((obj) => {
-    return makeSuccess<T>(value);
+    return ParseResult.success<T>({
+      value: value,
+      flags: obj.flags,
+    });
   });
 }
 
 export function customParser<T, U>(
-  fn: (
-    onSuccess: mkSType<U>,
-    onFailure: mkFType<U>
-  ) => ParseFunc<T, U>
-) {
-  const parseF = fn(makeSuccess, makeFailure);
-  return new Parser<T, U>(parseF);
+  f: (
+    mkS: (convObj: U) => ParseResult<U>,
+    mkF: (msg: string, exp?: string) => ParseResult<U>
+  ) => MapperParseResult<T, U>
+): Parser<T, U> {
+  const parseF = mapParseResult<T, U>(f);
+  return new Parser(parseF);
 }
