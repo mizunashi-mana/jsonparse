@@ -39,7 +39,7 @@ import {
 import {
   ParseResult,
   SuccessObjType,
-} from "./parseresult/result2";
+} from "./parseresult/result";
 
 export class ConfigParseError extends BaseCustomError {
   constructor(msg: string) {

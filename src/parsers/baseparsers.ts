@@ -2,7 +2,7 @@ import {
   FailObjType,
   SuccessObjType,
   ParseResult,
-} from "../parseresult/result2";
+} from "../parseresult/result";
 
 import {
   ParseErrorStocker

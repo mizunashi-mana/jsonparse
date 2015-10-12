@@ -7,7 +7,7 @@ import {
 import {
   ParseResult,
   ResultFlagType,
-} from "../parseresult/result2";
+} from "../parseresult/result";
 
 import {
   ParseErrorStocker

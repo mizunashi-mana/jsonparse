@@ -5,7 +5,7 @@ import {
 import {
   ParseResult,
   SuccessObjType,
-} from "./parseresult/result2";
+} from "./parseresult/result";
 
 export type ParseFunc<T, U> = (obj: SuccessObjType<T>) => ParseResult<U>;
 

@@ -7,7 +7,8 @@ import {clone} from "../lib/util/util";
 import {
   ParseResult,
   ResultFlagType,
-} from "../parseresult/result2";
+} from "../parseresult/result";
+
 import {ParseErrorStocker} from "../parseresult/parseerr";
 
 function probjconcat(
