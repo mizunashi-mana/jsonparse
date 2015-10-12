@@ -30,7 +30,7 @@ export function isNumber() {
       } else {
         return makeFailure(`${obj} is not 'number'`, "number");
       }
-    }
+    };
   });
 }
 
@@ -42,7 +42,7 @@ export function isString() {
       } else {
         return makeFailure(`${obj} is not 'string'`, "string");
       }
-    }
+    };
   });
 }
 
@@ -54,7 +54,7 @@ export function isBoolean() {
       } else {
         return makeFailure(`${obj} is not 'boolean'`, "boolean");
       }
-    }
+    };
   });
 }
 
@@ -68,14 +68,18 @@ function prconcat<T>(
   index: number
 ): ParseResult<T[]> {
   return res1.caseOf(
-    (l1) => res2.caseOf((l2) => ParseResult.fail<T[]>(
-      l1.addChild(buildErrorChild(index, l2))
-    ), (r2) => ParseResult.fail<T[]>(l1)),
-    (r1) => res2.caseOf((l2) => ParseResult.fail<T[]>(new ParseErrorStocker(
-      "failed to parse elem of array",
-      "array",
-      [buildErrorChild(index, l2)]
-    )), (r2) => ParseResult.success<T[]>({
+    (l1) => res2.caseOf((l2) => ParseResult.fail<T[]>({
+      value: l1.value.addChild(buildErrorChild(index, l2.value)),
+      flags: l1.flags,
+    }), (r2) => ParseResult.fail<T[]>(l1)),
+    (r1) => res2.caseOf((l2) => ParseResult.fail<T[]>({
+      value: new ParseErrorStocker(
+        "failed to parse elem of array",
+        "array",
+        [buildErrorChild(index, l2.value)]
+      ),
+      flags: l2.flags,
+    }), (r2) => ParseResult.success<T[]>({
       value: r1.value.concat([r2.value]),
       flags: r1.flags
     }))
@@ -101,10 +105,13 @@ function parseArrayObj<T>(
     results.push(convObj);
   }
   if (results.length != arr.length) {
-    return ParseResult.fail<T[]>(new ParseErrorStocker(
-      "failed to parse elem of array",
-      "array"
-    ));
+    return ParseResult.fail<T[]>({
+      value: new ParseErrorStocker(
+        "failed to parse elem of array",
+        "array"
+      ),
+      flags: flags,
+    });
   }
   return <ParseResult<T[]>>results
     .reduce(prconcat, ParseResult.success({
@@ -120,10 +127,13 @@ export function isArray<T>(parser: Parser<Object, T>) {
       const results = parseArrayObj(value, parser, obj.flags);
       return <ParseResult<T[]>>results;
     } else {
-      return ParseResult.fail<T[]>(new ParseErrorStocker(
-        `${obj.value} is not array`,
-        "array"
-      ));
+      return ParseResult.fail<T[]>({
+        value: new ParseErrorStocker(
+          `${obj.value} is not array`,
+          "array"
+        ),
+        flags: obj.flags,
+      });
     }
   });
 }
@@ -136,18 +146,18 @@ export function isObject() {
       } else {
         return makeFailure(`${obj} is not 'object'`, "object");
       }
-    }
+    };
   });
 }
 
 export function isNothing<T>(value: T) {
-  return buildTypeParser<Object>((makeSuccess, makeFailure) => {
+  return buildTypeParser<T>((makeSuccess, makeFailure) => {
     return (obj) => {
       if (typeof obj === "undefined" || obj === null) {
-        return makeSuccess(obj);
+        return makeSuccess(value);
       } else {
         return makeFailure(`${obj} is not 'undefined' or 'null'`, "nothing");
       }
-    }
+    };
   });
 }

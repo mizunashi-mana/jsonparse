@@ -42,7 +42,7 @@ export class ParseErrorStocker {
     return new ParseErrorStocker(msg, (typeof exp === "undefined") ? this.innerExpected : exp, this.innerChilds);
   }
 
-  report(f: (msg: string, exp: string, childs: ParseErrorNode[]) => any): void {
+  report(f: (msg: string, exp?: string, childs?: ParseErrorNode[]) => any): void {
     f(this.innerMsg, this.innerExpected, this.innerChilds);
   }
 

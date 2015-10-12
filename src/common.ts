@@ -17,7 +17,10 @@ export function makeSuccess<T, U>(obj: SuccessObjType<T>, convObj: U) {
 }
 
 export function makeFailure<T, U>(obj: SuccessObjType<T>, msg: string, exp?: string) {
-  return ParseResult.fail<U>(new ParseErrorStocker(msg, exp));
+  return ParseResult.fail<U>({
+    value: new ParseErrorStocker(msg, exp),
+    flags: obj.flags,
+  });
 }
 
 export type MapperParseResult<T, U> = (obj: T) => ParseResult<U>;

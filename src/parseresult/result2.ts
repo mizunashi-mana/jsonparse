@@ -7,11 +7,16 @@ export enum ResultType {Success, Failure}
 export type ResultFlagType = {
   isReport: boolean;
 };
-export type FailObjType = ParseErrorStocker;
-export type SuccessObjType<S> = {
-  value: S;
+
+export interface BaseObjType {
   flags: ResultFlagType;
-};
+}
+export interface FailObjType extends BaseObjType {
+  value:  ParseErrorStocker;
+}
+export interface SuccessObjType<S> extends BaseObjType {
+  value: S;
+}
 
 export function id<T>(a: T) {
   return clone(a, true);
@@ -22,6 +27,13 @@ export function exists<T>(a: T) {
 }
 
 export function mapSuccess<S, T>(f: (s: S) => T, v: SuccessObjType<S>) {
+  return {
+    value: f(v.value),
+    flags: v.flags,
+  };
+}
+
+export function mapFailure(f: (s: ParseErrorStocker) => ParseErrorStocker, v: FailObjType) {
   return {
     value: f(v.value),
     flags: v.flags,

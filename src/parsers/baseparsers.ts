@@ -10,8 +10,6 @@ import {
 
 import {
   Parser,
-  makeSuccess,
-  makeFailure,
   mapParseResult,
   MapperParseResult,
 } from "../common";
@@ -48,9 +46,10 @@ export function descParser<T, U>(fail: {
 }, parser: Parser<T, U>) {
   return new Parser<T, U>((obj) => {
     const res = parser.parse(obj);
-    return res.caseOf((l) => ParseResult.fail<U>(
-      l.desc(fail.msg, fail.expected)
-    ), (r) => ParseResult.success(r));
+    return res.caseOf((l) => ParseResult.fail<U>({
+      value: l.value.desc(fail.msg, fail.expected),
+      flags: l.flags,
+    }), (r) => ParseResult.success(r));
   });
 }
 
@@ -66,8 +65,24 @@ export function receiveParser<T, U>(
   });
 }
 
-export function catchParser<T, U>(onFail: () => any, parser: Parser<T, U>) {
+export function thenCatchParser<T, U>(
+  onFail: (obj: FailObjType) => any,
+  parser: Parser<T, U>
+) {
   return receiveParser((obj) => obj, onFail, parser);
+}
+
+export function catchParser<T, U>(
+  onFail: (obj: FailObjType) => SuccessObjType<U>,
+  parser: Parser<T, U>
+) {
+  return new Parser<T, U>((obj) => {
+    const res = parser.parse(obj);
+    return res.caseOf(
+      (err) => ParseResult.success(onFail(err)),
+      (convObj) => ParseResult.success(convObj)
+    );
+  });
 }
 
 export function mapParser<T1, T2, T3>(
@@ -81,12 +96,12 @@ export function mapParser<T1, T2, T3>(
   });
 }
 
-export function failParser<T>() {
+export function failParser<T>(msg: string, exp?: string) {
   return new Parser<any, T>((obj) => {
-    return ParseResult.fail<T>(new ParseErrorStocker(
-      "make by fail parser",
-      "unknown"
-    ));
+    return ParseResult.fail<T>({
+      value: new ParseErrorStocker(msg, exp),
+      flags: obj.flags,
+    });
   });
 }
 
