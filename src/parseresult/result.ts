@@ -127,8 +127,8 @@ export class ParseResult<S> {
 
   valueFailure(def: FailObjType): FailObjType {
     return this.isSuccess()
-      ? this.lv
-      : def
+      ? def
+      : this.lv
       ;
   }
 }

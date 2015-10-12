@@ -142,7 +142,7 @@ describe("base parsers test", () => {
           } else if (typeof obj === "string") {
             return makeSuccess(false);
           }
-          return makeFailure(`${obj} is neither 'number' or 'string'`);
+          return makeFailure();
         };
       });
       const CustomParser2 = jsonparse.custom<string, string>((makeSuccess, makeFailure) => {
@@ -150,7 +150,7 @@ describe("base parsers test", () => {
           if (obj == "debug" || obj == "info" || obj == "error") {
             return makeSuccess(obj);
           }
-          return makeFailure(`${obj} is not specify words`);
+          return makeFailure();
         };
       });
 

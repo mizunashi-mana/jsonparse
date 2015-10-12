@@ -21,6 +21,7 @@ import {
   customParser,
   descBuilder,
   descParser,
+  descFromExpectedParser,
 } from "./parsers/baseparsers";
 
 import {
@@ -86,6 +87,10 @@ export class ConfigParser<T, U> {
     return new ConfigParser(descParser(descBuilder(msg, exp), this.parser));
   }
 
+  descFromExpected(exp: string) {
+    return new ConfigParser(descFromExpectedParser(exp, this.parser));
+  }
+
   then(
     onSuccess: (obj: U) => any,
     onFail?: (msg: string, exp?: string) => any
@@ -133,7 +138,9 @@ export class ConfigParser<T, U> {
     if (res.isSuccess()) {
       return res.valueSuccess(undefined).value;
     } else {
-      throw new ConfigParseError("Illegal config!");
+      res.valueFailure(undefined).value.report((msg: string) => {
+        throw new ConfigParseError(msg);
+      });
     }
   }
 
@@ -186,7 +193,7 @@ export function hasProperties<T>(
 
 export function custom<T, U>(fn: (
   onSuccess: (obj: U) => ParseResult<U>,
-  onFailure: (msg: string, exp?: string) => ParseResult<U>
+  onFailure: (msg?: string, exp?: string) => ParseResult<U>
 ) => MapperParseResult<T, U>) {
   return new ConfigParser(customParser(fn));
 }

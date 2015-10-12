@@ -33,12 +33,15 @@ export function andParser<T1, T2, T3>(parser1: Parser<T1, T2>, parser2: Parser<T
   });
 }
 
-export function descBuilder(msg: string, expected?: string) {
+export function descBuilder(msg: string, expected?: string): {
+  msg: string,
+  expected?: string,
+} {
   return {
     msg: msg,
     expected: expected,
   };
-}
+};
 
 export function descParser<T, U>(fail: {
   msg: string;
@@ -48,6 +51,32 @@ export function descParser<T, U>(fail: {
     const res = parser.parse(obj);
     return res.caseOf((l) => ParseResult.fail<U>({
       value: l.value.desc(fail.msg, fail.expected),
+      flags: l.flags,
+    }), (r) => ParseResult.success(r));
+  });
+}
+
+function createMsgFromExpected(obj: Object, expected: string[]) {
+  const objStr = JSON.stringify(obj);
+
+  const subExps = expected.slice(0, expected.length - 1);
+  const expsStr = subExps.length == 0
+    ? expected[0]
+    : `${subExps.join(", ")} or ${expected[expected.length - 1]}`
+    ;
+  return subExps.length == 0
+    ? `${objStr} is not ${expsStr}`
+    : `${objStr} is neither ${expsStr}`
+    ;
+}
+export function descFromExpectedParser<T, U>(expected: (string|string[]), parser: Parser<T, U>) {
+  const exps = typeof expected === "string" ? [expected] : expected;
+  const expsStr = exps.join(" | ");
+  return new Parser<T, U>((obj) => {
+    const msg = createMsgFromExpected(obj, exps);
+    const res = parser.parse(obj);
+    return res.caseOf((l) => ParseResult.fail<U>({
+      value: l.value.desc(msg, expsStr),
       flags: l.flags,
     }), (r) => ParseResult.success(r));
   });
@@ -117,7 +146,7 @@ export function successParser<T>(value: T) {
 export function customParser<T, U>(
   f: (
     mkS: (convObj: U) => ParseResult<U>,
-    mkF: (msg: string, exp?: string) => ParseResult<U>
+    mkF: (msg?: string, exp?: string) => ParseResult<U>
   ) => MapperParseResult<T, U>
 ): Parser<T, U> {
   const parseF = mapParseResult<T, U>(f);
