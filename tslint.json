@@ -4,6 +4,7 @@
     "curly": true,
     "eofline": true,
     "indent": [true, "spaces"],
+    "max-line-length": [true, 140],
     "member-ordering": {
       "static-before-instance": true,
       "variables-before-functions": true
