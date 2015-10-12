@@ -17,7 +17,7 @@ describe("chain parser test", () => {
           if (typeof obj === "number") {
             return makeSuccess(true);
           }
-          return makeFailure();
+          return makeFailure(`${obj} is not 'number'`);
         };
       });
       const CustomParser2 = jsonparse.custom<Object, boolean>((makeSuccess, makeFailure) => {
@@ -25,7 +25,7 @@ describe("chain parser test", () => {
           if (typeof obj === "string") {
             return makeSuccess(false);
           }
-          return makeFailure();
+          return makeFailure(`${obj} is not 'number'`);
         };
       });
       const MyParser = CustomParser1.or(CustomParser2);
@@ -45,7 +45,7 @@ describe("chain parser test", () => {
           } else if (typeof obj === "string") {
             return makeSuccess(2);
           }
-          return makeFailure();
+          return makeFailure(`${obj} is neither 'boolean', 'number' or 'string'`);
         };
       });
       const CustomParser2 = jsonparse.custom<number, boolean>((makeSuccess, makeFailure) => {
@@ -55,7 +55,7 @@ describe("chain parser test", () => {
           } else if (obj === 1) {
             return makeSuccess(true);
           }
-          return makeFailure();
+          return makeFailure(`${obj} is neither '0' or '1'`);
         };
       });
       const MyParser = CustomParser1.and(CustomParser2);

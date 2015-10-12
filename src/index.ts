@@ -8,7 +8,7 @@ import {
 
 import {
   Parser,
-  ParseFunc,
+  MapperParseResult,
 } from "./common";
 
 import {
@@ -149,7 +149,10 @@ export class ConfigParser<T, U> {
     });
     return {
       status: res.isSuccess(),
-      value: res.valueSuccess(undefined).value,
+      value: res.valueSuccess({
+        value: undefined,
+        flags: undefined,
+      }).value,
     };
   }
 
@@ -184,7 +187,7 @@ export function hasProperties<T>(
 export function custom<T, U>(fn: (
   onSuccess: (obj: U) => ParseResult<U>,
   onFailure: (msg: string, exp?: string) => ParseResult<U>
-) => ParseFunc<T, U>) {
+) => MapperParseResult<T, U>) {
   return new ConfigParser(customParser(fn));
 }
 

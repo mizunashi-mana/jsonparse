@@ -106,8 +106,8 @@ export class ParseResult<S> {
     fr: (r: SuccessObjType<S>) => T
   ): T {
     return this.isSuccess()
-      ? fl(this.lv)
-      : fr(this.rv)
+      ? fr(this.rv)
+      : fl(this.lv)
       ;
   }
 
