@@ -56,8 +56,8 @@ export function descParser<T, U>(fail: {
   });
 }
 
-function createMsgFromExpected(obj: Object, expected: string[]) {
-  const objStr = JSON.stringify(obj);
+function createMsgFromExpected<T>(obj: SuccessObjType<T>, expected: string[]) {
+  const objStr = JSON.stringify(obj.value);
 
   const subExps = expected.slice(0, expected.length - 1);
   const expsStr = subExps.length == 0

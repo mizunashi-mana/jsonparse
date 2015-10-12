@@ -80,14 +80,53 @@ describe("chain parser test", () => {
 
   describe("extra parsers test", () => {
 
-    it("should be not converted by my description", () => {
+    it("should be not converted and added desc by my description", () => {
       const MyParser = jsonparse.string
         .desc("this should be string value");
 
       assert.strictEqual(MyParser.parse(""), "");
       assert.strictEqual(MyParser.parse("str"), "str");
-      assert.throw(() => MyParser.parse({}), ConfigParseError);
-      assert.throw(() => MyParser.parse(true), ConfigParseError);
+      assert.throw(() => MyParser.parse({}), ConfigParseError, "this should be string value");
+      assert.throw(() => MyParser.parse(true), ConfigParseError, "this should be string value");
+    });
+
+    it("should be not converted and added desc by my description from expected", () => {
+      const MyParser1 = jsonparse.custom<Object, number>((makeSuccess, makeFailure) => {
+        return (obj) => {
+          if (typeof obj === "boolean") {
+            return makeSuccess(0);
+          } else if (obj === "special") {
+            return makeSuccess(1);
+          } else if (typeof obj === "number") {
+            return makeSuccess(2);
+          }
+          return makeFailure();
+        };
+      })
+        .descFromExpected(["boolean", "number", "special"]);
+      const MyParser2 = jsonparse.string
+        .descFromExpected("string");
+
+      assert.strictEqual(MyParser1.parse(true), 0);
+      assert.strictEqual(MyParser1.parse("special"), 1);
+      assert.strictEqual(MyParser1.parse(10), 2);
+      assert.throw(
+        () => MyParser1.parse({a: 1}),
+        ConfigParseError, '{"a":1} is neither boolean, number or special'
+      );
+      assert.throw(
+        () => MyParser1.parse("str"),
+        ConfigParseError, '"str" is neither boolean, number or special'
+      );
+      assert.strictEqual(MyParser2.parse("str"), "str");
+      assert.throw(
+        () => MyParser2.parse({a: 1}),
+        ConfigParseError, '{"a":1} is not string'
+      );
+      assert.throw(
+        () => MyParser2.parse(true),
+        ConfigParseError, "true is not string"
+      );
     });
 
     it("should be sent event after converting", () => {

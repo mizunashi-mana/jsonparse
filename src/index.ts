@@ -87,7 +87,7 @@ export class ConfigParser<T, U> {
     return new ConfigParser(descParser(descBuilder(msg, exp), this.parser));
   }
 
-  descFromExpected(exp: string) {
+  descFromExpected(exp: (string|string[])) {
     return new ConfigParser(descFromExpectedParser(exp, this.parser));
   }
 
