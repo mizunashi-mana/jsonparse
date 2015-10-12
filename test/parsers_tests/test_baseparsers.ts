@@ -135,7 +135,7 @@ describe("base parsers test", () => {
     });
 
     it("should be customize by my custom parser", () => {
-      const CustomParser1 = jsonparse.custom((makeSuccess, makeFailure) => {
+      const CustomParser1 = jsonparse.custom<Object, boolean>((makeSuccess, makeFailure) => {
         return (obj) => {
           if (typeof obj === "number") {
             return makeSuccess(true);
@@ -145,9 +145,9 @@ describe("base parsers test", () => {
           return makeFailure();
         };
       });
-      const CustomParser2 = jsonparse.custom((makeSuccess, makeFailure) => {
+      const CustomParser2 = jsonparse.custom<string, string>((makeSuccess, makeFailure) => {
         return (obj) => {
-          if (obj === "debug" || obj === "info" || obj === "error") {
+          if (obj == "debug" || obj == "info" || obj == "error") {
             return makeSuccess(obj);
           }
           return makeFailure();

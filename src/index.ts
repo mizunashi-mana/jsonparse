@@ -8,9 +8,7 @@ import {
 
 import {
   Parser,
-  mkSType,
-  mkFType,
-  ParseFunc,
+  MapperParseResult,
 } from "./common";
 
 import {
@@ -18,11 +16,12 @@ import {
   andParser,
   mapParser,
   receiveParser,
+  thenCatchParser,
   catchParser,
   customParser,
   descBuilder,
   descParser,
-  setDefaultParser,
+  descFromExpectedParser,
 } from "./parsers/baseparsers";
 
 import {
@@ -37,6 +36,11 @@ import {
 import {
   hasPropertiesObj,
 } from "./parsers/objparsers";
+
+import {
+  ParseResult,
+  SuccessObjType,
+} from "./parseresult/result";
 
 export class ConfigParseError extends BaseCustomError {
   constructor(msg: string) {
@@ -66,24 +70,54 @@ export class ConfigParser<T, U> {
   }
 
   map<R>(fn: (obj: U) => R) {
+    return new ConfigParser(mapParser(
+      (innerObj) => <SuccessObjType<R>>{
+        value: fn(innerObj.value),
+        flags: innerObj.flags,
+      },
+      this.parser
+    ));
+  }
+
+  innerMap<R>(fn: (obj: SuccessObjType<U>) => SuccessObjType<R>) {
     return new ConfigParser(mapParser(fn, this.parser));
   }
 
-  desc(msg: string) {
-    return new ConfigParser(descParser(descBuilder(msg), this.parser));
+  desc(msg: string, exp?: string) {
+    return new ConfigParser(descParser(descBuilder(msg, exp), this.parser));
   }
 
-  then(onSuccess: (obj: U) => any, onFail?: () => any) {
-    const onFailure = typeof onFail === "undefined" ? () => { return; } : onFail;
-    return new ConfigParser(receiveParser(onSuccess, onFailure, this.parser));
+  descFromExpected(exp: (string|string[])) {
+    return new ConfigParser(descFromExpectedParser(exp, this.parser));
+  }
+
+  then(
+    onSuccess: (obj: U) => any,
+    onFail?: (msg: string, exp?: string) => any
+  ) {
+    const onFailure = typeof onFail === "undefined"
+      ? () => { return; }
+      : onFail
+      ;
+    return new ConfigParser(receiveParser(
+      (innerObj) => onSuccess(innerObj.value),
+      (innerObj) => innerObj.value.report(onFailure),
+      this.parser
+    ));
   }
 
   catch(onFail: () => any) {
-    return new ConfigParser(catchParser(onFail, this.parser));
+    return new ConfigParser(thenCatchParser(onFail, this.parser));
   }
 
   default(def: U) {
-    return new ConfigParser(setDefaultParser(def, this.parser));
+    return new ConfigParser(catchParser(
+      (obj) => ({
+        value: def,
+        flags: obj.flags,
+      }),
+      this.parser
+    ));
   }
 
   option(def: U) {
@@ -95,11 +129,18 @@ export class ConfigParser<T, U> {
   }
 
   parse(obj: T): U {
-    const res = this.parser.parse(obj);
+    const res = this.parser.parse({
+      value: obj,
+      flags: {
+        isReport: false,
+      },
+    });
     if (res.isSuccess()) {
-      return res.value(undefined);
+      return res.valueSuccess(undefined).value;
     } else {
-      throw new ConfigParseError("Illegal config!");
+      res.valueFailure(undefined).value.report((msg: string) => {
+        throw new ConfigParseError(msg);
+      });
     }
   }
 
@@ -107,10 +148,18 @@ export class ConfigParser<T, U> {
     status: boolean;
     value?: U
   } {
-    const res = this.parser.parse(obj);
+    const res = this.parser.parse({
+      value: obj,
+      flags: {
+        isReport: false,
+      },
+    });
     return {
       status: res.isSuccess(),
-      value: res.value(undefined),
+      value: res.valueSuccess({
+        value: undefined,
+        flags: undefined,
+      }).value,
     };
   }
 
@@ -143,9 +192,9 @@ export function hasProperties<T>(
 }
 
 export function custom<T, U>(fn: (
-  onSuccess: mkSType<U>,
-  onFailure: mkFType<U>
-) => ParseFunc<T, U>) {
+  onSuccess: (obj: U) => ParseResult<U>,
+  onFailure: (msg?: string, exp?: string) => ParseResult<U>
+) => MapperParseResult<T, U>) {
   return new ConfigParser(customParser(fn));
 }
 

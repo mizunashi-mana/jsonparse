@@ -1,49 +1,66 @@
-import {BaseCustomError} from "../lib/customerror/node-customerror";
+import {ParseErrorStocker} from "./parseerr";
 
 import {clone} from "../lib/util/util";
 
 export enum ResultType {Success, Failure}
 
-export class ParseResultError extends BaseCustomError {
-  constructor(msg: string) {
-    super(msg);
-  }
+export type ResultFlagType = {
+  isReport: boolean;
+};
+
+export interface BaseObjType {
+  flags: ResultFlagType;
+}
+export interface FailObjType extends BaseObjType {
+  value:  ParseErrorStocker;
+}
+export interface SuccessObjType<S> extends BaseObjType {
+  value: S;
 }
 
 export function id<T>(a: T) {
   return clone(a, true);
 }
 
-export function prresult<T, U>(n: U, f: (i: T) => U, x: ParseResult<T>): U {
-  return x.lift(f).value(n);
+export function exists<T>(a: T) {
+  return a !== null && a !== undefined;
 }
 
-export class ParseResult<T> {
+export function mapSuccess<S, T>(f: (s: S) => T, v: SuccessObjType<S>) {
+  return {
+    value: f(v.value),
+    flags: v.flags,
+  };
+}
+
+export function mapFailure(f: (s: ParseErrorStocker) => ParseErrorStocker, v: FailObjType) {
+  return {
+    value: f(v.value),
+    flags: v.flags,
+  };
+}
+
+export class ParseResult<S> {
   private t: ResultType;
-  private v: T;
+  private lv: FailObjType;
+  private rv: SuccessObjType<S>;
 
-  constructor(type: ResultType, value?: T) {
+  constructor(type: ResultType, fail: FailObjType, success?: SuccessObjType<S>) {
     this.t = type;
-    this.v = value;
+    this.lv = fail;
+    this.rv = success;
   }
 
-  static success<T>(value: T) {
-    return new ParseResult<T>(ResultType.Success, value);
+  static success<S>(value: SuccessObjType<S>) {
+    return new ParseResult<S>(ResultType.Success, undefined, value);
   }
 
-  static fail<T>() {
-    return new ParseResult<T>(ResultType.Failure);
-  }
-
-  static result<T>(value?: T) {
-    return (value === null || value === undefined)
-      ? ParseResult.fail<T>()
-      : ParseResult.success<T>(value)
-      ;
+  static fail<S>(value: FailObjType) {
+    return new ParseResult<S>(ResultType.Failure, value);
   }
 
   static bind2<T1, T2, T3>(
-    f: (arg1: T1, arg2: T2) => ParseResult<T3>
+    f: (arg1: SuccessObjType<T1>, arg2: SuccessObjType<T2>) => ParseResult<T3>
   ) {
     return (
       res1: ParseResult<T1>,
@@ -61,36 +78,57 @@ export class ParseResult<T> {
     return this.t === ResultType.Success;
   }
 
-  chain<U>(f: (t: T) => ParseResult<U>) {
+  chain<T>(f: (r: SuccessObjType<S>) => ParseResult<T>) {
     return this.isSuccess()
-      ? f(this.v)
-      : ParseResult.fail<U>()
+      ? f(this.rv)
+      : ParseResult.fail<T>(this.lv)
       ;
   }
 
-  of<U>(u: U) {
-    return ParseResult.result<U>(u);
+  of<T>(t: SuccessObjType<T>) {
+    return ParseResult.success<T>(t);
   }
 
-  lift<U>(f: (t: T) => U) {
-    return this.chain((val) => this.of<U>(f(val)));
+  lift<T>(f: (r: SuccessObjType<S>) => SuccessObjType<T>) {
+    return this.chain((val) => this.of<T>(f(val)));
   }
 
-  catch(n: T) {
-    return ParseResult.success<T>(prresult<T, T>(n, id, this));
+  catch(f: (l: FailObjType) => SuccessObjType<S>) {
+    return ParseResult.success<S>(
+      this.isSuccess()
+      ? this.rv
+      : f(this.lv)
+    );
+  }
+
+  caseOf<T>(
+    fl: (l: FailObjType) => T,
+    fr: (r: SuccessObjType<S>) => T
+  ): T {
+    return this.isSuccess()
+      ? fr(this.rv)
+      : fl(this.lv)
+      ;
   }
 
   clone() {
     return this.isSuccess()
-      ? ParseResult.success<T>(this.v)
-      : ParseResult.fail<T>()
+      ? ParseResult.success<S>(id(this.rv))
+      : ParseResult.fail<S>(id(this.lv))
       ;
   }
 
-  value(def: T) {
+  valueSuccess(def: SuccessObjType<S>): SuccessObjType<S> {
     return this.isSuccess()
-      ? this.v
+      ? this.rv
       : def
+      ;
+  }
+
+  valueFailure(def: FailObjType): FailObjType {
+    return this.isSuccess()
+      ? def
+      : this.lv
       ;
   }
 }
