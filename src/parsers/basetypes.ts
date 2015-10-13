@@ -13,13 +13,18 @@ import {
   ParseErrorStocker
 } from "../parseresult/parseerr";
 
-export function buildTypeParser<T>(f: (
+import {
+  descFromExpectedParser
+} from "./baseparsers";
+
+function buildTypeParser<T>(f: (
     mkS: (convObj: T) => ParseResult<T>,
-    mkF: (msg: string, exp?: string) => ParseResult<T>
-  ) => MapperParseResult<Object, T>
+    mkF: () => ParseResult<T>
+  ) => MapperParseResult<Object, T>,
+  expected: string | string[]
 ): Parser<Object, T> {
-  const parseF = mapParseResult<Object, T>(f);
-  return new Parser(parseF);
+  const innerParser = new Parser(mapParseResult<Object, T>(f));
+  return descFromExpectedParser(expected, innerParser);
 }
 
 export function isNumber() {
@@ -28,10 +33,10 @@ export function isNumber() {
       if (typeof obj === "number") {
         return makeSuccess(obj);
       } else {
-        return makeFailure(`${obj} is not 'number'`, "number");
+        return makeFailure();
       }
     };
-  });
+  }, "number");
 }
 
 export function isString() {
@@ -40,10 +45,10 @@ export function isString() {
       if (typeof obj === "string") {
         return makeSuccess(obj);
       } else {
-        return makeFailure(`${obj} is not 'string'`, "string");
+        return makeFailure();
       }
     };
-  });
+  }, "string");
 }
 
 export function isBoolean() {
@@ -52,10 +57,10 @@ export function isBoolean() {
       if (typeof obj === "boolean") {
         return makeSuccess(obj);
       } else {
-        return makeFailure(`${obj} is not 'boolean'`, "boolean");
+        return makeFailure();
       }
     };
-  });
+  }, "boolean");
 }
 
 function buildErrorChild(i: number, fl: ParseErrorStocker) {
@@ -129,7 +134,7 @@ export function isArray<T>(parser: Parser<Object, T>) {
     } else {
       return ParseResult.fail<T[]>({
         value: new ParseErrorStocker(
-          `${obj.value} is not array`,
+          `${JSON.stringify(obj.value)} is not 'array'`,
           "array"
         ),
         flags: obj.flags,
@@ -144,10 +149,10 @@ export function isObject() {
       if (typeof obj === "object" && !(obj instanceof Array)) {
         return makeSuccess(obj);
       } else {
-        return makeFailure(`${obj} is not 'object'`, "object");
+        return makeFailure();
       }
     };
-  });
+  }, "object");
 }
 
 export function isNothing<T>(value: T) {
@@ -156,8 +161,8 @@ export function isNothing<T>(value: T) {
       if (typeof obj === "undefined" || obj === null) {
         return makeSuccess(value);
       } else {
-        return makeFailure(`${obj} is not 'undefined' or 'null'`, "nothing");
+        return makeFailure();
       }
     };
-  });
+  }, ["undefined", "null"]);
 }

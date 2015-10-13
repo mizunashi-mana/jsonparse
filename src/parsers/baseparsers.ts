@@ -61,8 +61,8 @@ function createMsgFromExpected<T>(obj: SuccessObjType<T>, expected: string[]) {
 
   const subExps = expected.slice(0, expected.length - 1);
   const expsStr = subExps.length == 0
-    ? expected[0]
-    : `${subExps.join(", ")} or ${expected[expected.length - 1]}`
+    ? `'${expected[0]}'`
+    : `'${subExps.join("', '")}' or '${expected[expected.length - 1]}'`
     ;
   return subExps.length == 0
     ? `${objStr} is not ${expsStr}`

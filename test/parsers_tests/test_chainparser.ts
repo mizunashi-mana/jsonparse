@@ -112,20 +112,20 @@ describe("chain parser test", () => {
       assert.strictEqual(MyParser1.parse(10), 2);
       assert.throw(
         () => MyParser1.parse({a: 1}),
-        ConfigParseError, '{"a":1} is neither boolean, number or special'
+        ConfigParseError, "{\"a\":1} is neither 'boolean', 'number' or 'special'"
       );
       assert.throw(
         () => MyParser1.parse("str"),
-        ConfigParseError, '"str" is neither boolean, number or special'
+        ConfigParseError, "\"str\" is neither 'boolean', 'number' or 'special'"
       );
       assert.strictEqual(MyParser2.parse("str"), "str");
       assert.throw(
         () => MyParser2.parse({a: 1}),
-        ConfigParseError, '{"a":1} is not string'
+        ConfigParseError, "{\"a\":1} is not 'string'"
       );
       assert.throw(
         () => MyParser2.parse(true),
-        ConfigParseError, "true is not string"
+        ConfigParseError, "true is not 'string'"
       );
     });
 

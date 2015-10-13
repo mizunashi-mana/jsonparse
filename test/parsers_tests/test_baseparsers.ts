@@ -30,24 +30,24 @@ describe("base parsers test", () => {
 
     it("should be through only boolean value by boolean parser", () => {
       assert.strictEqual(jsonparse.boolean.parse(true), true);
-      assert.throw(() => jsonparse.boolean.parse(1), ConfigParseError);
+      assert.throw(() => jsonparse.boolean.parse(1), ConfigParseError, "1 is not 'boolean'");
     });
 
     it("should be through only number value by number parser", () => {
       assert.strictEqual(jsonparse.number.parse(1), 1);
-      assert.throw(() => jsonparse.number.parse("1"), ConfigParseError);
+      assert.throw(() => jsonparse.number.parse("1"), ConfigParseError, "\"1\" is not 'number'");
     });
 
     it("should be through only string value by string parser", () => {
       assert.strictEqual(jsonparse.string.parse("str"), "str");
-      assert.throw(() => jsonparse.string.parse(true), ConfigParseError);
+      assert.throw(() => jsonparse.string.parse(true), ConfigParseError, "true is not 'string'");
     });
 
     it("should be through only object value by object parser", () => {
       assert.deepEqual(jsonparse.object.parse({}), {});
       assert.deepEqual(jsonparse.object.parse({ a: "a", b: "b" }), { a: "a", b: "b" });
-      assert.throw(() => jsonparse.object.parse([]), ConfigParseError);
-      assert.throw(() => jsonparse.object.parse(""), ConfigParseError);
+      assert.throw(() => jsonparse.object.parse([]), ConfigParseError, "[] is not 'object'");
+      assert.throw(() => jsonparse.object.parse(""), ConfigParseError, "\"\" is not 'object'");
     });
 
     it("should be through only strict array value by array parser", () => {

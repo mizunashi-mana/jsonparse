@@ -9,6 +9,7 @@ const {
   ConfigParseError,
   parseFile,
   parseFileWithStatus,
+  customReporter,
 } = jsonparse;
 
 describe("parse methods test", () => {
@@ -24,6 +25,14 @@ describe("parse methods test", () => {
       const result2 = jsonparse
         .boolean.parseWithStatus(1);
       assert.propertyVal(result2, "status", false);
+    });
+
+    it("should return result on success and report on fail", () => {
+      assert.strictEqual(jsonparse
+        .boolean.parseWithReporter(true, customReporter(console.log)),
+        true
+      );
+      jsonparse.boolean.parseWithReporter("true", customReporter(console.log));
     });
 
   });

@@ -42,6 +42,10 @@ import {
   SuccessObjType,
 } from "./parseresult/result";
 
+import {
+  ParseErrorNode,
+} from "./parseresult/parseerr";
+
 export class ConfigParseError extends BaseCustomError {
   constructor(msg: string) {
     super(msg);
@@ -163,6 +167,20 @@ export class ConfigParser<T, U> {
     };
   }
 
+  parseWithReporter(obj: T, reporter: (msg: string, exp?: string, childs?: ParseErrorNode[]) => void): U {
+    const res = this.parser.parse({
+      value: obj,
+      flags: {
+        isReport: true,
+      },
+    });
+    if (res.isSuccess()) {
+      return res.valueSuccess(undefined).value;
+    } else {
+      res.valueFailure(undefined).value.report(reporter);
+    }
+  }
+
 }
 
 function buildConfigParserF<T, U>(pf: () => Parser<T, U>) {
@@ -216,3 +234,7 @@ export function parseFileWithStatus<T>(fname: string, parser: ConfigParser<Objec
     };
   }
 }
+
+export {
+  customReporter,
+} from "./reporter/node-reporters";
