@@ -32,7 +32,7 @@ describe("parse methods test", () => {
         .boolean.parseWithReporter(true, customReporter(console.log)),
         true
       );
-      jsonparse.boolean.parseWithReporter("true", customReporter(console.log));
+      //jsonparse.boolean.parseWithReporter("true", customReporter(console.log));
     });
 
   });
