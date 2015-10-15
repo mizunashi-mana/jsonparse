@@ -236,5 +236,5 @@ export function parseFileWithStatus<T>(fname: string, parser: ConfigParser<Objec
 }
 
 export {
-  customReporter,
+  nestedReporter,
 } from "./reporter/node-reporters";

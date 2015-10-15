@@ -9,7 +9,7 @@ const {
   ConfigParseError,
   parseFile,
   parseFileWithStatus,
-  customReporter,
+  nestedReporter,
 } = jsonparse;
 
 describe("parse methods test", () => {
@@ -29,10 +29,14 @@ describe("parse methods test", () => {
 
     it("should return result on success and report on fail", () => {
       assert.strictEqual(jsonparse
-        .boolean.parseWithReporter(true, customReporter(console.log)),
+        .boolean.parseWithReporter(true, nestedReporter(console.log)),
         true
       );
-      //jsonparse.boolean.parseWithReporter("true", customReporter(console.log));
+      assert.doesNotThrow(() => jsonparse
+        .boolean.parseWithReporter("str", nestedReporter((msg) => {
+          return;
+        }))
+      );
     });
 
   });

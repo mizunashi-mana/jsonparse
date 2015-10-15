@@ -55,7 +55,7 @@ var inherits = module.exports.inherits = function(ctor, superCtor) {
 };
 
 
-function repeat(count, str) {
+var repeat = module.exports.repeat = function(count, str) {
   var repU;
   if (count == 0) {
     return "";
@@ -64,6 +64,6 @@ function repeat(count, str) {
   return repU + repU + ((count % 2) == 1 ? str : "");
 }
 
-function escapeRegExp(str) {
+var escapeRegExp = module.exports.escapeRegExp = function(str) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }

@@ -6,12 +6,21 @@ import {
   repeat
 } from "../lib/util/util";
 
-export function customReporter(logFunc: (msg: string) => any): (msg: string, exp?: string, childs?: ParseErrorNode[]) => void {
-  const reportF = (pname: string, depth: number) => (msg: string, exp?: string, childs?: ParseErrorNode[]) => {
-    logFunc(`Error: ${repeat(depth * 2, " ")}${depth === 0 ? "" : "."}${pname} - ${msg}`);
+export function nestedReporter(
+  logFunc: (msg: string) => any,
+  depth?: number
+): (msg: string, exp?: string, childs?: ParseErrorNode[]) => void {
+  const reportF = (
+    pname: string,
+    depthCount: number
+  ) => (msg: string, exp?: string, childs?: ParseErrorNode[]) => {
+    if (typeof depth !== "undefined" && depthCount > depth) {
+      return;
+    }
+    logFunc(`${depthCount === 0 ? "-" : `${repeat(depthCount - 1, " ")}|- .${pname} :`} ${msg}`);
     childs.forEach((e) => {
-      e[1].report(reportF(e[0], depth + 1));
+      e[1].report(reportF(e[0], depthCount + 1));
     });
   };
-  return reportF("root", 0);
+  return reportF("", 0);
 }
