@@ -53,3 +53,17 @@ var inherits = module.exports.inherits = function(ctor, superCtor) {
     }
   });
 };
+
+
+function repeat(count, str) {
+  var repU;
+  if (count == 0) {
+    return "";
+  }
+  repU = repeat(Math.floor(count / 2), str);
+  return repU + repU + ((count % 2) == 1 ? str : "");
+}
+
+function escapeRegExp(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}

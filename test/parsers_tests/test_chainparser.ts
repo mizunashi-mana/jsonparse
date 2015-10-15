@@ -1,6 +1,9 @@
 /// <reference path="../../lib/lib/typings.d.ts" />
 
-import {assert} from "chai";
+import {
+  assert,
+  assertThrow,
+} from "../lib/chai_setup";
 
 import * as jsonparse from "../../lib/";
 const {
@@ -32,7 +35,7 @@ describe("chain parser test", () => {
 
       assert.strictEqual(MyParser.parse(1), true);
       assert.strictEqual(MyParser.parse("str"), false);
-      assert.throw(() => MyParser.parse(true), ConfigParseError);
+      assertThrow(() => MyParser.parse(true), ConfigParseError);
     });
 
     it("should be using second parser when first parser succeeded", () => {
@@ -62,8 +65,8 @@ describe("chain parser test", () => {
 
       assert.strictEqual(MyParser.parse(true), false);
       assert.strictEqual(MyParser.parse(1), true);
-      assert.throw(() => MyParser.parse({}), ConfigParseError);
-      assert.throw(() => MyParser.parse("str"), ConfigParseError);
+      assertThrow(() => MyParser.parse({}), ConfigParseError);
+      assertThrow(() => MyParser.parse("str"), ConfigParseError);
     });
 
     it("should be converted by my function", () => {
@@ -72,8 +75,8 @@ describe("chain parser test", () => {
 
       assert.strictEqual(MyParser.parse("true"), true);
       assert.strictEqual(MyParser.parse("false"), false);
-      assert.throw(() => MyParser.parse({}), ConfigParseError);
-      assert.throw(() => MyParser.parse(true), ConfigParseError);
+      assertThrow(() => MyParser.parse({}), ConfigParseError);
+      assertThrow(() => MyParser.parse(true), ConfigParseError);
     });
 
   });
@@ -86,8 +89,10 @@ describe("chain parser test", () => {
 
       assert.strictEqual(MyParser.parse(""), "");
       assert.strictEqual(MyParser.parse("str"), "str");
-      assert.throw(() => MyParser.parse({}), ConfigParseError, "this should be string value");
-      assert.throw(() => MyParser.parse(true), ConfigParseError, "this should be string value");
+      assertThrow(() => MyParser.parse({}),
+      ConfigParseError, "this should be string value");
+      assertThrow(() => MyParser.parse(true),
+      ConfigParseError, "this should be string value");
     });
 
     it("should be not converted and added desc by my description from expected", () => {
@@ -110,16 +115,16 @@ describe("chain parser test", () => {
       assert.strictEqual(MyParser1.parse(true), 0);
       assert.strictEqual(MyParser1.parse("special"), 1);
       assert.strictEqual(MyParser1.parse(10), 2);
-      assert.throw(
+      assertThrow(
         () => MyParser1.parse({a: 1}),
         ConfigParseError, "{\"a\":1} is neither 'boolean', 'number' or 'special'"
       );
-      assert.throw(
+      assertThrow(
         () => MyParser1.parse("str"),
         ConfigParseError, "\"str\" is neither 'boolean', 'number' or 'special'"
       );
       assert.strictEqual(MyParser2.parse("str"), "str");
-      assert.throw(
+      assertThrow(
         () => MyParser2.parse({a: 1}),
         ConfigParseError, "{\"a\":1} is not 'string'"
       );
@@ -138,7 +143,7 @@ describe("chain parser test", () => {
           () => assert(false, "unexpected call on fail")
         )
         .parse("str"), "str");
-      assert.throw(() => MyParser
+      assertThrow(() => MyParser
         .then(
           (obj) => assert(false, "unexpected call on success"),
           () => assert(true, "called on fail")
@@ -152,7 +157,7 @@ describe("chain parser test", () => {
       assert.strictEqual(MyParser
         .catch(() => assert(false, "unexpected call on fail"))
         .parse("str"), "str");
-      assert.throw(() => MyParser
+      assertThrow(() => MyParser
         .catch(() => assert(true, "called on fail"))
         .parse(1), ConfigParseError);
     });
@@ -172,7 +177,7 @@ describe("chain parser test", () => {
       assert.strictEqual(MyParser.parse(true), true);
       assert.strictEqual(MyParser.parse(undefined), false);
       assert.strictEqual(MyParser.parse(null), false);
-      assert.throw(() => MyParser.parse(1), ConfigParseError);
+      assertThrow(() => MyParser.parse(1), ConfigParseError);
     });
 
   });
