@@ -79,7 +79,7 @@ function prconcat<T>(
     }), (r2) => ParseResult.fail<T[]>(l1)),
     (r1) => res2.caseOf((l2) => ParseResult.fail<T[]>({
       value: new ParseErrorStocker(
-        "failed to parse elem of array",
+        "failed to parse elem of 'array'",
         "array",
         [buildErrorChild(index, l2.value)]
       ),
@@ -112,7 +112,7 @@ function parseArrayObj<T>(
   if (results.length != arr.length) {
     return ParseResult.fail<T[]>({
       value: new ParseErrorStocker(
-        "failed to parse elem of array",
+        "failed to parse elem of 'array'",
         "array"
       ),
       flags: flags,

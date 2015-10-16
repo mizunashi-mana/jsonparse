@@ -10,7 +10,7 @@ export class ParseErrorStocker {
   constructor(msg: string, exp?: string, childs?: ParseErrorNode[]);
   constructor(arg1?: (ParseErrorNode[]|string), arg2?: (ParseErrorNode[]|string), arg3?: ParseErrorNode[]) {
     if (typeof arg1 !== "string") {
-      this.innerMsg = "get error";
+      this.innerMsg = "this is not parsable";
       this.innerExpected = "unknown";
       this.innerChilds = typeof arg1 === "undefined" ? [] : arg1;
     } else if (typeof arg2 !== "string") {

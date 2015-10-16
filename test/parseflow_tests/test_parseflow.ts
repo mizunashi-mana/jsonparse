@@ -1,6 +1,6 @@
 /// <reference path="../../lib/lib/typings.d.ts" />
 
-import {assert} from "chai";
+import {assert} from "../lib/chai_setup";
 
 import * as path from "path";
 

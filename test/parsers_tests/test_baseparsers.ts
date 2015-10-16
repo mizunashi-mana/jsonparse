@@ -63,7 +63,7 @@ describe("base parsers test", () => {
       assert.deepEqual(jsonparse.array(jsonparse.string).parse([]), []);
       assert.deepEqual(jsonparse.array(jsonparse.string).parse(["", "true", "1"]), ["", "true", "1"]);
       assertThrow(() => jsonparse.array(jsonparse.string).parse(["", true, 1]),
-      ConfigParseError, "failed to parse elem of array");
+      ConfigParseError, "failed to parse elem of 'array'");
       assertThrow(() => jsonparse.array(jsonparse.string).parse({ 0: "1" }),
       ConfigParseError, "{\"0\":\"1\"} is not 'array'");
     });
@@ -123,7 +123,7 @@ describe("base parsers test", () => {
         "propO": {
           "anything": true
         },
-      }), ConfigParseError, "failed to parse property of object");
+      }), ConfigParseError, "failed to parse property of 'object'");
       assertThrow(() => MyObjectParser.parse({
         "propB": true,
         "propN": true,
@@ -132,7 +132,7 @@ describe("base parsers test", () => {
           "anything": true
         },
         "propAs": ["str1", "str2"],
-      }), ConfigParseError, "failed to parse property of object");
+      }), ConfigParseError, "failed to parse property of 'object'");
       assertThrow(() => MyObjectParser.parse({
         "propB": true,
         "propN": true,
@@ -141,7 +141,7 @@ describe("base parsers test", () => {
           "anything": true
         },
         "propAs": ["str1", "str2"],
-      }), ConfigParseError, "failed to parse property of object");
+      }), ConfigParseError, "failed to parse property of 'object'");
       assertThrow(() => MyObjectParser.parse([]),
       ConfigParseError, "[] is not 'object'");
     });

@@ -29,7 +29,7 @@ function probjconcat(
     }), (r2) => ParseResult.fail<{[key: string]: any}>(l1)),
     (r1) => res2.caseOf((l2) => ParseResult.fail<{[key: string]: any}>({
       value: new ParseErrorStocker(
-        "failed to parse elem of object",
+        "failed to parse elem of 'object'",
         "object",
         <[string, ParseErrorStocker][]>[[pnames[index], l2.value]]
       ),
@@ -74,7 +74,7 @@ function parsePropertiesObj<T>(
   if (results.length != props.length) {
     return ParseResult.fail<T>({
       value: new ParseErrorStocker(
-        "failed to parse property of object",
+        "failed to parse property of 'object'",
         "object"
       ),
       flags: flags,
