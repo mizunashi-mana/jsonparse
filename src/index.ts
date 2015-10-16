@@ -177,7 +177,10 @@ export class ConfigParser<T, U> {
     if (res.isSuccess()) {
       return res.valueSuccess(undefined).value;
     } else {
-      res.valueFailure(undefined).value.report(reporter);
+      res.valueFailure(undefined).value.report((msg, exp, childs) => {
+        reporter(msg, exp, childs);
+        throw new ConfigParseError(msg);
+      });
     }
   }
 
@@ -234,6 +237,8 @@ export function parseFileWithStatus<T>(fname: string, parser: ConfigParser<Objec
     };
   }
 }
+
+export type ReporterType = (msg: string, exp?: string, childs?: ParseErrorNode[]) => void;
 
 export {
   nestedReporter,

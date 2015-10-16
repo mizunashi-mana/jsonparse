@@ -1,6 +1,9 @@
 /// <reference path="../../lib/lib/typings.d.ts" />
 
-import {assert} from "../lib/chai_setup";
+import {
+  assert,
+  assertThrow,
+} from "../lib/chai_setup";
 
 import * as path from "path";
 
@@ -16,6 +19,13 @@ describe("parse methods test", () => {
 
   describe("parse object test", () => {
 
+    it("should return result on success and throw on fail", () => {
+      assert.strictEqual(jsonparse.boolean.parse(true), true);
+      assertThrow(() => jsonparse.boolean.parse("str"),
+        ConfigParseError, "\"str\" is not 'boolean'"
+      );
+    });
+
     it("should return result with status", () => {
       const result1 = jsonparse
         .boolean.parseWithStatus(true);
@@ -28,14 +38,16 @@ describe("parse methods test", () => {
     });
 
     it("should return result on success and report on fail", () => {
+      const reporter = nestedReporter((msg) => {
+        return;
+      });
       assert.strictEqual(jsonparse
-        .boolean.parseWithReporter(true, nestedReporter(console.log)),
+        .boolean.parseWithReporter(true, reporter),
         true
       );
-      assert.doesNotThrow(() => jsonparse
-        .boolean.parseWithReporter("str", nestedReporter((msg) => {
-          return;
-        }))
+      assertThrow(() => jsonparse
+        .boolean.parseWithReporter("str", reporter),
+        ConfigParseError, "\"str\" is not 'boolean'"
       );
     });
 
@@ -62,12 +74,12 @@ describe("parse methods test", () => {
       assert.deepEqual(parseFile(resolvePath("data/valid.cson"), jsonparse.object), dataObj);
       assert.deepEqual(parseFile(resolvePath("data/json.txt"), jsonparse.object), dataObj);
       assert.deepEqual(parseFile(resolvePath("data/cson.txt"), jsonparse.object), dataObj);
-      assert.throw(() => parseFile(resolvePath("data/invalid.json"), jsonparse.object), Error);
-      assert.throw(() => parseFile(resolvePath("data/invalid.cson"), jsonparse.object), Error);
-      assert.throw(() => parseFile(resolvePath("data/nosuchfile"), jsonparse.object), Error);
-      assert.throw(() => parseFile(resolvePath("data/normal.txt"), jsonparse.object),
+      assertThrow(() => parseFile(resolvePath("data/invalid.json"), jsonparse.object), Error);
+      assertThrow(() => parseFile(resolvePath("data/invalid.cson"), jsonparse.object), Error);
+      assertThrow(() => parseFile(resolvePath("data/nosuchfile"), jsonparse.object), Error);
+      assertThrow(() => parseFile(resolvePath("data/normal.txt"), jsonparse.object),
         Error, `${resolvePath("data/normal.txt")} is not parsable file`);
-      assert.throw(() => parseFile(resolvePath("data/valid.json"), jsonparse.boolean), ConfigParseError);
+      assertThrow(() => parseFile(resolvePath("data/valid.json"), jsonparse.boolean), ConfigParseError);
     });
 
     it("should be through only son file and return result", () => {

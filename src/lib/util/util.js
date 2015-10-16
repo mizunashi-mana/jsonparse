@@ -57,7 +57,7 @@ var inherits = module.exports.inherits = function(ctor, superCtor) {
 
 var repeat = module.exports.repeat = function(count, str) {
   var repU;
-  if (count == 0) {
+  if (count <= 0) {
     return "";
   }
   repU = repeat(Math.floor(count / 2), str);

@@ -2,10 +2,6 @@ import {
   ParseErrorNode,
 } from "../parseresult/parseerr";
 
-import {
-  repeat
-} from "../lib/util/util";
-
 function convertPropertyNameForConcat(pname: string) {
   return pname[0] === "["
     ? pname
@@ -23,17 +19,35 @@ export function nestedReporter(
 ): (msg: string, exp?: string, childs?: ParseErrorNode[]) => void {
   const reportF = (
     pname: string,
-    depthCount: number
+    depthCount: number,
+    prefix: string,
+    last: boolean
   ) => (msg: string, exp?: string, childs?: ParseErrorNode[]) => {
     if (typeof depth !== "undefined" && depthCount > depth) {
       return;
     }
-    logFunc(`${depthCount === 0 ? `- ${pname}` : `${repeat(depthCount - 1, " ")}|- ${convertPropertyNameForConcat(pname)}`} : ${msg}`);
-    childs.forEach((e) => {
-      e[1].report(reportF(e[0], depthCount + 1));
+    const prefixStr = depthCount == 0 ? ""
+      : prefix
+      + (last ? "└─" : "├─")
+      + (childs.length == 0 || depth == depthCount ? "─" : "┬")
+      + " "
+      ;
+    const descName = depthCount === 0
+      ? pname
+      : convertPropertyNameForConcat(pname)
+      ;
+    logFunc(`${prefixStr}${descName} : ${msg}`);
+
+    const chlast = childs.length - 1;
+    childs.forEach((e, i) => {
+      const nPrefix = depthCount == 0 ? ""
+        : prefix
+        + (last ? "  " : "│ ")
+        ;
+      e[1].report(reportF(e[0], depthCount + 1, nPrefix, i == chlast));
     });
   };
-  return reportF("this", 0);
+  return reportF("this", 0, "", true);
 }
 
 export function listReporter(
@@ -56,3 +70,5 @@ export function listReporter(
   };
   return reportF("this", "", 0);
 }
+
+//export function jsonReporter
