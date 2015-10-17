@@ -5,10 +5,10 @@ import {
   assertThrow,
 } from "../lib/chai_setup";
 
-import * as jsonparse from "../../lib/";
+import * as sonparse from "../../lib/";
 const {
   ConfigParseError,
-} = jsonparse;
+} = sonparse;
 
 
 describe("base parsers test", () => {
@@ -16,55 +16,55 @@ describe("base parsers test", () => {
   describe("basetype parsers test", () => {
 
     it("should be through all by base parser", () => {
-      assert.strictEqual(jsonparse.base.parse(true), true);
-      assert.strictEqual(jsonparse.base.parse(1), 1);
-      assert.strictEqual(jsonparse.base.parse("str"), "str");
-      assert.deepEqual(jsonparse.base.parse({}), {});
-      assert.deepEqual(jsonparse.base.parse({
+      assert.strictEqual(sonparse.base.parse(true), true);
+      assert.strictEqual(sonparse.base.parse(1), 1);
+      assert.strictEqual(sonparse.base.parse("str"), "str");
+      assert.deepEqual(sonparse.base.parse({}), {});
+      assert.deepEqual(sonparse.base.parse({
         "anything": "ok?",
         "something": true,
       }), {
         "anything": "ok?",
         "something": true,
       });
-      assert.deepEqual(jsonparse.base.parse([]), []);
-      assert.deepEqual(jsonparse.base.parse(["", "true", "1", "{}"]), ["", "true", "1", "{}"]);
-      assert.deepEqual(jsonparse.base.parse(["", true, 1, {}]), ["", true, 1, {}]);
+      assert.deepEqual(sonparse.base.parse([]), []);
+      assert.deepEqual(sonparse.base.parse(["", "true", "1", "{}"]), ["", "true", "1", "{}"]);
+      assert.deepEqual(sonparse.base.parse(["", true, 1, {}]), ["", true, 1, {}]);
     });
 
     it("should be through only boolean value by boolean parser", () => {
-      assert.strictEqual(jsonparse.boolean.parse(true), true);
-      assertThrow(() => jsonparse.boolean.parse(1),
+      assert.strictEqual(sonparse.boolean.parse(true), true);
+      assertThrow(() => sonparse.boolean.parse(1),
       ConfigParseError, "1 is not 'boolean'");
     });
 
     it("should be through only number value by number parser", () => {
-      assert.strictEqual(jsonparse.number.parse(1), 1);
-      assertThrow(() => jsonparse.number.parse("1"),
+      assert.strictEqual(sonparse.number.parse(1), 1);
+      assertThrow(() => sonparse.number.parse("1"),
       ConfigParseError, "\"1\" is not 'number'");
     });
 
     it("should be through only string value by string parser", () => {
-      assert.strictEqual(jsonparse.string.parse("str"), "str");
-      assertThrow(() => jsonparse.string.parse(true),
+      assert.strictEqual(sonparse.string.parse("str"), "str");
+      assertThrow(() => sonparse.string.parse(true),
       ConfigParseError, "true is not 'string'");
     });
 
     it("should be through only object value by object parser", () => {
-      assert.deepEqual(jsonparse.object.parse({}), {});
-      assert.deepEqual(jsonparse.object.parse({ a: "a", b: "b" }), { a: "a", b: "b" });
-      assertThrow(() => jsonparse.object.parse([]),
+      assert.deepEqual(sonparse.object.parse({}), {});
+      assert.deepEqual(sonparse.object.parse({ a: "a", b: "b" }), { a: "a", b: "b" });
+      assertThrow(() => sonparse.object.parse([]),
       ConfigParseError, "[] is not 'object'");
-      assertThrow(() => jsonparse.object.parse(""),
+      assertThrow(() => sonparse.object.parse(""),
       ConfigParseError, "\"\" is not 'object'");
     });
 
     it("should be through only strict array value by array parser", () => {
-      assert.deepEqual(jsonparse.array(jsonparse.string).parse([]), []);
-      assert.deepEqual(jsonparse.array(jsonparse.string).parse(["", "true", "1"]), ["", "true", "1"]);
-      assertThrow(() => jsonparse.array(jsonparse.string).parse(["", true, 1]),
+      assert.deepEqual(sonparse.array(sonparse.string).parse([]), []);
+      assert.deepEqual(sonparse.array(sonparse.string).parse(["", "true", "1"]), ["", "true", "1"]);
+      assertThrow(() => sonparse.array(sonparse.string).parse(["", true, 1]),
       ConfigParseError, "failed to parse elem of 'array'");
-      assertThrow(() => jsonparse.array(jsonparse.string).parse({ 0: "1" }),
+      assertThrow(() => sonparse.array(sonparse.string).parse({ 0: "1" }),
       ConfigParseError, "{\"0\":\"1\"} is not 'array'");
     });
 
@@ -73,12 +73,12 @@ describe("base parsers test", () => {
   describe("base extra parsers test", () => {
 
     it("should be through only having specify properties by hasProperties parser", function() {
-      const MyObjectParser = jsonparse.hasProperties([
-        ["propB", jsonparse.boolean],
-        ["propN", jsonparse.number],
-        ["propS", jsonparse.string],
-        ["propO", jsonparse.object],
-        ["propAs", jsonparse.array(jsonparse.string)],
+      const MyObjectParser = sonparse.hasProperties([
+        ["propB", sonparse.boolean],
+        ["propN", sonparse.number],
+        ["propS", sonparse.string],
+        ["propO", sonparse.object],
+        ["propAs", sonparse.array(sonparse.string)],
       ]);
 
       assert.deepEqual(MyObjectParser.parse({
@@ -147,7 +147,7 @@ describe("base parsers test", () => {
     });
 
     it("should be customize by my custom parser", () => {
-      const CustomParser1 = jsonparse.custom<Object, boolean>((makeSuccess, makeFailure) => {
+      const CustomParser1 = sonparse.custom<Object, boolean>((makeSuccess, makeFailure) => {
         return (obj) => {
           if (typeof obj === "number") {
             return makeSuccess(true);
@@ -157,7 +157,7 @@ describe("base parsers test", () => {
           return makeFailure();
         };
       });
-      const CustomParser2 = jsonparse.custom<string, string>((makeSuccess, makeFailure) => {
+      const CustomParser2 = sonparse.custom<string, string>((makeSuccess, makeFailure) => {
         return (obj) => {
           if (obj == "debug" || obj == "info" || obj == "error") {
             return makeSuccess(obj);

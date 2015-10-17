@@ -5,17 +5,17 @@ import {
   assertThrow,
 } from "../lib/chai_setup";
 
-import * as jsonparse from "../../lib/";
+import * as sonparse from "../../lib/";
 const {
   ConfigParseError,
-} = jsonparse;
+} = sonparse;
 
 describe("chain parser test", () => {
 
   describe("base parsers test", () => {
 
     it("should be using second parser when first parser failed", () => {
-      const CustomParser1 = jsonparse.custom<Object, boolean>((makeSuccess, makeFailure) => {
+      const CustomParser1 = sonparse.custom<Object, boolean>((makeSuccess, makeFailure) => {
         return (obj) => {
           if (typeof obj === "number") {
             return makeSuccess(true);
@@ -23,7 +23,7 @@ describe("chain parser test", () => {
           return makeFailure();
         };
       });
-      const CustomParser2 = jsonparse.custom<Object, boolean>((makeSuccess, makeFailure) => {
+      const CustomParser2 = sonparse.custom<Object, boolean>((makeSuccess, makeFailure) => {
         return (obj) => {
           if (typeof obj === "string") {
             return makeSuccess(false);
@@ -39,7 +39,7 @@ describe("chain parser test", () => {
     });
 
     it("should be using second parser when first parser succeeded", () => {
-      const CustomParser1 = jsonparse.custom<Object, number>((makeSuccess, makeFailure) => {
+      const CustomParser1 = sonparse.custom<Object, number>((makeSuccess, makeFailure) => {
         return (obj) => {
           if (typeof obj === "boolean") {
             return makeSuccess(0);
@@ -51,7 +51,7 @@ describe("chain parser test", () => {
           return makeFailure();
         };
       });
-      const CustomParser2 = jsonparse.custom<number, boolean>((makeSuccess, makeFailure) => {
+      const CustomParser2 = sonparse.custom<number, boolean>((makeSuccess, makeFailure) => {
         return (obj) => {
           if (obj === 0) {
             return makeSuccess(false);
@@ -70,7 +70,7 @@ describe("chain parser test", () => {
     });
 
     it("should be converted by my function", () => {
-      const MyParser = jsonparse.string
+      const MyParser = sonparse.string
         .map((str) => str === "true");
 
       assert.strictEqual(MyParser.parse("true"), true);
@@ -84,7 +84,7 @@ describe("chain parser test", () => {
   describe("extra parsers test", () => {
 
     it("should be not converted and added desc by my description", () => {
-      const MyParser = jsonparse.string
+      const MyParser = sonparse.string
         .desc("this should be string value");
 
       assert.strictEqual(MyParser.parse(""), "");
@@ -96,7 +96,7 @@ describe("chain parser test", () => {
     });
 
     it("should be not converted and added desc by my description from expected", () => {
-      const MyParser1 = jsonparse.custom<Object, number>((makeSuccess, makeFailure) => {
+      const MyParser1 = sonparse.custom<Object, number>((makeSuccess, makeFailure) => {
         return (obj) => {
           if (typeof obj === "boolean") {
             return makeSuccess(0);
@@ -109,7 +109,7 @@ describe("chain parser test", () => {
         };
       })
         .descFromExpected(["boolean", "number", "special"]);
-      const MyParser2 = jsonparse.string
+      const MyParser2 = sonparse.string
         .descFromExpected("string");
 
       assert.strictEqual(MyParser1.parse(true), 0);
@@ -135,7 +135,7 @@ describe("chain parser test", () => {
     });
 
     it("should be sent event after converting", () => {
-      const MyParser = jsonparse.string;
+      const MyParser = sonparse.string;
 
       assert.strictEqual(MyParser
         .then(
@@ -152,7 +152,7 @@ describe("chain parser test", () => {
     });
 
     it("should be cacthed failed after converting", () => {
-      const MyParser = jsonparse.string;
+      const MyParser = sonparse.string;
 
       assert.strictEqual(MyParser
         .catch(() => assert(false, "unexpected call on fail"))
@@ -163,7 +163,7 @@ describe("chain parser test", () => {
     });
 
     it("should be set default value on fail after converting", () => {
-      const MyParser = jsonparse
+      const MyParser = sonparse
         .boolean.default(false);
 
       assert.strictEqual(MyParser.parse(true), true);
@@ -171,7 +171,7 @@ describe("chain parser test", () => {
     });
 
     it("should be optional value for no value received", () => {
-      const MyParser = jsonparse
+      const MyParser = sonparse
         .boolean.option(false);
 
       assert.strictEqual(MyParser.parse(true), true);

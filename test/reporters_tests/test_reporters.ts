@@ -5,20 +5,20 @@ import {
   assertThrow,
 } from "../lib/chai_setup";
 
-import * as jsonparse from "../../lib/";
+import * as sonparse from "../../lib/";
 const {
   nestedReporter,
   listReporter,
   jsonReporter,
   ConfigParseError,
-} = jsonparse;
+} = sonparse;
 
 describe("reporters test", () => {
   function assertDataWithReport<T, U>(data: {
-    parser: jsonparse.ConfigParser<T, U>,
+    parser: sonparse.ConfigParser<T, U>,
     input: T,
     output: string[]
-  }, reporter: (logFunc: (msg: string) => any) => jsonparse.ReporterType) {
+  }, reporter: (logFunc: (msg: string) => any) => sonparse.ReporterType) {
     let calledCount = 0;
     const assertOutputFunc = (msg: string) => {
       assert.strictEqual(msg, data.output[calledCount++]);
@@ -33,12 +33,12 @@ describe("reporters test", () => {
 
   it("should report nested by nestedReporter", () => {
     const reportData1 = {
-      parser: jsonparse.hasProperties([
-        ["a", jsonparse.boolean],
-        ["b", jsonparse.hasProperties([
-          ["c", jsonparse.hasProperties([
-            ["d", jsonparse.array(jsonparse.string)],
-            ["e", jsonparse.number],
+      parser: sonparse.hasProperties([
+        ["a", sonparse.boolean],
+        ["b", sonparse.hasProperties([
+          ["c", sonparse.hasProperties([
+            ["d", sonparse.array(sonparse.string)],
+            ["e", sonparse.number],
           ])],
         ])],
       ]),
@@ -55,12 +55,12 @@ describe("reporters test", () => {
       ],
     };
     const reportData2 = {
-      parser: jsonparse.hasProperties([
-        ["a", jsonparse.boolean],
-        ["b", jsonparse.hasProperties([
-          ["c", jsonparse.hasProperties([
-            ["d", jsonparse.array(jsonparse.string)],
-            ["e", jsonparse.number],
+      parser: sonparse.hasProperties([
+        ["a", sonparse.boolean],
+        ["b", sonparse.hasProperties([
+          ["c", sonparse.hasProperties([
+            ["d", sonparse.array(sonparse.string)],
+            ["e", sonparse.number],
           ])],
         ])],
       ]),
@@ -72,7 +72,7 @@ describe("reporters test", () => {
       ],
     };
     const reportData3 = {
-      parser: jsonparse.boolean,
+      parser: sonparse.boolean,
       input: {a: "", b: true, c: 0, d: {}},
       output: [
         "this : {\"a\":\"\",\"b\":true,\"c\":0,\"d\":{}} is not 'boolean'",
@@ -86,12 +86,12 @@ describe("reporters test", () => {
 
   it("should report nested by listReporter", () => {
     const reportData1 = {
-      parser: jsonparse.hasProperties([
-        ["a", jsonparse.boolean],
-        ["b", jsonparse.hasProperties([
-          ["c", jsonparse.hasProperties([
-            ["d", jsonparse.array(jsonparse.string)],
-            ["e", jsonparse.number],
+      parser: sonparse.hasProperties([
+        ["a", sonparse.boolean],
+        ["b", sonparse.hasProperties([
+          ["c", sonparse.hasProperties([
+            ["d", sonparse.array(sonparse.string)],
+            ["e", sonparse.number],
           ])],
         ])],
       ]),
@@ -104,12 +104,12 @@ describe("reporters test", () => {
       ],
     };
     const reportData2 = {
-      parser: jsonparse.hasProperties([
-        ["a", jsonparse.boolean],
-        ["b", jsonparse.hasProperties([
-          ["c", jsonparse.hasProperties([
-            ["d", jsonparse.array(jsonparse.string)],
-            ["e", jsonparse.number],
+      parser: sonparse.hasProperties([
+        ["a", sonparse.boolean],
+        ["b", sonparse.hasProperties([
+          ["c", sonparse.hasProperties([
+            ["d", sonparse.array(sonparse.string)],
+            ["e", sonparse.number],
           ])],
         ])],
       ]),
@@ -120,7 +120,7 @@ describe("reporters test", () => {
       ],
     };
     const reportData3 = {
-      parser: jsonparse.boolean,
+      parser: sonparse.boolean,
       input: {a: "", b: true, c: 0, d: {}},
       output: [
         "this : {\"a\":\"\",\"b\":true,\"c\":0,\"d\":{}} is not 'boolean'",
@@ -134,12 +134,12 @@ describe("reporters test", () => {
 
   it("should report json format by jsonReporter", () => {
     const reportData1 = {
-      parser: jsonparse.hasProperties([
-        ["a", jsonparse.boolean],
-        ["b", jsonparse.hasProperties([
-          ["c", jsonparse.hasProperties([
-            ["d", jsonparse.array(jsonparse.string)],
-            ["e", jsonparse.number],
+      parser: sonparse.hasProperties([
+        ["a", sonparse.boolean],
+        ["b", sonparse.hasProperties([
+          ["c", sonparse.hasProperties([
+            ["d", sonparse.array(sonparse.string)],
+            ["e", sonparse.number],
           ])],
         ])],
       ]),
@@ -160,12 +160,12 @@ describe("reporters test", () => {
       ],
     };
     const reportData2 = {
-      parser: jsonparse.hasProperties([
-        ["a", jsonparse.boolean],
-        ["b", jsonparse.hasProperties([
-          ["c", jsonparse.hasProperties([
-            ["d", jsonparse.array(jsonparse.string)],
-            ["e", jsonparse.number],
+      parser: sonparse.hasProperties([
+        ["a", sonparse.boolean],
+        ["b", sonparse.hasProperties([
+          ["c", sonparse.hasProperties([
+            ["d", sonparse.array(sonparse.string)],
+            ["e", sonparse.number],
           ])],
         ])],
       ]),
@@ -179,12 +179,12 @@ describe("reporters test", () => {
       ],
     };
     const reportData3 = {
-      parser: jsonparse.hasProperties([
-        ["a", jsonparse.boolean],
-        ["b", jsonparse.hasProperties([
-          ["c", jsonparse.hasProperties([
-            ["d", jsonparse.array(jsonparse.string)],
-            ["e", jsonparse.number],
+      parser: sonparse.hasProperties([
+        ["a", sonparse.boolean],
+        ["b", sonparse.hasProperties([
+          ["c", sonparse.hasProperties([
+            ["d", sonparse.array(sonparse.string)],
+            ["e", sonparse.number],
           ])],
         ])],
       ]),
@@ -197,12 +197,12 @@ describe("reporters test", () => {
       ],
     };
     const reportData4 = {
-      parser: jsonparse.hasProperties([
-        ["a", jsonparse.boolean],
-        ["b", jsonparse.hasProperties([
-          ["c", jsonparse.hasProperties([
-            ["d", jsonparse.array(jsonparse.string)],
-            ["e", jsonparse.number],
+      parser: sonparse.hasProperties([
+        ["a", sonparse.boolean],
+        ["b", sonparse.hasProperties([
+          ["c", sonparse.hasProperties([
+            ["d", sonparse.array(sonparse.string)],
+            ["e", sonparse.number],
           ])],
         ])],
       ]),
@@ -213,7 +213,7 @@ describe("reporters test", () => {
       ],
     };
     const reportData5 = {
-      parser: jsonparse.boolean,
+      parser: sonparse.boolean,
       input: {a: "", b: true, c: 0, d: {}},
       output: [
         "\"{\\\"a\\\":\\\"\\\",\\\"b\\\":true,\\\"c\\\":0,\\\"d\\\":{}}"

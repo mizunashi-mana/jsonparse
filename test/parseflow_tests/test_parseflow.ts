@@ -7,32 +7,32 @@ import {
 
 import * as path from "path";
 
-import * as jsonparse from "../../lib/";
+import * as sonparse from "../../lib/";
 const {
   ConfigParseError,
   parseFile,
   parseFileWithStatus,
   nestedReporter,
-} = jsonparse;
+} = sonparse;
 
 describe("parse methods test", () => {
 
   describe("parse object test", () => {
 
     it("should return result on success and throw on fail", () => {
-      assert.strictEqual(jsonparse.boolean.parse(true), true);
-      assertThrow(() => jsonparse.boolean.parse("str"),
+      assert.strictEqual(sonparse.boolean.parse(true), true);
+      assertThrow(() => sonparse.boolean.parse("str"),
         ConfigParseError, "\"str\" is not 'boolean'"
       );
     });
 
     it("should return result with status", () => {
-      const result1 = jsonparse
+      const result1 = sonparse
         .boolean.parseWithStatus(true);
       assert.propertyVal(result1, "status", true);
       assert.propertyVal(result1, "value", true);
 
-      const result2 = jsonparse
+      const result2 = sonparse
         .boolean.parseWithStatus(1);
       assert.propertyVal(result2, "status", false);
     });
@@ -41,11 +41,11 @@ describe("parse methods test", () => {
       const reporter = nestedReporter((msg) => {
         return;
       });
-      assert.strictEqual(jsonparse
+      assert.strictEqual(sonparse
         .boolean.parseWithReporter(true, reporter),
         true
       );
-      assertThrow(() => jsonparse
+      assertThrow(() => sonparse
         .boolean.parseWithReporter("str", reporter),
         ConfigParseError, "\"str\" is not 'boolean'"
       );
@@ -70,16 +70,16 @@ describe("parse methods test", () => {
     };
 
     it("should be through only son file and return result", () => {
-      assert.deepEqual(parseFile(resolvePath("data/valid.json"), jsonparse.object), dataObj);
-      assert.deepEqual(parseFile(resolvePath("data/valid.cson"), jsonparse.object), dataObj);
-      assert.deepEqual(parseFile(resolvePath("data/json.txt"), jsonparse.object), dataObj);
-      assert.deepEqual(parseFile(resolvePath("data/cson.txt"), jsonparse.object), dataObj);
-      assertThrow(() => parseFile(resolvePath("data/invalid.json"), jsonparse.object), Error);
-      assertThrow(() => parseFile(resolvePath("data/invalid.cson"), jsonparse.object), Error);
-      assertThrow(() => parseFile(resolvePath("data/nosuchfile"), jsonparse.object), Error);
-      assertThrow(() => parseFile(resolvePath("data/normal.txt"), jsonparse.object),
+      assert.deepEqual(parseFile(resolvePath("data/valid.json"), sonparse.object), dataObj);
+      assert.deepEqual(parseFile(resolvePath("data/valid.cson"), sonparse.object), dataObj);
+      assert.deepEqual(parseFile(resolvePath("data/json.txt"), sonparse.object), dataObj);
+      assert.deepEqual(parseFile(resolvePath("data/cson.txt"), sonparse.object), dataObj);
+      assertThrow(() => parseFile(resolvePath("data/invalid.json"), sonparse.object), Error);
+      assertThrow(() => parseFile(resolvePath("data/invalid.cson"), sonparse.object), Error);
+      assertThrow(() => parseFile(resolvePath("data/nosuchfile"), sonparse.object), Error);
+      assertThrow(() => parseFile(resolvePath("data/normal.txt"), sonparse.object),
         Error, `${resolvePath("data/normal.txt")} is not parsable file`);
-      assertThrow(() => parseFile(resolvePath("data/valid.json"), jsonparse.boolean), ConfigParseError);
+      assertThrow(() => parseFile(resolvePath("data/valid.json"), sonparse.boolean), ConfigParseError);
     });
 
     it("should be through only son file and return result", () => {
@@ -94,15 +94,15 @@ describe("parse methods test", () => {
           }
         }
       }
-      statusAssert(parseFileWithStatus(resolvePath("data/valid.json"), jsonparse.object), true, dataObj);
-      statusAssert(parseFileWithStatus(resolvePath("data/valid.cson"), jsonparse.object), true, dataObj);
-      statusAssert(parseFileWithStatus(resolvePath("data/json.txt"), jsonparse.object), true, dataObj);
-      statusAssert(parseFileWithStatus(resolvePath("data/cson.txt"), jsonparse.object), true, dataObj);
-      statusAssert(parseFileWithStatus(resolvePath("data/invalid.json"), jsonparse.object), false);
-      statusAssert(parseFileWithStatus(resolvePath("data/invalid.cson"), jsonparse.object), false);
-      statusAssert(parseFileWithStatus(resolvePath("data/nosuchfile"), jsonparse.object), false);
-      statusAssert(parseFileWithStatus(resolvePath("data/normal.txt"), jsonparse.object), false);
-      statusAssert(parseFileWithStatus(resolvePath("data/valid.json"), jsonparse.boolean), false);
+      statusAssert(parseFileWithStatus(resolvePath("data/valid.json"), sonparse.object), true, dataObj);
+      statusAssert(parseFileWithStatus(resolvePath("data/valid.cson"), sonparse.object), true, dataObj);
+      statusAssert(parseFileWithStatus(resolvePath("data/json.txt"), sonparse.object), true, dataObj);
+      statusAssert(parseFileWithStatus(resolvePath("data/cson.txt"), sonparse.object), true, dataObj);
+      statusAssert(parseFileWithStatus(resolvePath("data/invalid.json"), sonparse.object), false);
+      statusAssert(parseFileWithStatus(resolvePath("data/invalid.cson"), sonparse.object), false);
+      statusAssert(parseFileWithStatus(resolvePath("data/nosuchfile"), sonparse.object), false);
+      statusAssert(parseFileWithStatus(resolvePath("data/normal.txt"), sonparse.object), false);
+      statusAssert(parseFileWithStatus(resolvePath("data/valid.json"), sonparse.boolean), false);
     });
 
   });
