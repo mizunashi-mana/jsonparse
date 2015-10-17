@@ -3,24 +3,36 @@ export type ParseErrorNode = [string, ParseErrorStocker];
 export class ParseErrorStocker {
   private innerMsg: string;
   private innerExpected: string;
+  private innerActual: string;
   private innerChilds: ParseErrorNode[];
 
   constructor(childs?: ParseErrorNode[]);
   constructor(msg: string, childs?: ParseErrorNode[]);
   constructor(msg: string, exp?: string, childs?: ParseErrorNode[]);
-  constructor(arg1?: (ParseErrorNode[]|string), arg2?: (ParseErrorNode[]|string), arg3?: ParseErrorNode[]) {
+  constructor(msg: string, exp?: string, act?: string, childs?: ParseErrorNode[]);
+  constructor(
+    arg1?: (ParseErrorNode[]|string),
+    arg2?: (ParseErrorNode[]|string),
+    arg3?: (ParseErrorNode[]|string),
+    arg4?: ParseErrorNode[]
+  ) {
+    this.innerMsg = "this is not parsable";
+    this.innerExpected = "unknown";
+    this.innerActual = typeof undefined;
     if (typeof arg1 !== "string") {
-      this.innerMsg = "this is not parsable";
-      this.innerExpected = "unknown";
       this.innerChilds = typeof arg1 === "undefined" ? [] : arg1;
     } else if (typeof arg2 !== "string") {
       this.innerMsg = arg1;
-      this.innerExpected = "unknown";
       this.innerChilds = typeof arg2 === "undefined" ? [] : arg2;
-    } else {
+    } else if (typeof arg3 !== "string") {
       this.innerMsg = arg1;
       this.innerExpected = arg2;
       this.innerChilds = typeof arg3 === "undefined" ? [] : arg3;
+    } else {
+      this.innerMsg = arg1;
+      this.innerExpected = arg2;
+      this.innerActual = arg3;
+      this.innerChilds = typeof arg4 === "undefined" ? [] : arg4;
     }
   }
 

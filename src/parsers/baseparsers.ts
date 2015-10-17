@@ -5,11 +5,9 @@ import {
 } from "../parseresult/result";
 
 import {
-  ParseErrorStocker
-} from "../parseresult/parseerr";
-
-import {
   Parser,
+  makeFailure as makeFailureP,
+  makeSuccess as makeSuccessP,
   mapParseResult,
   MapperParseResult,
 } from "../common";
@@ -127,19 +125,13 @@ export function mapParser<T1, T2, T3>(
 
 export function failParser<T>(msg: string, exp?: string) {
   return new Parser<any, T>((obj) => {
-    return ParseResult.fail<T>({
-      value: new ParseErrorStocker(msg, exp),
-      flags: obj.flags,
-    });
+    return makeFailureP<any, T>(obj, msg, exp);
   });
 }
 
 export function successParser<T>(value: T) {
   return new Parser<any, T>((obj) => {
-    return ParseResult.success<T>({
-      value: value,
-      flags: obj.flags,
-    });
+    return makeSuccessP(obj, value);
   });
 }
 

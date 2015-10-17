@@ -1,12 +1,14 @@
 import {
   Parser,
+  makeFailure as makeFailureP,
+  makeSuccess as makeSuccessP,
   mapParseResult,
   MapperParseResult,
 } from "../common";
 
 import {
   ParseResult,
-  ResultFlagType,
+  SuccessObjType,
 } from "../parseresult/result";
 
 import {
@@ -68,77 +70,62 @@ function buildErrorChild(i: number, fl: ParseErrorStocker) {
 }
 
 function prconcat<T>(
+  sObj: SuccessObjType<Object>
+): (
   res1: ParseResult<T[]>,
   res2: ParseResult<T>,
   index: number
-): ParseResult<T[]> {
-  return res1.caseOf(
+) => ParseResult<T[]> {
+  return (
+    res1: ParseResult<T[]>,
+    res2: ParseResult<T>,
+    index: number
+  ) => res1.caseOf(
     (l1) => res2.caseOf((l2) => ParseResult.fail<T[]>({
       value: l1.value.addChild(buildErrorChild(index, l2.value)),
       flags: l1.flags,
     }), (r2) => ParseResult.fail<T[]>(l1)),
-    (r1) => res2.caseOf((l2) => ParseResult.fail<T[]>({
-      value: new ParseErrorStocker(
-        "failed to parse elem of 'array'",
-        "array",
-        [buildErrorChild(index, l2.value)]
-      ),
-      flags: l2.flags,
-    }), (r2) => ParseResult.success<T[]>({
-      value: r1.value.concat([r2.value]),
-      flags: r1.flags
-    }))
+    (r1) => res2.caseOf((l2) => makeFailureP<Object, T[]>(
+      sObj,
+      "failed to parse elem of 'array'", "array",
+      [buildErrorChild(index, l2.value)]
+    ), (r2) => makeSuccessP(sObj, r1.value.concat([r2.value])))
   );
 }
 
 function parseArrayObj<T>(
   arr: Object[],
   parser: Parser<Object, T>,
-  flags: ResultFlagType
+  sObj: SuccessObjType<Object>
 ): ParseResult<T[]> {
   const results: ParseResult<T>[] = [];
   for (const obj of arr) {
     const convObj = parser.parse({
       value: obj,
-      flags: flags,
+      flags: sObj.flags,
     });
     if (!convObj.isSuccess()) {
-      if (!flags.isReport) {
+      if (!sObj.flags.isReport) {
         break;
       }
     }
     results.push(convObj);
   }
   if (results.length != arr.length) {
-    return ParseResult.fail<T[]>({
-      value: new ParseErrorStocker(
-        "failed to parse elem of 'array'",
-        "array"
-      ),
-      flags: flags,
-    });
+    return makeFailureP<Object, T[]>(sObj, "failed to parse elem of 'array'", "array");
   }
   return <ParseResult<T[]>>results
-    .reduce(prconcat, ParseResult.success({
-      value: [],
-      flags: flags,
-    }));
+    .reduce(prconcat(sObj), makeSuccessP(sObj, <T[]>[]));
 }
 
 export function isArray<T>(parser: Parser<Object, T>) {
   return new Parser<Object, T[]>((obj) => {
     const value = obj.value;
     if (value instanceof Array) {
-      const results = parseArrayObj(value, parser, obj.flags);
+      const results = parseArrayObj(value, parser, obj);
       return <ParseResult<T[]>>results;
     } else {
-      return ParseResult.fail<T[]>({
-        value: new ParseErrorStocker(
-          `${JSON.stringify(obj.value)} is not 'array'`,
-          "array"
-        ),
-        flags: obj.flags,
-      });
+      return makeFailureP<Object, T[]>(obj, `${JSON.stringify(obj.value)} is not 'array'`, "array");
     }
   });
 }

@@ -1,5 +1,6 @@
 import {
-  ParseErrorStocker
+  ParseErrorStocker,
+  ParseErrorNode,
 } from "./parseresult/parseerr";
 
 import {
@@ -16,9 +17,9 @@ export function makeSuccess<T, U>(obj: SuccessObjType<T>, convObj: U) {
   });
 }
 
-export function makeFailure<T, U>(obj: SuccessObjType<T>, msg?: string, exp?: string) {
+export function makeFailure<T, U>(obj: SuccessObjType<T>, msg?: string, exp?: string, childs?: ParseErrorNode[]) {
   return ParseResult.fail<U>({
-    value: new ParseErrorStocker(msg, exp),
+    value: new ParseErrorStocker(msg, exp, JSON.stringify(obj.value), childs),
     flags: obj.flags,
   });
 }
