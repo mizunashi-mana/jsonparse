@@ -18,7 +18,7 @@ function propertyJoin(base: string, pname: string) {
   return base === "" ? pname : base + convertPropertyNameForConcat(pname);
 }
 
-export function nestedReporter(
+export function nestReporter(
   logFunc: (msg: string) => any,
   depth?: number
 ): ReporterType {

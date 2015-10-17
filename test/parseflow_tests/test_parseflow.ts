@@ -12,7 +12,7 @@ const {
   ConfigParseError,
   parseFile,
   parseFileWithStatus,
-  nestedReporter,
+  nestReporter,
 } = sonparse;
 
 describe("parse methods test", () => {
@@ -38,7 +38,7 @@ describe("parse methods test", () => {
     });
 
     it("should return result on success and report on fail", () => {
-      const reporter = nestedReporter((msg) => {
+      const reporter = nestReporter((msg) => {
         return;
       });
       assert.strictEqual(sonparse

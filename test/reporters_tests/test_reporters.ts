@@ -7,7 +7,7 @@ import {
 
 import * as sonparse from "../../lib/";
 const {
-  nestedReporter,
+  nestReporter,
   listReporter,
   jsonReporter,
   ConfigParseError,
@@ -31,7 +31,7 @@ describe("reporters test", () => {
     assert.strictEqual(calledCount, data.output.length, "should be called same as output count");
   }
 
-  it("should report nested by nestedReporter", () => {
+  it("should report nested by nestReporter", () => {
     const reportData1 = {
       parser: sonparse.hasProperties([
         ["a", sonparse.boolean],
@@ -78,13 +78,13 @@ describe("reporters test", () => {
         "this : {\"a\":\"\",\"b\":true,\"c\":0,\"d\":{}} is not 'boolean'",
       ],
     };
-    assertDataWithReport(reportData1, (logFunc) => nestedReporter(logFunc));
-    assertDataWithReport(reportData2, (logFunc) => nestedReporter(logFunc, 1));
-    assertDataWithReport(reportData3, (logFunc) => nestedReporter(logFunc));
-    assertDataWithReport(reportData3, (logFunc) => nestedReporter(logFunc, 3));
+    assertDataWithReport(reportData1, (logFunc) => nestReporter(logFunc));
+    assertDataWithReport(reportData2, (logFunc) => nestReporter(logFunc, 1));
+    assertDataWithReport(reportData3, (logFunc) => nestReporter(logFunc));
+    assertDataWithReport(reportData3, (logFunc) => nestReporter(logFunc, 3));
   });
 
-  it("should report nested by listReporter", () => {
+  it("should report listed by listReporter", () => {
     const reportData1 = {
       parser: sonparse.hasProperties([
         ["a", sonparse.boolean],

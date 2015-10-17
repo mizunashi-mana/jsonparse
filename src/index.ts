@@ -249,7 +249,7 @@ export function parseFileWithStatus<T>(fname: string, parser: ConfigParser<Objec
 export type ReporterType = (msg: string, exp?: string, act?: string, childs?: ParseErrorNode[]) => void;
 
 export {
-  nestedReporter,
+  nestReporter,
   listReporter,
   jsonReporter,
 } from "./reporter/node-reporters";
