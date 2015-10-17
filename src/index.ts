@@ -167,7 +167,15 @@ export class ConfigParser<T, U> {
     };
   }
 
-  parseWithReporter(obj: T, reporter: (msg: string, exp?: string, childs?: ParseErrorNode[]) => void): U {
+  parseWithReporter(
+    obj: T,
+    reporter: (
+      msg: string,
+      exp?: string,
+      act?: string,
+      childs?: ParseErrorNode[]
+    ) => void
+  ): U {
     const res = this.parser.parse({
       value: obj,
       flags: {
@@ -177,8 +185,8 @@ export class ConfigParser<T, U> {
     if (res.isSuccess()) {
       return res.valueSuccess(undefined).value;
     } else {
-      res.valueFailure(undefined).value.report((msg, exp, childs) => {
-        reporter(msg, exp, childs);
+      res.valueFailure(undefined).value.report((msg, exp, act, childs) => {
+        reporter(msg, exp, act, childs);
         throw new ConfigParseError(msg);
       });
     }
@@ -238,9 +246,10 @@ export function parseFileWithStatus<T>(fname: string, parser: ConfigParser<Objec
   }
 }
 
-export type ReporterType = (msg: string, exp?: string, childs?: ParseErrorNode[]) => void;
+export type ReporterType = (msg: string, exp?: string, act?: string, childs?: ParseErrorNode[]) => void;
 
 export {
   nestedReporter,
   listReporter,
+  jsonReporter,
 } from "./reporter/node-reporters";

@@ -9,6 +9,7 @@ import * as jsonparse from "../../lib/";
 const {
   nestedReporter,
   listReporter,
+  jsonReporter,
   ConfigParseError,
 } = jsonparse;
 
@@ -130,4 +131,102 @@ describe("reporters test", () => {
     assertDataWithReport(reportData3, (logFunc) => listReporter(logFunc));
     assertDataWithReport(reportData3, (logFunc) => listReporter(logFunc, 3));
   });
+
+  it("should report json format by jsonReporter", () => {
+    const reportData1 = {
+      parser: jsonparse.hasProperties([
+        ["a", jsonparse.boolean],
+        ["b", jsonparse.hasProperties([
+          ["c", jsonparse.hasProperties([
+            ["d", jsonparse.array(jsonparse.string)],
+            ["e", jsonparse.number],
+          ])],
+        ])],
+      ]),
+      input: {"b": {"c": {"d": [0, "ww", true]}}},
+      output: [
+        "{",
+        "  \"a\": \"undefined is not 'boolean'\",",
+        "  \"b\": {",
+        "    \"c\": {",
+        "      \"d\": {",
+        "        \"[0]\": \"0 is not 'string'\",",
+        "        \"[2]\": \"true is not 'string'\"",
+        "      },",
+        "      \"e\": \"undefined is not 'number'\"",
+        "    }",
+        "  }",
+        "}",
+      ],
+    };
+    const reportData2 = {
+      parser: jsonparse.hasProperties([
+        ["a", jsonparse.boolean],
+        ["b", jsonparse.hasProperties([
+          ["c", jsonparse.hasProperties([
+            ["d", jsonparse.array(jsonparse.string)],
+            ["e", jsonparse.number],
+          ])],
+        ])],
+      ]),
+      input: {"b": {"c": {"d": [0, "ww", true]}}},
+      output: [
+        "{\"a\":\"undefined is not 'boolean'\","
+        + "\"b\":{\"c\":{\"d\":"
+        + "{\"[0]\":\"0 is not 'string'\","
+        + "\"[2]\":\"true is not 'string'\"},"
+        + "\"e\":\"undefined is not 'number'\"}}}",
+      ],
+    };
+    const reportData3 = {
+      parser: jsonparse.hasProperties([
+        ["a", jsonparse.boolean],
+        ["b", jsonparse.hasProperties([
+          ["c", jsonparse.hasProperties([
+            ["d", jsonparse.array(jsonparse.string)],
+            ["e", jsonparse.number],
+          ])],
+        ])],
+      ]),
+      input: {"b": {"c": {"d": [0, "ww", true]}}},
+      output: [
+        "{",
+        "  \"a\": \"undefined is not 'boolean'\",",
+        "  \"b\": \"failed to parse elem of 'object'\"",
+        "}",
+      ],
+    };
+    const reportData4 = {
+      parser: jsonparse.hasProperties([
+        ["a", jsonparse.boolean],
+        ["b", jsonparse.hasProperties([
+          ["c", jsonparse.hasProperties([
+            ["d", jsonparse.array(jsonparse.string)],
+            ["e", jsonparse.number],
+          ])],
+        ])],
+      ]),
+      input: {"b": {"c": {"d": [0, "ww", true]}}},
+      output: [
+        "{\"a\":\"undefined is not 'boolean'\","
+        + "\"b\":\"failed to parse elem of 'object'\"}",
+      ],
+    };
+    const reportData5 = {
+      parser: jsonparse.boolean,
+      input: {a: "", b: true, c: 0, d: {}},
+      output: [
+        "\"{\\\"a\\\":\\\"\\\",\\\"b\\\":true,\\\"c\\\":0,\\\"d\\\":{}}"
+        + " is not 'boolean'\"",
+      ],
+    };
+    assertDataWithReport(reportData1, (logFunc) => jsonReporter(logFunc));
+    assertDataWithReport(reportData2, (logFunc) => jsonReporter(logFunc, {isOneLine: true}));
+    assertDataWithReport(reportData3, (logFunc) => jsonReporter(logFunc, undefined, 1));
+    assertDataWithReport(reportData4, (logFunc) => jsonReporter(logFunc, {isOneLine: true}, 1));
+    assertDataWithReport(reportData5, (logFunc) => jsonReporter(logFunc));
+    assertDataWithReport(reportData5, (logFunc) => jsonReporter(logFunc, undefined, 3));
+    assertDataWithReport(reportData5, (logFunc) => jsonReporter(logFunc, {isOneLine: true}));
+  });
+
 });

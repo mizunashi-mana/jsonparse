@@ -1,5 +1,10 @@
 import {
+  ReporterType,
+} from "../";
+
+import {
   ParseErrorNode,
+  ParseErrorStocker,
 } from "../parseresult/parseerr";
 
 function convertPropertyNameForConcat(pname: string) {
@@ -16,13 +21,13 @@ function propertyJoin(base: string, pname: string) {
 export function nestedReporter(
   logFunc: (msg: string) => any,
   depth?: number
-): (msg: string, exp?: string, childs?: ParseErrorNode[]) => void {
+): ReporterType {
   const reportF = (
     pname: string,
     depthCount: number,
     prefix: string,
     last: boolean
-  ) => (msg: string, exp?: string, childs?: ParseErrorNode[]) => {
+  ) => (msg: string, exp?: string, act?: string, childs?: ParseErrorNode[]) => {
     if (typeof depth !== "undefined" && depthCount > depth) {
       return;
     }
@@ -53,12 +58,12 @@ export function nestedReporter(
 export function listReporter(
   logFunc: (msg: string) => any,
   depth?: number
-): (msg: string, exp?: string, childs?: ParseErrorNode[]) => void {
+): ReporterType {
   const reportF = (
     pname: string,
     basename: string,
     depthCount: number
-  ) => (msg: string, exp?: string, childs?: ParseErrorNode[]) => {
+  ) => (msg: string, exp?: string, act?: string, childs?: ParseErrorNode[]) => {
     const propertyFullName = propertyJoin(basename, pname);
     if (typeof depth !== "undefined" && depthCount === depth || childs.length === 0) {
       logFunc(`${propertyFullName} : ${msg}`);
@@ -71,4 +76,39 @@ export function listReporter(
   return reportF("this", "", 0);
 }
 
-//export function jsonReporter
+export function jsonReporter(
+  logFunc: (msg: string) => any,
+  flags?: {
+    isOneLine?: boolean;
+  },
+  depth?: number
+): ReporterType {
+  const convertErrorToObject = (err: ParseErrorStocker, depthCount: number) => {
+    let result: string | {[key: string]: any};
+    err.report((msg, exp, act, childs) => {
+      if (typeof depth !== "undefined" && depth == depthCount || childs.length == 0) {
+        result = msg;
+      } else {
+        result = {};
+        childs.forEach((e) => {
+          (<{[key: string]: any}>result)[e[0]] = convertErrorToObject(
+            e[1],
+            depthCount + 1
+          );
+        });
+      }
+    });
+    return result;
+  };
+  return (msg: string, exp: string, act: string, childs: ParseErrorNode[]) => {
+    const result: Object = convertErrorToObject(
+      new ParseErrorStocker(msg, exp, act, childs), 0
+    );
+    if (typeof flags !== "undefined" && flags.isOneLine === true) {
+      logFunc(JSON.stringify(result));
+    } else {
+      JSON.stringify(result, null, 2)
+        .split("\n").forEach((e) => logFunc(e));
+    }
+  };
+}
