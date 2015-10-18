@@ -2,6 +2,7 @@
 /typings/
 /lib/
 /test-build/
+/docs/reference/
 
 # for NPM
 node_modules/

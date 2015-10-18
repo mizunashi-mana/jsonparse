@@ -20,6 +20,9 @@ distDir:
     jsDir  : 'js'
     dtsDir : 'definitions'
     mapDir : 'maps'
+  docs:
+    base   : 'docs'
+    refsDir: 'reference'
 testDir:
   srcDir:
     base   : 'test'
