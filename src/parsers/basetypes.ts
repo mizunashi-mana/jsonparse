@@ -9,6 +9,7 @@ import {
 import {
   ParseResult,
   SuccessObjType,
+  mapFailure,
 } from "../parseresult/result";
 
 import {
@@ -81,10 +82,9 @@ function prconcat<T>(
     res2: ParseResult<T>,
     index: number
   ) => res1.caseOf(
-    (l1) => res2.caseOf((l2) => ParseResult.fail<T[]>({
-      value: l1.value.addChild(buildErrorChild(index, l2.value)),
-      flags: l1.flags,
-    }), (r2) => ParseResult.fail<T[]>(l1)),
+    (l1) => res2.caseOf((l2) => ParseResult.fail<T[]>(
+      mapFailure((s) => s.addChild(buildErrorChild(index, l2.value)), l1)
+    ), (r2) => ParseResult.fail<T[]>(l1)),
     (r1) => res2.caseOf((l2) => makeFailureP<Object, T[]>(
       sObj,
       "failed to parse elem of 'array'", "array",

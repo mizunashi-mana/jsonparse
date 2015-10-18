@@ -9,6 +9,7 @@ import {clone} from "../lib/util/util";
 import {
   ParseResult,
   SuccessObjType,
+  mapFailure,
 } from "../parseresult/result";
 
 import {
@@ -28,10 +29,9 @@ function probjconcat(
     res2: ParseResult<[string, any]>,
     index: number
   ) => res1.caseOf(
-    (l1) => res2.caseOf((l2) => ParseResult.fail<{[key: string]: any}>({
-      value: l1.value.addChild(pnames[index], l2.value),
-      flags: sObj.flags,
-    }), (r2) => ParseResult.fail<{[key: string]: any}>(l1)),
+    (l1) => res2.caseOf((l2) => ParseResult.fail<{[key: string]: any}>(
+      mapFailure((s) => s.addChild(pnames[index], l2.value), l1)
+    ), (r2) => ParseResult.fail<{[key: string]: any}>(l1)),
     (r1) => res2.caseOf((l2) => makeFailureP<Object, {[key: string]: any}>(
       sObj,
       "failed to parse elem of 'object'", "object",

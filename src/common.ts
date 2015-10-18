@@ -6,15 +6,13 @@ import {
 import {
   ParseResult,
   SuccessObjType,
+  mapSuccess,
 } from "./parseresult/result";
 
 export type ParseFunc<T, U> = (obj: SuccessObjType<T>) => ParseResult<U>;
 
 export function makeSuccess<T, U>(obj: SuccessObjType<T>, convObj: U) {
-  return ParseResult.success<U>({
-    value: convObj,
-    flags: obj.flags,
-  });
+  return ParseResult.success(mapSuccess((v) => convObj, obj));
 }
 
 export function makeFailure<T, U>(obj: SuccessObjType<T>, msg?: string, exp?: string, childs?: ParseErrorNode[]) {

@@ -2,6 +2,7 @@ import {
   FailObjType,
   SuccessObjType,
   ParseResult,
+  mapFailure,
 } from "../parseresult/result";
 
 import {
@@ -47,10 +48,9 @@ export function descParser<T, U>(fail: {
 }, parser: Parser<T, U>) {
   return new Parser<T, U>((obj) => {
     const res = parser.parse(obj);
-    return res.caseOf((l) => ParseResult.fail<U>({
-      value: l.value.desc(fail.msg, fail.expected),
-      flags: l.flags,
-    }), (r) => ParseResult.success(r));
+    return res.caseOf((l) => ParseResult.fail<U>(
+      mapFailure((s) => s.desc(fail.msg, fail.expected), l)
+    ), (r) => ParseResult.success(r));
   });
 }
 
@@ -73,10 +73,9 @@ export function descFromExpectedParser<T, U>(expected: (string|string[]), parser
   return new Parser<T, U>((obj) => {
     const msg = createMsgFromExpected(obj, exps);
     const res = parser.parse(obj);
-    return res.caseOf((l) => ParseResult.fail<U>({
-      value: l.value.desc(msg, expsStr),
-      flags: l.flags,
-    }), (r) => ParseResult.success(r));
+    return res.caseOf((l) => ParseResult.fail<U>(
+      mapFailure((s) => s.desc(msg, expsStr), l)
+    ), (r) => ParseResult.success(r));
   });
 }
 
