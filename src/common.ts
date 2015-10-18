@@ -10,10 +10,7 @@ import {
 } from "./parseresult/result";
 
 /**
- * base function type of {@link Parser}
- *
- * @param obj source success object
- * @returns result parsed source object (success or failure)
+ * base function type of [[Parser]]
  */
 export type ParseFunc<T, U> = (obj: SuccessObjType<T>) => ParseResult<U>;
 
@@ -49,24 +46,31 @@ export function makeFailure<T, U>(obj: SuccessObjType<T>, msg?: string, exp?: st
 }
 
 /**
- * alias function type of {@link ParseFunc} for {@link mapParseResult}
- *
- * @param obj source success value
- * @returns result parsed source value
+ * alias function type of [[ParseFunc]] for [[mapParseResult]]
  */
 export type MapperParseResult<T, U> = (obj: T) => ParseResult<U>;
 
 /**
- * wrapper and builder for {@link ParseFunc}
+ * make success function type for [[mapParseResult]]
+ */
+export type ReceiveMakeSuccess<U> = (obj: U) => ParseResult<U>;
+
+/**
+ * make failure function type for [[mapParseResult]]
+ */
+export type ReceiveMakeFailure<U> = (msg: string, exp?: string) => ParseResult<U>;
+
+/**
+ * wrapper and builder for [[ParseFunc]]
  *
- * @param f receive makeSuccess and makeFailure and create parse function for {@link Parser}
- * @returns parse function for {@link Parser}
+ * @param f receive makeSuccess and makeFailure and create parse function for [[Parser]]
+ * @returns parse function for [[Parser]]
  * @param T source object type
  * @param U converted object type
  */
 export function mapParseResult<T, U>(f: (
-  mkS: (convObj: U) => ParseResult<U>,
-  mkF: (msg: string, exp?: string) => ParseResult<U>
+  mkS: ReceiveMakeSuccess<U>,
+  mkF: ReceiveMakeFailure<U>
 ) => MapperParseResult<T, U>): ParseFunc<T, U> {
   return (obj) => f(
     (convObj: U) => makeSuccess<T, U>(obj, convObj),
@@ -75,7 +79,7 @@ export function mapParseResult<T, U>(f: (
 }
 
 /**
- * Parser class including parse function ({@link ParseFunc})
+ * Parser class including parse function ([[ParseFunc]])
  *
  * @param T source object type
  * @param U converted object type

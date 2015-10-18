@@ -1,29 +1,35 @@
 import {ParseErrorStocker} from "./parseerr";
 
-import {clone} from "../lib/util/util";
+import {id} from "../lib/util/ts-util";
 
+/**
+ * Result types
+ */
 export enum ResultType {Success, Failure}
 
 export type ResultFlagType = {
+  /**
+   * is this parser reporting finally?
+   */
   isReport: boolean;
 };
 
 export interface BaseObjType {
   flags: ResultFlagType;
 }
+
+/**
+ * parser's object type on fail
+ */
 export interface FailObjType extends BaseObjType {
   value:  ParseErrorStocker;
 }
+
+/**
+ * parser's object type on success
+ */
 export interface SuccessObjType<S> extends BaseObjType {
   value: S;
-}
-
-export function id<T>(a: T) {
-  return clone(a, true);
-}
-
-export function exists<T>(a: T) {
-  return a !== null && a !== undefined;
 }
 
 export function mapSuccess<S, T>(f: (s: S) => T, v: SuccessObjType<S>) {
@@ -40,6 +46,11 @@ export function mapFailure(f: (s: ParseErrorStocker) => ParseErrorStocker, v: Fa
   };
 }
 
+/**
+ * Parse result class (like either)
+ *
+ * @param S parsed value type
+ */
 export class ParseResult<S> {
   private t: ResultType;
   private lv: FailObjType;
@@ -51,14 +62,32 @@ export class ParseResult<S> {
     this.rv = success;
   }
 
+  /**
+   * create success result
+   *
+   * @param value of success
+   * @returns success parse result
+   */
   static success<S>(value: SuccessObjType<S>) {
     return new ParseResult<S>(ResultType.Success, undefined, value);
   }
 
+  /**
+   * create fail result
+   *
+   * @param value of fail
+   * @returns fail parse result
+   */
   static fail<S>(value: FailObjType) {
     return new ParseResult<S>(ResultType.Failure, value);
   }
 
+  /**
+   * create function merging two result value
+   *
+   * @param f merge function
+   * @returns safe function merging two result value
+   */
   static bind2<T1, T2, T3>(
     f: (arg1: SuccessObjType<T1>, arg2: SuccessObjType<T2>) => ParseResult<T3>
   ) {
@@ -74,10 +103,21 @@ export class ParseResult<S> {
     };
   }
 
+  /**
+   * check this result is success
+   *
+   * @returns is this success
+   */
   isSuccess(): boolean {
     return this.t === ResultType.Success;
   }
 
+  /**
+   * bind result
+   *
+   * @param f bind function
+   * @returns fail on fail and bind value on success
+   */
   chain<T>(f: (r: SuccessObjType<S>) => ParseResult<T>) {
     return this.isSuccess()
       ? f(this.rv)
@@ -85,14 +125,33 @@ export class ParseResult<S> {
       ;
   }
 
+  /**
+   * unit result
+   *
+   * @param t unit value
+   * @returns success include unit value
+   */
   of<T>(t: SuccessObjType<T>) {
     return ParseResult.success<T>(t);
   }
 
+  /**
+   * fmap result
+   *
+   * @param f map function
+   * @returns fail on fail and map value on success
+   */
   lift<T>(f: (r: SuccessObjType<S>) => SuccessObjType<T>) {
     return this.chain((val) => this.of<T>(f(val)));
   }
 
+  /**
+   * convert fail to success
+   * My sad is not existing pattern match...
+   *
+   * @param f catch function
+   * @returns this value on success and converted success value on fail
+   */
   catch(f: (l: FailObjType) => SuccessObjType<S>) {
     return ParseResult.success<S>(
       this.isSuccess()
@@ -101,6 +160,9 @@ export class ParseResult<S> {
     );
   }
 
+  /**
+   * no comment
+   */
   caseOf<T>(
     fl: (l: FailObjType) => T,
     fr: (r: SuccessObjType<S>) => T
@@ -111,6 +173,9 @@ export class ParseResult<S> {
       ;
   }
 
+  /**
+   * clone this object
+   */
   clone() {
     return this.isSuccess()
       ? ParseResult.success<S>(id(this.rv))
