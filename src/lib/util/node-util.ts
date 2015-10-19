@@ -4,10 +4,22 @@ import * as fs from "fs";
 import * as path from "path";
 import * as CSON from "cson";
 
+/**
+ * convert JSON string to JSON object
+ *
+ * @param jsonStr JSON string
+ * @returns converted JSON object
+ */
 export function parseJSONString(jsonStr: string): Object {
   return JSON.parse(jsonStr);
 }
 
+/**
+ * convert CSON string to JSON object
+ *
+ * @param csonStr CSON string
+ * @returns converted JSON object
+ */
 export function parseCSONString(csonStr: string): Object {
   const res = CSON.parseCSONString(csonStr);
   if (res instanceof Error) {
@@ -16,16 +28,34 @@ export function parseCSONString(csonStr: string): Object {
   return res;
 }
 
+/**
+ * convert JSON file to JSON object
+ *
+ * @param filename JSON file name
+ * @returns converted JSON object
+ */
 export function parseJSONFile(filename: string): Object {
   return parseJSONString(fs.readFileSync(filename).toString());
 }
 
+/**
+ * convert CSON file to JSON object
+ *
+ * @param filename CSON file name
+ * @returns converted JSON object
+ */
 export function parseCSONFile(filename: string): Object {
   return parseCSONString(fs.readFileSync(filename).toString());
 }
 
 enum ResultType { Left, Right }
 
+/**
+ * SONParseResult stocker (like Either)
+ *
+ * @param L left type
+ * @param R right type
+ */
 class SONParseResult<L, R> {
   private t: ResultType;
   private lv: L;
@@ -87,53 +117,72 @@ class SONParseResult<L, R> {
 
 }
 
-export function parseSONFileSync(filename: string): Object {
-  const extname = path.extname(filename);
-  const fcontent = fs.readFileSync(filename).toString();
-  if (extname === ".json") {
-    return parseJSONString(fcontent);
-  } else if (extname === ".cson") {
-    return parseCSONString(fcontent);
-  } else {
-    const result = SONParseResult.right<Object, string>(fcontent)
-      .trycatch(parseJSONString)
-      .trycatch(parseCSONString);
+/**
+ * SON file table for [[parseSONFile]]
+ */
+const parseSONTable: [string, (content: string) => Object][] = [
+  ["json", parseJSONString],
+  ["cson", parseCSONString],
+];
 
-    if (result.isRight()) {
-      throw new Error(`${filename} is not parsable file`);
-    }
-    return result.value(undefined);
+/**
+ * helper function of parse file content
+ *
+ * @param filename file name
+ * @param content file content
+ * @returns parse result from [[parseSONTable]]
+ */
+function parseSONContent(filename: string, content: string): SONParseResult<Object, string> {
+  const sResult = parseSONTable.map((e) => "." + e[0]).indexOf(path.extname(filename));
+  if (sResult >= 0){
+    return SONParseResult.left<Object, string>(parseSONTable[sResult][1](content));
+  } else {
+    return parseSONTable.reduce(
+      (p, c) => p.trycatch(c[1]),
+      SONParseResult.right<Object, string>(content)
+    );
   }
 }
 
+/**
+ * parsing SON file synchlonized
+ *
+ * @param filename file name for parsing
+ * @returns parsed JSON object
+ */
+export function parseSONFileSync(filename: string): Object {
+  const fcontent = fs.readFileSync(filename).toString();
 
+  const result = parseSONContent(filename, fcontent);
+  if (result.isRight()) {
+    throw new Error(`${filename} is not parsable son file`);
+  }
+  return result.value(undefined);
+}
+
+/**
+ * parsing SON file
+ *
+ * @param fname file name for parsing
+ * @param cb callback for parsing result
+ * @param cb.e error object on fail and undefined on success
+ * @param cb.obj success object
+ */
 export function parseSONFile(fname: string, cb: (e: any, obj: Object) => any): void {
   fs.readFile(fname, (err: NodeJS.ErrnoException, data: Buffer) => {
-    const fcontent = data.toString();
     if (err) {
-      cb(err, undefined);
+      return cb(err, undefined);
     }
-    const ename = path.extname(fname);
-    let result: Object;
-    try {
-      if (ename === ".json") {
-        result = parseJSONString(fcontent);
-      } else if (ename === ".cson") {
-        result = parseCSONString(fcontent);
-      } else {
-        const pResult = SONParseResult.right<Object, string>(fcontent)
-          .trycatch(parseJSONString)
-          .trycatch(parseCSONString);
 
-        if (pResult.isRight()) {
-          throw new Error(`${fname} is not parsable file`);
-        }
-        result = pResult.value(undefined);
+    try {
+      const result = parseSONContent(fname, data.toString());
+      if (result.isRight()) {
+        throw new Error(`${fname} is not parsable son file`);
       }
-      cb(undefined, result);
+
+      return cb(undefined, result);
     } catch (e) {
-      cb(e, undefined);
+      return cb(e, undefined);
     }
   });
-
 }

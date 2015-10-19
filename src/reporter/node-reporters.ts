@@ -7,6 +7,12 @@ import {
   ParseErrorStocker,
 } from "../parseresult/parseerr";
 
+/**
+ * converting string for [[propertyJoin]] or more...
+ *
+ * @param pname property name
+ * @returns converted string
+ */
 function convertPropertyNameForConcat(pname: string) {
   return pname[0] === "["
     ? pname
@@ -14,10 +20,24 @@ function convertPropertyNameForConcat(pname: string) {
     ;
 }
 
+/**
+ * properties join function
+ *
+ * @param base base property
+ * @param pname property child name
+ * @returns joined property
+ */
 function propertyJoin(base: string, pname: string) {
   return base === "" ? pname : base + convertPropertyNameForConcat(pname);
 }
 
+/**
+ * A builder of reporter with nested show
+ *
+ * @param logFunc print function for log
+ * @param depth depth count (if not set, all logged)
+ * @returns nested show reporter
+ */
 export function nestReporter(
   logFunc: (msg: string) => any,
   depth?: number

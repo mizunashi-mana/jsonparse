@@ -16,14 +16,30 @@ import {
   ParseErrorStocker
 } from "../parseresult/parseerr";
 
-function probjconcat(
-  pnames: string[],
-  sObj: SuccessObjType<Object>
-): (
+/**
+ * A concat function of object parse results
+ *
+ * @param ObjectResultConcat.res1 previous returned last function
+ * @param ObjectResultConcat.res2 current parsed result
+ * @param ObjectResultConcat.index current index
+ */
+type ObjectResultConcat = (
   res1: ParseResult<{[key: string]: any}>,
   res2: ParseResult<[string, any]>,
   index: number
-) => ParseResult<{[key: string]: any}> {
+) => ParseResult<{[key: string]: any}>;
+
+/**
+ * A builder of concat function of object parse results
+ *
+ * @param pnames property names for report error
+ * @param sObj target success object
+ * @returns concat function of object parse results
+ */
+function probjconcat(
+  pnames: string[],
+  sObj: SuccessObjType<Object>
+): ObjectResultConcat {
   return (
     res1: ParseResult<{[key: string]: any}>,
     res2: ParseResult<[string, any]>,
@@ -44,6 +60,14 @@ function probjconcat(
   );
 }
 
+/**
+ * A type parse function of object has the properties
+ *
+ * @param obj target object with type safe
+ * @param parser a parser for parsing each elements of object
+ * @param sObj target success object
+ * @returns result of object
+ */
 function parsePropertiesObj<T>(
   obj: {[key: string]: any},
   props: [string, Parser<Object, any>][],
@@ -84,6 +108,12 @@ function parsePropertiesObj<T>(
     );
 }
 
+/**
+ * A build of type parser of object has specify properties
+ *
+ * @param props property list
+ * @returns result of check has properties
+ */
 export function hasPropertiesObj<T>(
   props: [string, Parser<Object, any>][]
 ) {

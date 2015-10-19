@@ -30,7 +30,7 @@ export class ParseErrorStocker {
   ) {
     this.innerMsg = "this is not parsable";
     this.innerExpected = "unknown";
-    this.innerActual = typeof undefined;
+    this.innerActual = "<unknown>";
     if (typeof arg1 !== "string") {
       this.innerChilds = typeof arg1 === "undefined" ? [] : arg1;
     } else if (typeof arg2 !== "string") {

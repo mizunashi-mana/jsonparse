@@ -111,7 +111,7 @@ module.exports = (gulp, $, conf) ->
           .pipe gulp.dest paths.distDir.debug.base
       ]
 
-  gulp.task 'build', [
-    'build:doc'
-    'build:tjs'
-  ]
+  gulp.task 'build', if runOptions.production then ['build:tjs'] else [
+      'build:doc'
+      'build:tjs'
+    ]
