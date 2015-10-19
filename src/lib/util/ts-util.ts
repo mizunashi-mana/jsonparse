@@ -1,7 +1,7 @@
 import {clone} from "./util";
 
 /**
- * builder of repeat string
+ * A builder of repeat string
  *
  * @param count repeat count
  * @param str source string
@@ -16,7 +16,7 @@ export function repeat(count: number, str: string): string {
 }
 
 /**
- * escape string for regexp
+ * A builder of escape string for regexp
  *
  * @param str source string
  * @returns escaping source
@@ -26,7 +26,8 @@ export function escapeRegExp(str: string) {
 }
 
 /**
- * id wrapper
+ * Id wrapper
+ *
  * @param a source object
  * @returns clone object of source
  */
@@ -35,7 +36,8 @@ export function id<T>(a: T) {
 }
 
 /**
- * is value exists
+ * A checker value exists
+ *
  * @param a source object
  * @returns is exists
  */

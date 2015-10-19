@@ -96,6 +96,10 @@ export class ParseErrorStocker {
    * report this error with report function
    *
    * @param f report function
+   * @param f.msg failure message
+   * @param f.exp expected type
+   * @param f.act actual value
+   * @param f.childs child nodes of result
    */
   report(f: (msg: string, exp?: string, act?: string, childs?: ParseErrorNode[]) => any): void {
     f(this.innerMsg, this.innerExpected, this.innerActual, this.innerChilds);

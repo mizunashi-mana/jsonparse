@@ -5,8 +5,16 @@ import {id} from "../lib/util/ts-util";
 /**
  * Result types
  */
-export enum ResultType {Success, Failure}
+export enum ResultType {
+  /** Success Type for converting */
+  Success,
+  /** Failure Type for nothing */
+  Failure,
+}
 
+/**
+ * Result flags
+ */
 export type ResultFlagType = {
   /**
    * is this parser reporting finally?
@@ -85,7 +93,9 @@ export class ParseResult<S> {
   /**
    * create function merging two result value
    *
-   * @param f merge function
+   * @param f merge function return merge result
+   * @param f.arg1 first success result
+   * @param f.arg2 second success result
    * @returns safe function merging two result value
    */
   static bind2<T1, T2, T3>(
@@ -116,6 +126,7 @@ export class ParseResult<S> {
    * bind result
    *
    * @param f bind function
+   * @param f.r this success object
    * @returns fail on fail and bind value on success
    */
   chain<T>(f: (r: SuccessObjType<S>) => ParseResult<T>) {
@@ -139,6 +150,7 @@ export class ParseResult<S> {
    * fmap result
    *
    * @param f map function
+   * @param f.r this success object
    * @returns fail on fail and map value on success
    */
   lift<T>(f: (r: SuccessObjType<S>) => SuccessObjType<T>) {
@@ -150,6 +162,7 @@ export class ParseResult<S> {
    * My sad is not existing pattern match...
    *
    * @param f catch function
+   * @param f.l this failure object
    * @returns this value on success and converted success value on fail
    */
   catch(f: (l: FailObjType) => SuccessObjType<S>) {
@@ -183,6 +196,12 @@ export class ParseResult<S> {
       ;
   }
 
+　/**
+   * type safe get success value
+   *
+   * @param def default value
+   * @returns return this value on success and default value on fail
+   */
   valueSuccess(def: SuccessObjType<S>): SuccessObjType<S> {
     return this.isSuccess()
       ? this.rv
@@ -190,6 +209,12 @@ export class ParseResult<S> {
       ;
   }
 
+  /**
+   * type safe get failure value
+   *
+   * @param def default value
+   * @returns return this failure on fail and default value on success
+   */
   valueFailure(def: FailObjType): FailObjType {
     return this.isSuccess()
       ? def
