@@ -75,6 +75,13 @@ export function nestReporter(
   return reportF("this", 0, "", true);
 }
 
+/**
+ * A builder of reporter with listed show
+ *
+ * @param logFunc print function for log
+ * @param depth depth count (if not set, all logged)
+ * @returns listed show reporter
+ */
 export function listReporter(
   logFunc: (msg: string) => any,
   depth?: number
@@ -96,6 +103,15 @@ export function listReporter(
   return reportF("this", "", 0);
 }
 
+/**
+ * A builder of reporter with json show
+ *
+ * @param logFunc print function for log
+ * @param flags reporter options
+ * @param flags.isOneLine is report one line (default: false)
+ * @param depth depth count (if not set, all logged)
+ * @returns json show reporter
+ */
 export function jsonReporter(
   logFunc: (msg: string) => any,
   flags?: {
