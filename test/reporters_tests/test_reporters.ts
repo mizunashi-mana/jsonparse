@@ -7,11 +7,14 @@ import {
 
 import * as sonparse from "../../lib/";
 const {
+  ConfigParseError,
+} = sonparse;
+
+const {
   nestReporter,
   listReporter,
   jsonReporter,
-  ConfigParseError,
-} = sonparse;
+} = sonparse.Reporters;
 
 describe("reporters test", () => {
   function assertDataWithReport<T, U>(data: {

@@ -12,8 +12,11 @@ const {
   ConfigParseError,
   parseFile,
   parseFileWithStatus,
-  nestReporter,
 } = sonparse;
+
+const {
+  nestReporter,
+} = sonparse.Reporters;
 
 describe("parse methods test", () => {
 
@@ -78,7 +81,7 @@ describe("parse methods test", () => {
       assertThrow(() => parseFile(resolvePath("data/invalid.cson"), sonparse.object), Error);
       assertThrow(() => parseFile(resolvePath("data/nosuchfile"), sonparse.object), Error);
       assertThrow(() => parseFile(resolvePath("data/normal.txt"), sonparse.object),
-        Error, `${resolvePath("data/normal.txt")} is not parsable file`);
+        Error, `${resolvePath("data/normal.txt")} is not parsable son file`);
       assertThrow(() => parseFile(resolvePath("data/valid.json"), sonparse.boolean), ConfigParseError);
     });
 
