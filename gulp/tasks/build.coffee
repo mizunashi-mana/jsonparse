@@ -11,7 +11,20 @@ module.exports = (gulp, $, conf) ->
     $.typescript.createProject paths.tsconf, tsOptions
 
   gulp.task 'build:doc', ->
-    throw new Error 'not implement!'
+    tsConfig = require paths.tsconf
+
+    gulp.src [
+      paths.srcDir.srcTs
+      paths.srcDir.srcDts
+    ]
+      .pipe $.typedoc
+        module: tsConfig.compilerOptions.module
+        target: tsConfig.compilerOptions.target
+        includeDeclarations: true
+        out: paths.distDir.docs.refsDir
+        name: pkgInfo.name
+        version: true
+        verbose: true
 
   gulp.task 'build:ts', ->
     reqSMapFilter = $.filter [
@@ -98,7 +111,7 @@ module.exports = (gulp, $, conf) ->
           .pipe gulp.dest paths.distDir.debug.base
       ]
 
-  gulp.task 'build', [
-    #'build:doc'
-    'build:tjs'
-  ]
+  gulp.task 'build', if runOptions.production then ['build:tjs'] else [
+      'build:doc'
+      'build:tjs'
+    ]

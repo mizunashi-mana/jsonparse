@@ -9,6 +9,7 @@ import {
 import {
   ParseResult,
   SuccessObjType,
+  mapFailure,
 } from "../parseresult/result";
 
 import {
@@ -19,6 +20,16 @@ import {
   descFromExpectedParser
 } from "./baseparsers";
 
+/**
+ * Wrapper for type parsers
+ *
+ * @param f type parse function
+ * @param f.mkS make success function
+ * @param f.mkS.convObj success value of result
+ * @param f.mkF make fail function
+ * @param expected expected type or types
+ * @returns a type parser with custom parsing
+ */
 function buildTypeParser<T>(f: (
     mkS: (convObj: T) => ParseResult<T>,
     mkF: () => ParseResult<T>
@@ -29,6 +40,11 @@ function buildTypeParser<T>(f: (
   return descFromExpectedParser(expected, innerParser);
 }
 
+/**
+ * A builder of number type parser
+ *
+ * @returns number type parser
+ */
 export function isNumber() {
   return buildTypeParser<number>((makeSuccess, makeFailure) => {
     return (obj) => {
@@ -41,6 +57,11 @@ export function isNumber() {
   }, "number");
 }
 
+/**
+ * A builder of string type parser
+ *
+ * @returns string type parser
+ */
 export function isString() {
   return buildTypeParser<string>((makeSuccess, makeFailure) => {
     return (obj) => {
@@ -53,6 +74,11 @@ export function isString() {
   }, "string");
 }
 
+/**
+ * A builder of boolean type parser
+ *
+ * @returns boolean type parser
+ */
 export function isBoolean() {
   return buildTypeParser<boolean>((makeSuccess, makeFailure) => {
     return (obj) => {
@@ -65,26 +91,47 @@ export function isBoolean() {
   }, "boolean");
 }
 
+/**
+ * create error node of array from index
+ *
+ * @param i index of array
+ * @param fl error value in array
+ * @returns error node of array
+ */
 function buildErrorChild(i: number, fl: ParseErrorStocker) {
   return <[string, ParseErrorStocker]>[`[${i}]`, fl];
 }
 
-function prconcat<T>(
-  sObj: SuccessObjType<Object>
-): (
+/**
+ * A concat function of array parse results
+ *
+ * @param ArrayResultConcat.res1 previous returned last function
+ * @param ArrayResultConcat.res2 current parsed result
+ * @param ArrayResultConcat.index current index
+ */
+type ArrayResultConcat<T> = (
   res1: ParseResult<T[]>,
   res2: ParseResult<T>,
   index: number
-) => ParseResult<T[]> {
+) => ParseResult<T[]>;
+
+/**
+ * A builder of concat function of array parse results
+ *
+ * @param sObj target success object
+ * @returns concat function of array parse results
+ */
+function prconcat<T>(
+  sObj: SuccessObjType<Object>
+): ArrayResultConcat<T> {
   return (
     res1: ParseResult<T[]>,
     res2: ParseResult<T>,
     index: number
   ) => res1.caseOf(
-    (l1) => res2.caseOf((l2) => ParseResult.fail<T[]>({
-      value: l1.value.addChild(buildErrorChild(index, l2.value)),
-      flags: l1.flags,
-    }), (r2) => ParseResult.fail<T[]>(l1)),
+    (l1) => res2.caseOf((l2) => ParseResult.fail<T[]>(
+      mapFailure((s) => s.addChild(buildErrorChild(index, l2.value)), l1)
+    ), (r2) => ParseResult.fail<T[]>(l1)),
     (r1) => res2.caseOf((l2) => makeFailureP<Object, T[]>(
       sObj,
       "failed to parse elem of 'array'", "array",
@@ -93,6 +140,14 @@ function prconcat<T>(
   );
 }
 
+/**
+ * A type parse function of array object
+ *
+ * @param arr target object with type safe
+ * @param parser a parser for parsing each elements of array
+ * @param sObj target success object
+ * @returns result of array
+ */
 function parseArrayObj<T>(
   arr: Object[],
   parser: Parser<Object, T>,
@@ -118,6 +173,12 @@ function parseArrayObj<T>(
     .reduce(prconcat(sObj), makeSuccessP(sObj, <T[]>[]));
 }
 
+/**
+ * A builder of array type parser
+ *
+ * @param parser for parsing elements
+ * @returns array type parser
+ */
 export function isArray<T>(parser: Parser<Object, T>) {
   return new Parser<Object, T[]>((obj) => {
     const value = obj.value;
@@ -130,6 +191,13 @@ export function isArray<T>(parser: Parser<Object, T>) {
   });
 }
 
+/**
+ * A builder of object type parser
+ *
+ * Object do not include Array
+ *
+ * @returns object type parser
+ */
 export function isObject() {
   return buildTypeParser<Object>((makeSuccess, makeFailure) => {
     return (obj) => {
@@ -142,6 +210,12 @@ export function isObject() {
   }, "object");
 }
 
+/**
+ * A builder of nothing type parser; nothing is not exist value (null and undefined)
+ *
+ * @param value success value
+ * @returns nothing type parser returned default value on success
+ */
 export function isNothing<T>(value: T) {
   return buildTypeParser<T>((makeSuccess, makeFailure) => {
     return (obj) => {

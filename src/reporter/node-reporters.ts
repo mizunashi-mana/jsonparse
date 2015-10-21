@@ -7,6 +7,12 @@ import {
   ParseErrorStocker,
 } from "../parseresult/parseerr";
 
+/**
+ * converting string for [[propertyJoin]] or more...
+ *
+ * @param pname property name
+ * @returns converted string
+ */
 function convertPropertyNameForConcat(pname: string) {
   return pname[0] === "["
     ? pname
@@ -14,10 +20,24 @@ function convertPropertyNameForConcat(pname: string) {
     ;
 }
 
+/**
+ * properties join function
+ *
+ * @param base base property
+ * @param pname property child name
+ * @returns joined property
+ */
 function propertyJoin(base: string, pname: string) {
   return base === "" ? pname : base + convertPropertyNameForConcat(pname);
 }
 
+/**
+ * A builder of reporter with nested show
+ *
+ * @param logFunc print function for log
+ * @param depth depth count (if not set, all logged)
+ * @returns nested show reporter
+ */
 export function nestReporter(
   logFunc: (msg: string) => any,
   depth?: number
@@ -55,6 +75,13 @@ export function nestReporter(
   return reportF("this", 0, "", true);
 }
 
+/**
+ * A builder of reporter with listed show
+ *
+ * @param logFunc print function for log
+ * @param depth depth count (if not set, all logged)
+ * @returns listed show reporter
+ */
 export function listReporter(
   logFunc: (msg: string) => any,
   depth?: number
@@ -76,6 +103,15 @@ export function listReporter(
   return reportF("this", "", 0);
 }
 
+/**
+ * A builder of reporter with json show
+ *
+ * @param logFunc print function for log
+ * @param flags reporter options
+ * @param flags.isOneLine is report one line (default: false)
+ * @param depth depth count (if not set, all logged)
+ * @returns json show reporter
+ */
 export function jsonReporter(
   logFunc: (msg: string) => any,
   flags?: {
