@@ -44,7 +44,14 @@ import {
 
 import {
   ParseErrorNode,
+  ParseErrorStocker,
 } from "./parseresult/parseerr";
+
+import {
+  nestReporter,
+  listReporter,
+  jsonReporter,
+} from "./reporter/node-reporters";
 
 /**
  * Error class of ConfigParser
@@ -288,8 +295,9 @@ export class ConfigParser<T, U> {
    */
   parseWithReporter(
     obj: T,
-    reporter: ReporterType
+    reporter?: ReporterType
   ): U {
+    const reporterF = typeof reporter === "undefined" ? nestReporter(console.log) : reporter;
     const res = this.parser.parse({
       value: obj,
       flags: {
@@ -300,7 +308,7 @@ export class ConfigParser<T, U> {
       return res.valueSuccess(undefined).value;
     } else {
       res.valueFailure(undefined).value.report((msg, exp, act, childs) => {
-        reporter(msg, exp, act, childs);
+        reporterF(msg, exp, act, childs);
         throw new ConfigParseError(msg);
       });
     }
@@ -376,11 +384,25 @@ export function custom<T, U>(fn: (
   return new ConfigParser(customParser(fn));
 }
 
+/**
+ * parse son file with object parser
+ *
+ * @param fname target son file name
+ * @param parser custom parser using to parse
+ * @returns result of parsed
+ */
 export function parseFile<T>(fname: string, parser: ConfigParser<Object, T>): T {
   const obj = parseSONFileSync(fname);
   return parser.parse(obj);
 }
 
+/**
+ * parse son file using object parser with status
+ *
+ * @param fname target son file name
+ * @param parser custom parser using to parse
+ * @returns result of parsed with status
+ */
 export function parseFileWithStatus<T>(fname: string, parser: ConfigParser<Object, T>): {
   status: boolean;
   value?: T
@@ -395,10 +417,25 @@ export function parseFileWithStatus<T>(fname: string, parser: ConfigParser<Objec
   }
 }
 
+/**
+ * reporter type
+ *
+ * @param ReporterType.msg failure message
+ * @param ReporterType.exp expected type
+ * @param ReporterType.act actual object
+ * @param ReporterType.childs nodes of error
+ */
 export type ReporterType = (msg: string, exp?: string, act?: string, childs?: ParseErrorNode[]) => void;
 
-export {
+/**
+ * any reporters
+ */
+export const Reporters = {
+  /** a reporter with nested show */
   nestReporter,
+  /** a reporter with listed show */
   listReporter,
+  /** a reporter with json show */
   jsonReporter,
-} from "./reporter/node-reporters";
+  ParseErrorStocker,
+};
