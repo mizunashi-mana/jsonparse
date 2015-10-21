@@ -21,7 +21,7 @@ a = sparse.base.parse({});
 
 ## boolean parser
 
-This parser is check that the type of target object is `boolean`.
+This parser checks that the type of target object is `boolean`.
 
 ```javascript
 var sparse = require("sonparser");
@@ -40,7 +40,7 @@ a = sparse.boolean.parse("true"); // throw Error
 
 ## number parser
 
-This parser is check that the type of target object is `number`.
+This parser checks that the type of target object is `number`.
 
 ```javascript
 var sparse = require("sonparser");
@@ -59,7 +59,7 @@ a = sparse.number.parse("10"); // throw Error
 
 ## string parser
 
-This parser is check that the type of target object is `string`.
+This parser checks that the type of target object is `string`.
 
 ```javascript
 var sparse = require("sonparser");
@@ -81,7 +81,7 @@ a = sparse.string.parse(10); // throw Error
 
 ## object parser
 
-This parser is check that the type of target object is `object`.
+This parser checks that the type of target object is `object`.
 
 In this library, `array` is not included `object`. So, this parser will throw Error.  
 
@@ -107,7 +107,7 @@ a = sparse.object.parse([0,1]); // throw Error
 
 ## array parser
 
-This parser is check the type of target object is `array` and convert each elements as element type using receive parser for elements.
+This parser checks the type of target object is `array` and convert each elements as element type using receive parser for elements.
 
 ```javascript
 var sparse = require("sonparser");
