@@ -47,7 +47,7 @@ var MyConvertParseFunc = function(makeSuccess, makeFailure) {
         case "off":
           return makeSuccess(false);
       }
-      return makeFailure("${JSON.stringify(obj)} is not flag string", "flag string(yes/no)");
+      return makeFailure(JSON.stringify(obj) + " is not flag string", "flag string(yes/no)");
     } else {
       return makeFailure("this is not bool object", "bool object");
     }
