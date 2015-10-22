@@ -51,8 +51,8 @@ var MyConvertParseFunc = function(makeSuccess, makeFailure) {
     } else {
       return makeFailure("this is not bool object", "bool object");
     }
-  }
-}
+  };
+};
 var MyConvertParser = sparse.custom(MyConvertParseFunc);
 
 a = MyConvertParser.parse(true); // success
@@ -128,7 +128,7 @@ a = MyObjectParser.parse({
     "propEnum": "VAL2",
     "propExtra1": "extra str",
   },
-  "propExtra2": {}
+  "propExtra2": {},
 }); // success
 assert.deepEqual(a, {
   "propBool": true,
