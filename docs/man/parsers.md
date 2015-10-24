@@ -4,8 +4,8 @@
 
 ### Included parsers / parser generators:
 
-| name | API | description |
-|--|--|--|
+| Name | API | Description |
+| --- | --- | --- |
 | [base parser](docs/examples/parsers/base.js) | `sonparser.base` | This parser through target object always as it is.  You can use as method chains root. |
 | [boolean parser](docs/examples/parsers/boolean.js) | `sonparser.boolean` | This parser checks that the type of target object is `boolean`. |
 | [number parser](docs/examples/parsers/number.js) | `sonparser.number` | This parser checks that the type of target object is `number`. |
@@ -17,8 +17,8 @@
 
 ### Parser methods
 
-| name | API | description |
-|--|--|--|
+| Name | API | Description |
+| --- | --- | --- |
 | [or parser gen](docs/examples/parsers/or.js) | `parser.or(otherParser)` | This parser tries `parser`, and if it fails uses `otherParser`. |
 | [and parser gen](docs/examples/parsers/and.js) | `parser.and(otherParser)` | This parser tries `parser`, and parses the result of `parser` using `otherParser`. |
 | [map parser gen](docs/examples/parsers/map.js) | `parser.map(function(result) { return anotherResult; })` | This parser transforms the output of `parser` with the given function. |
