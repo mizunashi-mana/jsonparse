@@ -9,7 +9,7 @@ const IsEvenNatualParser = sparse.custom(function(makeSuccess, makeFailure) {
     if (Number.isInteger(obj) && obj >= 0) {
       return makeSuccess(obj % 2 == 0);
     } else {
-      return makeFailure(obj + " is not natural number", "natural number");
+      return makeFailure(`${obj} is not natural number`, "natural number");
     }
   };
 });

@@ -11,7 +11,7 @@ const boolStrParser = sparse.custom(function(makeSuccess, makeFailure) {
     } else if(["false", "no", "off"].indexOf(obj) != -1) {
       return makeSuccess(false);
     }
-    return makeFailure(JSON.stringify(obj) + " is not bool string", "bool string(yes/no)");
+    return makeFailure(`${JSON.stringify(obj)} is not bool string`, "bool string(yes/no)");
   };
 });
 const convertBoolParser = sparse.boolean.or(boolStrParser);
