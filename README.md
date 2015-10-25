@@ -7,7 +7,7 @@ Safe parser of JSON and CSON for config parsing like ConfigParser of python.
 [![License][license-image]][license-url]
 [![Downloads][downloads-image]][downloads-url]
 
-For more information, view the [documentation](docs/man/).
+For more information, view the [documentation](docs/man/README.md).
 
 ## Status
 
@@ -24,7 +24,7 @@ However, users and reporters are always welcome. And, also developers.
 npm install sonparser --save
 ```
 
-## Usage
+## Quick Example
 
 ```javascript
 var sonparser = require("sonparser");
