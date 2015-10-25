@@ -13,7 +13,7 @@ assert.strictEqual(
 
 flag = "true";
 assert.throws(
-  FlagParser.parse(flag),
+  () => FlagParser.parse(flag),
   sparse.ConfigParseError,
   "`flag` should be boolean object."
 ); // failure with custom description

@@ -66,18 +66,20 @@ assert.deepEqual(MyObjectParser.parse({
 }); // success
 
 assert.throws(
-  MyObjectParser.parse({}),
+  () => MyObjectParser.parse({}),
   sparse.ConfigParseError
 ); // failure
 
-assert.throws(MyObjectParser.parse({
+assert.throws(
+  () => MyObjectParser.parse({
     "propBool": true,
     "propStr": "str",
   }),
   sparse.ConfigParseError
 ); // failure
 
-assert.throws(MyObjectParser.parse({
+assert.throws(
+  () => MyObjectParser.parse({
     "propBool": true,
     "propNum": 1,
     "propStr": true,
@@ -90,6 +92,6 @@ assert.throws(MyObjectParser.parse({
 ); // failure
 
 assert.throws(
-  MyObjectParser.parse(true),
+  () => MyObjectParser.parse(true),
   sparse.ConfigParseError
 ); // failure

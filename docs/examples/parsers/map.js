@@ -17,6 +17,6 @@ assert.strictEqual(
 ); // success
 
 assert.throws(
-  IsIntegerParser.parse("str"),
+  () => IsIntegerParser.parse("str"),
   sparse.ConfigParseError
 ); // failure

@@ -25,12 +25,12 @@ assert.strictEqual(
 ); // success
 
 assert.throws(
-  MyEnumParser.parse(0),
+  () => MyEnumParser.parse(0),
   sparse.ConfigParseError
 ); // failure
 
 assert.throws(
-  MyEnumParser.parse("str"),
+  () => MyEnumParser.parse("str"),
   sparse.ConfigParseError
 ); // failure
 

@@ -12,11 +12,11 @@ assert.strictEqual(
 ); // success
 
 assert.throws(
-  sparse.boolean.parse(0),
+  () => sparse.boolean.parse(0),
   sparse.ConfigParseError
 ); // failure
 
 assert.throws(
-  sparse.boolean.parse("true"),
+  () => sparse.boolean.parse("true"),
   sparse.ConfigParseError
 ); // failure

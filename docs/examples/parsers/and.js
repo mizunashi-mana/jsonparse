@@ -26,16 +26,16 @@ assert.strictEqual(
 ); // success
 
 assert.throws(
-  IsEvenNaturalNumberParser.parse(-101),
+  () => IsEvenNaturalNumberParser.parse(-101),
   sparse.ConfigParseError
 ); // failure
 
 assert.throws(
-  IsEvenNaturalNumberParser.parse(2.7),
+  () => IsEvenNaturalNumberParser.parse(2.7),
   sparse.ConfigParseError
 ); // failure
 
 assert.throws(
-  IsEvenNaturalNumberParser.parse("str"),
+  () => IsEvenNaturalNumberParser.parse("str"),
   sparse.ConfigParseError
 ); // failure

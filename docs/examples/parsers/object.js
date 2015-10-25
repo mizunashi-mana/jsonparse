@@ -17,21 +17,21 @@ assert.deepEqual(
 ); // success
 
 assert.throws(
-  sparse.object.parse(false),
+  () => sparse.object.parse(false),
   sparse.ConfigParseError
 ); // failure
 
 assert.throws(
-  sparse.object.parse(10),
+  () => sparse.object.parse(10),
   sparse.ConfigParseError
 ); // failure
 
 assert.throws(
-  sparse.object.parse("str"),
+  () => sparse.object.parse("str"),
   sparse.ConfigParseError
 ); // failure
 
 assert.throws(
-  sparse.object.parse([0,1]),
+  () => sparse.object.parse([0,1]),
   sparse.ConfigParseError
 ); // failure

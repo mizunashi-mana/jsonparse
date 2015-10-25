@@ -12,11 +12,11 @@ assert.strictEqual(
 ); // success
 
 assert.throws(
-  sparse.number.parse(false),
+  () => sparse.number.parse(false),
   sparse.ConfigParseError
 ); // failure
 
 assert.throws(
-  sparse.number.parse("10"),
+  () => sparse.number.parse("10"),
   sparse.ConfigParseError
 ); // failure

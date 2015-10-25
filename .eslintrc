@@ -37,7 +37,6 @@ rules:
   no-unused-expressions: [1, { allowShortCircuit: true, allowTernary: true }]
   no-useless-call: 1
   no-useless-concat: 1
-  no-var: 2
   no-void: 1
   quotes: [1, "double", "avoid-escape"]
   vars-on-top: 1

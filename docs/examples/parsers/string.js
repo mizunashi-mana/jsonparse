@@ -17,11 +17,11 @@ assert.strictEqual(
 ); // success
 
 assert.throws(
-  sparse.string.parse(false),
+  () => sparse.string.parse(false),
   sparse.ConfigParseError
 ); // failure
 
 assert.throws(
-  sparse.string.parse(10),
+  () => sparse.string.parse(10),
   sparse.ConfigParseError
 ); // failure

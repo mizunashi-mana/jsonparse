@@ -12,7 +12,7 @@ assert.strictEqual(
  * Catch parser returns last parsed as it is.
  */
 assert.throws(
-  sparse.boolean.catch(function(msg, exp, act) {
+  () => sparse.boolean.catch(function(msg, exp, act) {
     console.log(`Error: ${msg}`);
     console.log(`Error: Expected ${exp}, but actual ${act}.`);
   }).parse("str"),

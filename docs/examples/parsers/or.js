@@ -32,20 +32,16 @@ assert.strictEqual(
 ); // success
 
 assert.throws(
-  convertBoolParser.parse(0),
+  () => convertBoolParser.parse(0),
   sparse.ConfigParseError
 ); // failure
 
 assert.throws(
-  convertBoolParser.parse("str"),
+  () => convertBoolParser.parse("str"),
   sparse.ConfigParseError
 ); // failure
 
 assert.throws(
-  convertBoolParser.parse([]),
+  () => convertBoolParser.parse([]),
   sparse.ConfigParseError
 ); // failure
-
-assert.throws(
-  function() { }
-);

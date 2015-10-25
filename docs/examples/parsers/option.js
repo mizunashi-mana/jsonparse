@@ -24,6 +24,6 @@ assert.deepEqual(
 ); // success with option value(false)
 
 assert.throws(
-  MyFlagObjParser.parse({"flag": "true"}),
+  () => MyFlagObjParser.parse({"flag": "true"}),
   ConfigParseError
 ); // failure

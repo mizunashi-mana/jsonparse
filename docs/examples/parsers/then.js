@@ -17,7 +17,7 @@ assert.strictEqual(
  * Then parser returns last result as it is.
  */
 assert.throws(
-  sparse.boolean.catch(function(obj) {
+  () => sparse.boolean.catch(function(obj) {
     throw Error("This function will not be called.");
   }, function(msg, exp, act) {
     console.log(`Error: ${msg}`);

@@ -14,12 +14,12 @@ assert.deepEqual(
 ); // success
 
 assert.throws(
-  strArray.parse([0, true, "str"]),
+  () => strArray.parse([0, true, "str"]),
   sparse.ConfigParseError
 ); // failure
 
 assert.throws(
-  strArray.parse({}),
+  () => strArray.parse({}),
   sparse.ConfigParseError
 ); // failure
 
@@ -31,12 +31,12 @@ assert.deepEqual(
 ); // success
 
 assert.throws(
-  checkArray.parse({}),
+  () => checkArray.parse({}),
   sparse.ConfigParseError
 ); // failure
 
 assert.throws(
-  checkArray.parse(true),
+  () => checkArray.parse(true),
   sparse.ConfigParseError
 ); // failure
 
@@ -58,16 +58,16 @@ assert.deepEqual(
 ); // success
 
 assert.throws(
-  str2DimArray.parse({}),
+  () => str2DimArray.parse({}),
   sparse.ConfigParseError
 ); // failure
 
 assert.throws(
-  str2DimArray.parse([{}, ["str"]]),
+  () => str2DimArray.parse([{}, ["str"]]),
   sparse.ConfigParseError
 ); // failure
 
 assert.throws(
-  str2DimArray.parse([[{}], ["str"]]),
+  () => str2DimArray.parse([[{}], ["str"]]),
   sparse.ConfigParseError
 ); // failure
