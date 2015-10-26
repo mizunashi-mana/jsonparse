@@ -34,3 +34,8 @@ testDir:
     base   : 'test-build'
     mapDir : 'maps'
     testTs : '**/test_*.js'
+docsDir:
+  base     : 'docs'
+  examples :
+    base   : 'examples'
+    srcJs  : '**/*.js'

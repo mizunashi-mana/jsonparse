@@ -118,7 +118,29 @@ export function jsonReporter(
     isOneLine?: boolean;
   },
   depth?: number
+): ReporterType;
+export function jsonReporter(
+  logFunc: (msg: string) => any,
+  depth?: number
+): ReporterType;
+export function jsonReporter(
+  logFunc: (msg: string) => any,
+  arg1?: {
+    isOneLine?: boolean;
+  } | number,
+  arg2?: number
 ): ReporterType {
+  let flags: {
+    isOneLine?: boolean;
+  } = undefined;
+  let depth: number = undefined;
+  if (typeof arg1 === "number") {
+    depth = arg1;
+  } else {
+    flags = arg1;
+    depth = arg2;
+  }
+
   const convertErrorToObject = (err: ParseErrorStocker, depthCount: number) => {
     let result: string | {[key: string]: any};
     err.report((msg, exp, act, childs) => {

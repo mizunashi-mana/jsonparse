@@ -225,10 +225,10 @@ describe("reporters test", () => {
     };
     assertDataWithReport(reportData1, (logFunc) => jsonReporter(logFunc));
     assertDataWithReport(reportData2, (logFunc) => jsonReporter(logFunc, {isOneLine: true}));
-    assertDataWithReport(reportData3, (logFunc) => jsonReporter(logFunc, undefined, 1));
+    assertDataWithReport(reportData3, (logFunc) => jsonReporter(logFunc, 1));
     assertDataWithReport(reportData4, (logFunc) => jsonReporter(logFunc, {isOneLine: true}, 1));
     assertDataWithReport(reportData5, (logFunc) => jsonReporter(logFunc));
-    assertDataWithReport(reportData5, (logFunc) => jsonReporter(logFunc, undefined, 3));
+    assertDataWithReport(reportData5, (logFunc) => jsonReporter(logFunc, 3));
     assertDataWithReport(reportData5, (logFunc) => jsonReporter(logFunc, {isOneLine: true}));
   });
 
