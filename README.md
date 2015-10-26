@@ -7,7 +7,7 @@ Safe parser of JSON and CSON for config parsing like ConfigParser of python.
 [![License][license-image]][license-url]
 [![Downloads][downloads-image]][downloads-url]
 
-For more information, view the [documentation](docs/man/README.md).
+For more information, view the [documentation][main-document].
 
 ## Status
 
@@ -62,6 +62,10 @@ ExampleTsConfParser.parse({
 
 [MIT](LICENSE)
 
+## Fantasyland
+
+[![Fantasyland][fantasy-land-logo]][fantasy-land-url]
+
 [npm-image]: https://img.shields.io/npm/v/sonparser.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/sonparser
 [travis-image]: https://travis-ci.org/mizunashi-mana/node-sonparser.svg?branch=master
@@ -70,3 +74,6 @@ ExampleTsConfParser.parse({
 [license-url]: LICENSE
 [downloads-image]: http://img.shields.io/npm/dm/sonparser.svg?style=flat-square
 [downloads-url]: https://npmjs.org/package/sonparser
+[main-document]: docs/man/README.md
+[fantasy-land-logo]: https://github.com/fantasyland/fantasy-land/raw/master/logo.png
+[fantasy-land-url]: https://github.com/fantasyland/fantasy-land
