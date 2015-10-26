@@ -1,4 +1,6 @@
 module.exports = (gulp, $, conf) ->
+  merge = require 'merge2'
+
   {paths} = conf
 
   gulp.task 'lint:gulp', ->
@@ -22,12 +24,21 @@ module.exports = (gulp, $, conf) ->
       .pipe $.tslint.report 'verbose'
 
   gulp.task 'lint:js', ->
-    gulp.src [
-      paths.srcDir.srcJs
+    merge [
+      gulp.src [
+        paths.srcDir.srcJs
+      ]
+        .pipe do $.eslint
+        .pipe do $.eslint.format
+        .pipe do $.eslint.failOnError
+      gulp.src [
+        paths.docsDir.examples.srcJs
+      ]
+        .pipe $.header '/* eslint-env es6 *//* eslint no-var: 1 */'
+        .pipe do $.eslint
+        .pipe do $.eslint.format
+        .pipe do $.eslint.failOnError
     ]
-      .pipe do $.eslint
-      .pipe do $.eslint.format
-      .pipe do $.eslint.failOnError
 
   gulp.task 'lint', [
     'lint:gulp'

@@ -37,7 +37,7 @@ assert.throws(
 /**
  * This parser converts bool object to bool value.
  */
-var MyConvertParseFunc = function(makeSuccess, makeFailure) {
+function MyConvertParseFunc(makeSuccess, makeFailure) {
   return function(obj) {
     if (typeof obj === "boolean") {
       return makeSuccess(obj);
@@ -55,12 +55,11 @@ var MyConvertParseFunc = function(makeSuccess, makeFailure) {
           return makeSuccess(false);
       }
       return makeFailure(`${JSON.stringify(obj)} is not flag string`, "flag string(yes/no)");
-    } else {
-      return makeFailure("This is not bool object", "bool object");
     }
+    return makeFailure("This is not bool object", "bool object");
   };
 };
-var MyConvertParser = sparse.custom(MyConvertParseFunc);
+const MyConvertParser = sparse.custom(MyConvertParseFunc);
 
 assert.strictEqual(
   MyConvertParser.parse(true),
