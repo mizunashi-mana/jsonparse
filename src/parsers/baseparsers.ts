@@ -1,4 +1,8 @@
 import {
+  ParseErrorStocker
+} from "../parseresult/parseerr";
+
+import {
   FailObjType,
   SuccessObjType,
   ParseResult,
@@ -14,6 +18,32 @@ import {
 } from "../common";
 
 /**
+ * merge two Fail Objects for or parser
+ *
+ * @param convObj1 first failure
+ * @param convObj2 second failure
+ * @returns merged failure
+ */
+function mergeFailuresForOr(convObj1: FailObjType, convObj2: FailObjType) {
+  return mapFailure((obj1) => {
+    const obj2 = convObj2.value;
+    let failMsg: string;
+    let expected: string;
+    let actual: string;
+    obj1.report((msg1, exp1, act) => {
+      obj2.report((msg2, exp2) => {
+        const convMsg1 = msg1[msg1.length - 1] === "." ? msg1 : msg1 + ".";
+        const convMsg2 = msg2[msg2.length - 1] === "." ? msg2 : msg2 + ".";
+        failMsg = `${convMsg1} And, ${convMsg2}`;
+        expected = `${exp1} | ${exp2}`;
+        actual = act;
+      });
+    });
+    return new ParseErrorStocker(failMsg, expected, actual);
+  }, convObj1);
+}
+
+/**
  * A builder of or parser
  *
  * @param parser1 first parser
@@ -23,11 +53,33 @@ import {
 export function orParser<T, U>(parser1: Parser<T, U>, parser2: Parser<T, U>) {
   return new Parser<T, U>((obj) => {
     const res1 = parser1.parse(obj);
-    if (res1.isSuccess()) {
-      return res1;
-    } else {
-      return parser2.parse(obj);
-    }
+    return res1.caseOf(
+      (convObj1) => parser2.parse(obj).caseOf(
+        (convObj2) => ParseResult.fail<U>(mergeFailuresForOr(convObj1, convObj2)),
+        (convObj2) => ParseResult.success(convObj2)
+      ),
+      (convObj1) => ParseResult.success(convObj1)
+    );
+  });
+}
+
+/**
+ * A builder of or parser with first parser description
+ *
+ * @param parser1 first parser
+ * @param parser2 second parser
+ * @returns a parser returns first parser value if first parser succeeded, else second parser result with first parser description
+ */
+export function orExtraParser<T, U>(parser1: Parser<T, U>, parser2: Parser<T, U>) {
+  return new Parser<T, U>((obj) => {
+    const res1 = parser1.parse(obj);
+    return res1.caseOf(
+      (convObj1) => parser2.parse(obj).caseOf(
+        (convObj2) => ParseResult.fail<U>(convObj1),
+        (convObj2) => ParseResult.success(convObj2)
+      ),
+      (convObj1) => ParseResult.success(convObj1)
+    );
   });
 }
 

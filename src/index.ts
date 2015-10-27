@@ -13,6 +13,7 @@ import {
 
 import {
   orParser,
+  orExtraParser,
   andParser,
   mapParser,
   receiveParser,
@@ -223,7 +224,10 @@ export class ConfigParser<T, U> {
    * @returns this parsed value on success and default value on fail and this value is nothing
    */
   option(def: U) {
-    return this.or(new ConfigParser<T, U>(isNothing(def)));
+    return new ConfigParser(orExtraParser(
+      this.parser,
+      isNothing(def)
+    ));
   }
 
   /**
