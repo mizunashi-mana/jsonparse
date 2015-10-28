@@ -1,0 +1,2 @@
+This is normal text file.
+This is not son file.

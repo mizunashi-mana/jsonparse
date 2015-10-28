@@ -1,0 +1,11 @@
+name: 'example-sonparser'
+version: 0
+description: 'An example of sonparser', 'invalid!'
+keywords: [
+  'example'
+  'more'
+  'complexible'
+  true
+]
+scripts:
+  test: 1

@@ -1,0 +1,10 @@
+name: 'example-sonparser'
+version: '0.0.0'
+description: 'An example of sonparser', 'invalid!'
+keywords: [
+  'example'
+  'more'
+  'complexible'
+]
+scripts:
+  test: 'echo "not implements!" && exit 1'
