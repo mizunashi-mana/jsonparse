@@ -1,6 +1,6 @@
 name: 'example-sonparser'
 version: 0
-description: 'An example of sonparser', 'invalid!'
+description: 'An example of sonparser'
 keywords: [
   'example'
   'more'
