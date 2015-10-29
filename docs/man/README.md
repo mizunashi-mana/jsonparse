@@ -24,7 +24,7 @@ For more information, see and find [examples][examples].
 
 You can see really patterns on [main examples][main example], and file patterns on [file examples][file example].
 
- 1. Choose or create by chaining or customize parsers
+ 1. Choose or create by chaining or customize parsers (you can find parsers on [here][parsers document])
 
 ```javascript
 const chosenParser = sonparser.boolean;
@@ -34,13 +34,13 @@ const chainParser = sonparser
   .option(true);
 ```
 
- 2. Optionally, choose a reporter
+ 2. Optionally, choose a reporter (you can find reporters on [here][reporters document])
 
 ```javascript
 const nestReporter = sonparser.Reporters.nestReporter;
 ```
 
- 3. Give the target JSON object to a parser
+ 3. Give the target JSON object to a parser (you can see more parse flow information on [here][methods document])
 
 ```javascript
 return chainParser.parse(true);
@@ -53,6 +53,7 @@ return chainParser.parseWithReporter("not expected!", nestReporter);
 
 ## Links
 
+ * [methods document][methods document]
  * [parsers document][parsers document]
  * [reporters document][reporters document]
  * [main example][main example]
@@ -65,6 +66,7 @@ return chainParser.parseWithReporter("not expected!", nestReporter);
 [examples]: ../examples
 [main example]: ../examples/main.js
 [file example]: ../examples/file.js
+[methods document]: ./methods.md
 [parsers document]: ./parsers.md
 [reporters document]: ./reporters.md
 [parsimmon-url]: https://www.npmjs.com/package/parsimmon
