@@ -282,6 +282,26 @@ export function successParser<T>(value: T) {
   });
 }
 
+export function seq2Parser<T, U1, U2>(parser1: Parser<T, U1>, parser2: Parser<T, U2>): Parser<T, [U1, U2]> {
+  const seqFunc = ParseResult.bind2(
+    (obj1: SuccessObjType<U1>, obj2: SuccessObjType<U2>) => makeSuccessP(obj1, <[U1, U2]>[obj1.value, obj2.value])
+  );
+  return new Parser<T, [U1, U2]>((obj) => {
+    const res1 = parser1.parse(obj);
+    if (!res1.isSuccess()) {
+      return res1.chain<[U1, U2]>((convObj) => res1.of<[U1, U2]>(undefined));
+    }
+    return seqFunc(res1, parser2.parse(obj));
+  });
+}
+
+export function bindParser<T, U1, U2>(
+  f: (convObj: SuccessObjType<U1>) => ParseResult<U2>,
+  parser: Parser<T, U1>
+): Parser<T, U2> {
+  return new Parser<T, U2>((obj) => parser.parse(obj).chain(f));
+}
+
 /**
  * A builder of custom parser
  *
