@@ -282,6 +282,13 @@ export function successParser<T>(value: T) {
   });
 }
 
+/**
+ * A builder of seq2 parser
+ *
+ * @param parser1 first parser
+ * @param parser2 second parser
+ * @returns a parser this result is two length array from first and second parsed
+ */
 export function seq2Parser<T, U1, U2>(parser1: Parser<T, U1>, parser2: Parser<T, U2>): Parser<T, [U1, U2]> {
   const seqFunc = ParseResult.bind2(
     (obj1: SuccessObjType<U1>, obj2: SuccessObjType<U2>) => makeSuccessP(obj1, <[U1, U2]>[obj1.value, obj2.value])
@@ -295,6 +302,14 @@ export function seq2Parser<T, U1, U2>(parser1: Parser<T, U1>, parser2: Parser<T,
   });
 }
 
+/**
+ * A builder of bind parser
+ *
+ * @param f bind function
+ * @param f.convObj converted object
+ * @param parser target parser
+ * @returns binded parser with given function
+ */
 export function bindParser<T, U1, U2>(
   f: (convObj: SuccessObjType<U1>) => ParseResult<U2>,
   parser: Parser<T, U1>

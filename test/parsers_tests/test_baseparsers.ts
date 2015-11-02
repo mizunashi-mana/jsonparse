@@ -32,6 +32,43 @@ describe("base parsers test", () => {
       assert.deepEqual(sonparse.base.parse(["", true, 1, {}]), ["", true, 1, {}]);
     });
 
+    it("should be success at all by succeed parser", () => {
+      assert.strictEqual(sonparse.succeed(true).parse(true), true);
+      assert.strictEqual(sonparse.succeed(true).parse("anything"), true);
+      assert.deepEqual(sonparse.succeed({
+        "anything": "ok?",
+        "something": true,
+      }).parse({
+        "anything": "ok?",
+        "something": true,
+      }), {
+        "anything": "ok?",
+        "something": true,
+      });
+      assert.deepEqual(sonparse.succeed({
+        "anything": "ok?",
+        "something": true,
+      }).parse({"some": "anything"}), {
+        "anything": "ok?",
+        "something": true,
+      });
+    });
+
+    it("should be fail at all by fail parser", () => {
+      assert.throws(
+        () => sonparse.fail("error!").parse(true),
+        sonparse.ConfigParseError,
+        "error!"
+      );
+      assert.throws(
+        () => sonparse.fail("fail at all!").parse({
+          "anything": "ok?",
+          "something": true,
+        }),
+        "fail at all!"
+      );
+    });
+
     it("should be through only boolean value by boolean parser", () => {
       assert.strictEqual(sonparse.boolean.parse(true), true);
       assertThrow(() => sonparse.boolean.parse(1),

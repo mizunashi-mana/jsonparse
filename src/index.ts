@@ -256,6 +256,12 @@ ConfigParserMonadPlus<T, U>
     ));
   }
 
+  /**
+   * build a seq parser
+   *
+   * @param parser second parser
+   * @returns a parser returns two length array from first and second parsed value
+   */
   seq2<R>(parser: ConfigParser<T, R>): ConfigParser<T, [U, R]> {
     return new ConfigParser(seq2Parser(this.parser, parser.parser));
   }
@@ -362,7 +368,7 @@ ConfigParserMonadPlus<T, U>
   append = this.mappend;
 
   mconcat(ps: ConfigParser<T, U>[]): ConfigParser<T, U> {
-    return ps.reduce((a, b) => a.mappend(b), this.mempty);
+    return ps.reduce((a, b) => a.mappend(b), this);
   }
   concat = this.mconcat;
 
@@ -371,7 +377,9 @@ ConfigParserMonadPlus<T, U>
   lift = this.fmap;
 
   // Applicative
-  of = succeed;
+  of<R>(val: R) {
+    return <ConfigParser<U, R>>succeed(val);
+  };
   unit = this.of;
 
   ap<R>(u: ConfigParser<T, (t: U) => R>): ConfigParser<T, R> {
@@ -397,6 +405,7 @@ ConfigParserMonadPlus<T, U>
   plus = this.mplus;
 }
 
+// keep the fail instance
 emptyFail = fail("empty");
 
 /**
@@ -412,10 +421,23 @@ function buildConfigParserF<T, U>(pf: () => Parser<T, U>) {
 /** a parser of base of base for chain root */
 export const base = new ConfigParser(customParser<Object, Object>((mkS, mkF) => (obj) => mkS(obj)));
 
+/**
+ * build a success parser with value
+ *
+ * @param val success value
+ * @returns a parser with success and given value
+ */
 export function succeed<T>(val: T) {
   return new ConfigParser(successParser(val));
 }
 
+/**
+ * build a fail parser with fail info
+ *
+ * @param msg failure message
+ * @param expected expected type
+ * @returns a parser with fail and fail info
+ */
 export function fail<T>(msg?: string, expected?: string) {
   return new ConfigParser(failParser(msg, expected));
 }
