@@ -62,9 +62,11 @@ ExampleTsConfParser.parse({
 
 [MIT](LICENSE)
 
+<!--
 ## Fantasyland
 
 [![Fantasyland][fantasy-land-logo]][fantasy-land-url]
+-->
 
 [npm-image]: https://img.shields.io/npm/v/sonparser.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/sonparser

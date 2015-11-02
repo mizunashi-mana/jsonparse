@@ -7,6 +7,8 @@
 | Name | API | Description |
 | --- | --- | --- |
 | [base parser](../examples/parsers/base.js) | `sonparser.base` | This parser through target object always as it is.  You can use as method chains root. |
+| [succeed parser](../examples/parsers/succeed.js) | `sonparser.succeed` | This parser returns the success with given value. |
+| [fail parser](../examples/parsers/fail.js) | `sonparser.fail` | This parser returns the failure with given failure info. |
 | [boolean parser](../examples/parsers/boolean.js) | `sonparser.boolean` | This parser checks that the type of target object is `boolean`. |
 | [number parser](../examples/parsers/number.js) | `sonparser.number` | This parser checks that the type of target object is `number`. |
 | [string parser](../examples/parsers/string.js) | `sonparser.string` | This parser checks that the type of target object is `string`. |

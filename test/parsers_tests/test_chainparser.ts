@@ -180,6 +180,30 @@ describe("chain parser test", () => {
       assertThrow(() => MyParser.parse(1), ConfigParseError);
     });
 
+    it("should return merged of two results", () => {
+      const MyParser = sonparse.boolean.map((bool) => bool ? [] : [1,2]);
+
+      assert.deepEqual(
+        sonparse.boolean.seq2(sonparse.boolean).parse(true),
+        [true, true]
+      );
+      assert.deepEqual(
+        sonparse.boolean.seq2(MyParser).parse(true),
+        [true, []]
+      );
+      assert.throws(
+        () => sonparse.boolean.seq2(sonparse.string).parse(false),
+        sonparse.ConfigParseError
+      );
+      assert.throws(
+        () => sonparse.boolean.seq2(sonparse.string).parse("str"),
+        sonparse.ConfigParseError
+      );
+      assert.throws(
+        () => sonparse.boolean.seq2(sonparse.boolean).parse("not expected"),
+        sonparse.ConfigParseError
+      );
+    });
   });
 
 });

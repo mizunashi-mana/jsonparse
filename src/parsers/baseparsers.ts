@@ -283,6 +283,41 @@ export function successParser<T>(value: T) {
 }
 
 /**
+ * A builder of seq2 parser
+ *
+ * @param parser1 first parser
+ * @param parser2 second parser
+ * @returns a parser this result is two length array from first and second parsed
+ */
+export function seq2Parser<T, U1, U2>(parser1: Parser<T, U1>, parser2: Parser<T, U2>): Parser<T, [U1, U2]> {
+  const seqFunc = ParseResult.bind2(
+    (obj1: SuccessObjType<U1>, obj2: SuccessObjType<U2>) => makeSuccessP(obj1, <[U1, U2]>[obj1.value, obj2.value])
+  );
+  return new Parser<T, [U1, U2]>((obj) => {
+    const res1 = parser1.parse(obj);
+    if (!res1.isSuccess()) {
+      return res1.chain<[U1, U2]>((convObj) => res1.of<[U1, U2]>(undefined));
+    }
+    return seqFunc(res1, parser2.parse(obj));
+  });
+}
+
+/**
+ * A builder of bind parser
+ *
+ * @param f bind function
+ * @param f.convObj converted object
+ * @param parser target parser
+ * @returns binded parser with given function
+ */
+export function bindParser<T, U1, U2>(
+  f: (convObj: SuccessObjType<U1>) => ParseResult<U2>,
+  parser: Parser<T, U1>
+): Parser<T, U2> {
+  return new Parser<T, U2>((obj) => parser.parse(obj).chain(f));
+}
+
+/**
  * A builder of custom parser
  *
  * @param f builder of custom function for parser

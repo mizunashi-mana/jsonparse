@@ -12,6 +12,8 @@ import {
 } from "./common";
 
 import {
+  successParser,
+  failParser,
   orParser,
   orExtraParser,
   andParser,
@@ -23,6 +25,8 @@ import {
   descBuilder,
   descParser,
   descFromExpectedParser,
+  seq2Parser,
+  bindParser,
 } from "./parsers/baseparsers";
 
 import {
@@ -41,6 +45,7 @@ import {
 import {
   ParseResult,
   SuccessObjType,
+  mapSuccess,
 } from "./parseresult/result";
 
 import {
@@ -54,6 +59,14 @@ import {
   jsonReporter,
 } from "./reporter/node-reporters";
 
+import {
+  Monad,
+  Functor,
+  MonadPlus,
+  Monoid,
+  Applicative,
+} from "./lib/basetypes/basetypes";
+
 /**
  * Error class of ConfigParser
  */
@@ -66,13 +79,26 @@ export class ConfigParseError extends BaseCustomError {
   }
 }
 
+// Fantasy area
+export interface ConfigParserMonoid<T, U> extends Monoid<U> {};
+export interface ConfigParserFunctor<T, U> extends Functor<U> {};
+export interface ConfigParserApplicative<T, U> extends Applicative<U> {};
+export interface ConfigParserMonad<T, U> extends Monad<U> {};
+export interface ConfigParserMonadPlus<T, U> extends MonadPlus<U> {};
+
+let emptyFail: ConfigParser<any, any>;
+
 /**
  * ConfigParser class including some helper methods
  *
  * @param T in object type
  * @param U out object type
  */
-export class ConfigParser<T, U> {
+export class ConfigParser<T, U> implements
+ConfigParserMonoid<T, U>, ConfigParserFunctor<T, U>,
+ConfigParserApplicative<T, U>, ConfigParserMonad<T, U>,
+ConfigParserMonadPlus<T, U>
+{
   /**
    * ConfigParser have parser object
    *
@@ -231,6 +257,16 @@ export class ConfigParser<T, U> {
   }
 
   /**
+   * build a seq parser
+   *
+   * @param parser second parser
+   * @returns a parser returns two length array from first and second parsed value
+   */
+  seq2<R>(parser: ConfigParser<T, R>): ConfigParser<T, [U, R]> {
+    return new ConfigParser(seq2Parser(this.parser, parser.parser));
+  }
+
+  /**
    * this is for developer getter
    *
    * you should not use this property
@@ -318,7 +354,59 @@ export class ConfigParser<T, U> {
     }
   }
 
+  /**
+   * Fantasy area
+   */
+
+  // Monoid
+  get mempty() {
+    return <ConfigParser<T, U>>emptyFail;
+  };
+  empty = this.mempty;
+
+  mappend = this.or;
+  append = this.mappend;
+
+  mconcat(ps: ConfigParser<T, U>[]): ConfigParser<T, U> {
+    return ps.reduce((a, b) => a.mappend(b), this);
+  }
+  concat = this.mconcat;
+
+  // Functor
+  fmap = this.map;
+  lift = this.fmap;
+
+  // Applicative
+  of<R>(val: R) {
+    return <ConfigParser<U, R>>succeed(val);
+  };
+  unit = this.of;
+
+  ap<R>(u: ConfigParser<T, (t: U) => R>): ConfigParser<T, R> {
+    return u.seq2(this).map((obj) => obj[0](obj[1]));
+  }
+
+  // Monad
+  // of <- using Applicative
+
+  bind<R>(f: (t: U) => ConfigParser<T, R>): ConfigParser<T, R> {
+    return new ConfigParser(bindParser(
+      (obj) => f(obj.value[0]).parser.parse(mapSuccess((inObj) => inObj[1], obj)),
+      this.seq2(custom<T, T>((mkS, mkF) => (obj) => mkS(obj))).parser
+    ));
+  }
+  chain = this.bind;
+
+  // MonadPlus
+  mzero = this.mempty;
+  zero = this.mzero;
+
+  mplus = this.mappend;
+  plus = this.mplus;
 }
+
+// keep the fail instance
+emptyFail = fail("empty");
 
 /**
  * helper function for type parser
@@ -331,7 +419,28 @@ function buildConfigParserF<T, U>(pf: () => Parser<T, U>) {
 }
 
 /** a parser of base of base for chain root */
-export const base = new ConfigParser(customParser<Object, Object>((obj) => obj));
+export const base = new ConfigParser(customParser<Object, Object>((mkS, mkF) => (obj) => mkS(obj)));
+
+/**
+ * build a success parser with value
+ *
+ * @param val success value
+ * @returns a parser with success and given value
+ */
+export function succeed<T>(val: T) {
+  return new ConfigParser(successParser(val));
+}
+
+/**
+ * build a fail parser with fail info
+ *
+ * @param msg failure message
+ * @param expected expected type
+ * @returns a parser with fail and fail info
+ */
+export function fail<T>(msg?: string, expected?: string) {
+  return new ConfigParser(failParser(msg, expected));
+}
 
 /** a type parser for boolean type */
 export const boolean = buildConfigParserF(isBoolean);
