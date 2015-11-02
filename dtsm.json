@@ -14,13 +14,13 @@
   },
   "dependencies": {
     "source-map-support/source-map-support.d.ts": {
-      "ref": "30387ec3dd6eb426cc48522fd3aef09ada83aa48"
+      "ref": "d6c98baa7fd703e449cf37f3ec39ed3bd92cfd35"
     },
     "mocha/mocha.d.ts": {
-      "ref": "6436105ed9e3f9de49ca7e2e010ffe298e884e40"
+      "ref": "d6c98baa7fd703e449cf37f3ec39ed3bd92cfd35"
     },
     "chai/chai.d.ts": {
-      "ref": "6436105ed9e3f9de49ca7e2e010ffe298e884e40"
+      "ref": "d6c98baa7fd703e449cf37f3ec39ed3bd92cfd35"
     },
     "cson/cson.d.ts": {
       "ref": "d6c98baa7fd703e449cf37f3ec39ed3bd92cfd35"
