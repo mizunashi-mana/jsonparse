@@ -5,6 +5,7 @@ gulp:
   conf     : 'conf/**/*.cson'
 tsconf     : 'tsconfig.json'
 dtsmconf   : 'dtsm.json'
+libTyping  : 'lib-typings/*.d.ts'
 srcDir:
   base     : 'src'
   srcIndex : 'index.ts'
@@ -30,6 +31,7 @@ testDir:
     typings: '../typings/**/*.d.ts'
     libs   : '../lib/**/*.d.ts'
     datas  : '**/data/*'
+    typingTest : '../lib-typings/*-tests.ts'
   distDir:
     base   : 'test-build'
     mapDir : 'maps'

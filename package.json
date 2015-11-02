@@ -4,8 +4,8 @@
   "description": "(Now status is not useful! See npm page!) Safe parser of JSON and CSON for config like ConfigParser of python",
   "main": "./lib/index.js",
   "scripts": {
-    "prepublish": "gulp build --production",
-    "postinstall": "dtsm --config ./dtsm.json install",
+    "prepublish": "dtsm --config ./dtsm.json install && gulp build --production",
+    "init": "dtsm --config ./dtsm.json install",
     "clean": "gulp clean",
     "lint": "gulp lint",
     "build": "gulp build --production",
