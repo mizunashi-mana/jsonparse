@@ -193,15 +193,15 @@ describe("chain parser test", () => {
       );
       assert.throws(
         () => sonparse.boolean.seq2(sonparse.string).parse(false),
-        sonparse.ConfigParseError
+        ConfigParseError
       );
       assert.throws(
         () => sonparse.boolean.seq2(sonparse.string).parse("str"),
-        sonparse.ConfigParseError
+        ConfigParseError
       );
       assert.throws(
         () => sonparse.boolean.seq2(sonparse.boolean).parse("not expected"),
-        sonparse.ConfigParseError
+        ConfigParseError
       );
     });
   });
