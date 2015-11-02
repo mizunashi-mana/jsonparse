@@ -2,7 +2,6 @@
 dist
 docs
 src
-typings
 node_modules
 test
 test-build
