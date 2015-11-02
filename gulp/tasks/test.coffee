@@ -1,6 +1,7 @@
 module.exports = (gulp, $, conf) ->
   path   = require 'path'
   merge  = require 'merge2'
+  runSequence = require 'run-sequence'
 
   {paths, tsOptions, runOptions, pkgInfo} = conf
 
@@ -39,7 +40,19 @@ module.exports = (gulp, $, conf) ->
           'source-map-support/register'
         ]
 
-  gulp.task 'test', ['build:test'], ->
+  gulp.task 'test:src', ['build:test'], ->
     gulpMochaTest [
       paths.testDir.distDir.testTs
     ]
+
+  gulp.task 'test:typings', ->
+    gulp.src [
+      paths.libTyping
+      paths.testDir.srcDir.typingTest
+    ]
+      .pipe $.typescript tsProject
+
+  gulp.task 'test', (cb) ->
+    runSequence 'test:src'
+      , 'test:typings'
+      , cb

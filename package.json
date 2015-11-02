@@ -4,8 +4,8 @@
   "description": "(Now status is not useful! See npm page!) Safe parser of JSON and CSON for config like ConfigParser of python",
   "main": "./lib/index.js",
   "scripts": {
-    "prepublish": "gulp build --production",
-    "postinstall": "dtsm --config ./dtsm.json install",
+    "prepublish": "dtsm --config ./dtsm.json install && gulp build --production",
+    "init": "dtsm --config ./dtsm.json install",
     "clean": "gulp clean",
     "lint": "gulp lint",
     "build": "gulp build --production",
@@ -35,8 +35,9 @@
   },
   "homepage": "https://github.com/mizunashi-mana/node-sonparser#readme",
   "devDependencies": {
-    "chai": "^3.3.0",
+    "chai": "^3.4.0",
     "coffee-script": "^1.10.0",
+    "dtsm": "^0.11.0",
     "gulp": "^3.9.0",
     "gulp-coffeelint": "^0.5.0",
     "gulp-eslint": "^1.0.0",
@@ -52,12 +53,12 @@
     "merge2": "^0.3.6",
     "mocha": "^2.3.3",
     "rimraf": "^2.4.3",
-    "source-map-support": "^0.3.2",
+    "run-sequence": "^1.1.4",
+    "source-map-support": "^0.3.3",
     "typescript": "^1.6.2",
     "yargs": "^3.29.0"
   },
   "dependencies": {
-    "dtsm": "^0.11.0",
     "cson": "^3.0.2"
   }
 }

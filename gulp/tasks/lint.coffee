@@ -40,9 +40,17 @@ module.exports = (gulp, $, conf) ->
         .pipe do $.eslint.failOnError
     ]
 
+  gulp.task 'lint:typing', ->
+    gulp.src [
+      paths.libTyping
+    ]
+      .pipe do $.tslint
+      .pipe $.tslint.report 'verbose'
+
   gulp.task 'lint', [
     'lint:gulp'
     # 'lint:config'
     'lint:ts'
     'lint:js'
+    'lint:typing'
   ]

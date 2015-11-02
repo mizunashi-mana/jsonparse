@@ -439,7 +439,7 @@ export function succeed<T>(val: T) {
  * @returns a parser with fail and fail info
  */
 export function fail<T>(msg?: string, expected?: string) {
-  return new ConfigParser(failParser(msg, expected));
+  return new ConfigParser(failParser<T>(msg, expected));
 }
 
 /** a type parser for boolean type */
