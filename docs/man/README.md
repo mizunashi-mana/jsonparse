@@ -26,28 +26,28 @@ You can see really patterns on [main examples][main example], and file patterns 
 
  1. Choose or create by chaining or customize parsers (you can find parsers on [here][parsers document])
 
-```javascript
-const chosenParser = sonparser.boolean;
-const chainParser = sonparser
-  .boolean
-  .or(sonparser.number.map((num) => num !== 0))
-  .option(true);
-```
+  ```javascript
+  const chosenParser = sonparser.boolean;
+  const chainParser = sonparser
+    .boolean
+    .or(sonparser.number.map((num) => num !== 0))
+    .option(true);
+  ```
 
  2. Optionally, choose a reporter (you can find reporters on [here][reporters document])
 
-```javascript
-const nestReporter = sonparser.Reporters.nestReporter;
-```
+  ```javascript
+  const nestReporter = sonparser.Reporters.nestReporter;
+  ```
 
  3. Give the target JSON object to a parser (you can see more parse flow information on [here][methods document])
 
-```javascript
-return chainParser.parse(true);
+  ```javascript
+  return chainParser.parse(true);
 
-// with the reporter
-return chainParser.parseWithReporter("not expected!", nestReporter);
-```
+  // with the reporter
+  return chainParser.parseWithReporter("not expected!", nestReporter);
+  ```
 
  4. Accept parsed result (try-catch error or choose safe method and check)
 
