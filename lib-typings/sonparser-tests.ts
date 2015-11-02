@@ -46,4 +46,46 @@ var thenParser: ConfigParser<Object, boolean> = booleanParser.then((o: boolean) 
 var catchParser: ConfigParser<Object, boolean> = booleanParser.catch((m: string, e: string, a: string) => {});
 
 var seq2Parser: ConfigParser<Object, [boolean, string]> = booleanParser.seq2(stringParser);
-var innerMapParser: ConfigParser<Object, string> = booleanParser.innerMap((obj) => {flags: obj.flags, value: str});
+var innerMapParser: ConfigParser<Object, string> = booleanParser.innerMap((o) => ({flags: o.flags, value: str}));
+
+// Monoid
+var FmemptyParser: ConfigParser<Object, boolean> = booleanParser.mempty;
+var FemptyParser: ConfigParser<Object, boolean> = booleanParser.empty;
+var FmappendParser: ConfigParser<Object, boolean> = booleanParser.mappend(booleanParser);
+var FappendParser: ConfigParser<Object, boolean> = booleanParser.append(booleanParser);
+var FmconcatParser: ConfigParser<Object, boolean> = booleanParser.mconcat([booleanParser, booleanParser]);
+var FconcatParser: ConfigParser<Object, boolean> = booleanParser.concat([booleanParser, booleanParser]);
+
+// Functor
+var FfmapParser: ConfigParser<Object, string> = booleanParser.fmap((o) => str);
+var FliftParser: ConfigParser<Object, string> = booleanParser.lift((o) => str);
+var FmapParser: ConfigParser<Object, string> = booleanParser.map((o) => str);
+
+// Applicative
+var FofParser: ConfigParser<boolean, string> = booleanParser.of(str);
+var FunitParser: ConfigParser<boolean, string> = booleanParser.unit(str);
+var FapParser: ConfigParser<Object, string> = booleanParser.ap(booleanParser.of((o: boolean) => str));
+
+// Monad
+var FofParserMonad: ConfigParser<boolean, string> = booleanParser.of(str);
+var FunitParserMonad: ConfigParser<boolean, string> = booleanParser.unit(str);
+var FbindParser: ConfigParser<Object, string> = numberParser.bind((n) => customParser);
+var FchainParser: ConfigParser<Object, string> = numberParser.chain((n) => customParser);
+
+// MonadPlus
+var FmzeroParser: ConfigParser<Object, boolean> = booleanParser.mzero;
+var FzeroParser: ConfigParser<Object, boolean> = booleanParser.zero;
+var FmplusParser: ConfigParser<Object, boolean> = booleanParser.mplus(booleanParser);
+var FplusParser: ConfigParser<Object, boolean> = booleanParser.plus(booleanParser);
+
+var methodParse: boolean = booleanParser.parse(obj);
+var methodParseWithStatus: {status: boolean; value?: boolean;} = booleanParser.parseWithStatus(obj);
+
+var funcParseFile: boolean = sparse.parseFile(str, booleanParser);
+var funcParseFileWithStatus: {status: boolean; value?: boolean;} = sparse.parseFileWithStatus(str, booleanParser);
+
+var nestReporter: sparse.ReporterType = sparse.Reporters.nestReporter(console.log, num);
+var listReporter: sparse.ReporterType = sparse.Reporters.listReporter(console.log, num);
+var jsonReporter: sparse.ReporterType = sparse.Reporters.jsonReporter(console.log, num);
+var jsonReporter2: sparse.ReporterType = sparse.Reporters.jsonReporter(console.log, {isOneLine: bool}, num);
+var methodParseWithReporter: boolean = booleanParser.parseWithReporter(obj, nestReporter);

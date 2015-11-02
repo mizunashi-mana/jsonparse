@@ -47,10 +47,12 @@ module.exports = (gulp, $, conf) ->
 
   gulp.task 'test:typings', ->
     gulp.src [
-      paths.testDir.typingTest
+      paths.libTyping
+      paths.testDir.srcDir.typingTest
     ]
-      .pipe $.typeScript tsProject
+      .pipe $.typescript tsProject
 
-  gulp.task 'test', ->
+  gulp.task 'test', (cb) ->
     runSequence 'test:src'
       , 'test:typings'
+      , cb

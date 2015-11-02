@@ -1,5 +1,5 @@
 declare module "sonparser/ftypes" {
-  
+
   export interface Eq<T> {
     equals(t: T): boolean;
   }

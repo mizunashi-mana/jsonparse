@@ -47,7 +47,10 @@ declare module "sonparser" {
    * @param T in object type
    * @param U out object type
    */
-  export class ConfigParser<T, U> implements ConfigParserMonoid<T, U>, ConfigParserFunctor<T, U>, ConfigParserApplicative<T, U>, ConfigParserMonad<T, U>, ConfigParserMonadPlus<T, U> {
+  export class ConfigParser<T, U> implements
+  ConfigParserMonoid<T, U>, ConfigParserFunctor<T, U>,
+  ConfigParserApplicative<T, U>, ConfigParserMonad<T, U>,
+  ConfigParserMonadPlus<T, U> {
     /**
      * build a or parser of this
      *
@@ -235,7 +238,9 @@ declare module "sonparser" {
    * @param fn.onFailure.act actual object
    * @returns a parser with custom parse function
    */
-  export function custom<T, U>(fn: (onSuccess: (obj: U) => ParseResult<U>, onFailure: (msg?: string, exp?: string, act?: string) => ParseResult<U>) => (obj: T) => ParseResult<U>): ConfigParser<T, U>;
+  export function custom<T, U>(fn: (
+    onSuccess: (obj: U) => ParseResult<U>, onFailure: (msg?: string, exp?: string, act?: string) => ParseResult<U>
+  ) => (obj: T) => ParseResult<U>): ConfigParser<T, U>;
   /**
    * parse son file with object parser
    *

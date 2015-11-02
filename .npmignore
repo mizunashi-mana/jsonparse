@@ -3,6 +3,7 @@ dist
 docs
 src
 typings
+node_modules
 test
 test-build
 
@@ -13,4 +14,9 @@ CHANGELOG.md
 .*
 *lint.json
 tsconfig.json
+dtsm.json
 gulp*
+
+# garbages
+*.log
+.DS_Store
