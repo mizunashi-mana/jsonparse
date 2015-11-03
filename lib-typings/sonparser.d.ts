@@ -1,7 +1,6 @@
 /// <reference path="ftypes.d.ts" />
 
 declare module "sonparser" {
-  import * as ftypes from "sonparser/ftypes";
 
   /**
    * Error class of ConfigParser

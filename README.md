@@ -26,10 +26,14 @@ npm install sonparser --save
 
 ## Quick Example
 
-```javascript
-var sonparser = require("sonparser");
+### Javascript
 
-var ExampleTsConfParser = sonparser.hasProperties([
+```javascript
+const sonparser = require("sonparser");
+
+let result;
+
+const ExampleTsConfParser = sonparser.hasProperties([
   ["compilerOptions", sonparser.hasProperties([
     ["target", sonparser.string],
     ["module", sonparser.string],
@@ -39,7 +43,7 @@ var ExampleTsConfParser = sonparser.hasProperties([
   ["exclude", sonparser.array(sonparser.string).option([])],
 ]);
 
-ExampleTsConfParser.parse({
+result = ExampleTsConfParser.parse({
   "compilerOptions": {
     "target": "es5",
     "module": "commonjs"
@@ -50,10 +54,60 @@ ExampleTsConfParser.parse({
   ]
 });
 
-ExampleTsConfParser.parse({
+result = ExampleTsConfParser.parse({
   "compilerOptions": {
     "target": 5,
     "module": "commonjs"
+  }
+}); // throw Error!
+```
+
+### Typescript
+
+```typescript
+/// <reference path="node_modules/lib-typings/sonparser.d.ts" />
+
+import * as sonparser from "sonparser";
+
+let result: TsConfig;
+
+interface CompilerOptions {
+  target: string;
+  module: string;
+  noImplicitAny: boolean;
+  preserveConstEnums: boolean;
+}
+
+interface TsConfig {
+  compilerOptions: CompilerOptions;
+  exclude: string[];
+}
+
+const ExampleTsConfParser = sonparser.hasProperties<TsConfig>([
+  ["compilerOptions", sonparser.hasProperties<CompilerOptions>([
+    ["target", sonparser.string],
+    ["module", sonparser.string],
+    ["noImplicitAny", sonparser.boolean.option(false)],
+    ["preserveConstEnums", sonparser.boolean.option(false)],
+  ])],
+  ["exclude", sonparser.array(sonparser.string).option([])],
+]);
+
+result = ExampleTsConfParser.parse({
+  compilerOptions: {
+    target: "es5",
+    module: "commonjs"
+  },
+  exclude: [
+    "node_modules",
+    "build"
+  ]
+});
+
+result = ExampleTsConfParser.parse({
+  compilerOptions: {
+    target: 5,
+    module: "commonjs"
   }
 }); // throw Error!
 ```
