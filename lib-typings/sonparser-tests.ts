@@ -23,7 +23,7 @@ var arrayParser: ConfigParser<Object, number[]> = sparse.array(numberParser);
 var arrayParser2: ConfigParser<Object, number[][]> = sparse.array(sparse.array(numberParser));
 
 var customParser: ConfigParser<number, string> = sparse.custom<number, string>(
-  (success, failure) => (o: number) => o == num ? success(str) : failure(str, str, str)
+  (success, failure) => (o) => o == num ? success(str) : failure(str, str, str)
 );
 
 var propertiesParser: ConfigParser<Object, objT> = sparse.hasProperties<objT>([
