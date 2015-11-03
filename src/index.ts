@@ -1,9 +1,12 @@
+/// <reference path="./lib/typings.d.ts" />
+
 import {
   BaseCustomError
 } from "./lib/customerror/node-customerror";
 
 import {
-  parseSONFileSync
+  parseSONFileSync,
+  parseSONFile,
 } from "./lib/util/node-util";
 
 import {
@@ -309,6 +312,7 @@ ConfigParserMonadPlus<T, U>
   parseWithStatus(obj: T): {
     status: boolean;
     value?: U
+    err?: ConfigParseError
   } {
     const res = this.parser.parse({
       value: obj,
@@ -316,12 +320,19 @@ ConfigParserMonadPlus<T, U>
         isReport: false,
       },
     });
+    let error: ConfigParseError = undefined;
+    if (!res.isSuccess()) {
+      res.valueFailure(undefined).value.report((msg: string) => {
+        error = new ConfigParseError(msg);
+      });
+    }
     return {
       status: res.isSuccess(),
       value: res.valueSuccess({
         value: undefined,
         flags: undefined,
       }).value,
+      err: error,
     };
   }
 
@@ -352,6 +363,17 @@ ConfigParserMonadPlus<T, U>
         throw new ConfigParseError(msg);
       });
     }
+  }
+
+  parseAsync(obj: T) {
+    return new Promise<U>((resolve, reject) => {
+      const res = this.parseWithStatus(obj);
+      if (res.status) {
+        resolve(res.value);
+      } else {
+        reject(res.err);
+      }
+    });
   }
 
   /**
@@ -518,7 +540,8 @@ export function parseFile<T>(fname: string, parser: ConfigParser<Object, T>): T 
  */
 export function parseFileWithStatus<T>(fname: string, parser: ConfigParser<Object, T>): {
   status: boolean;
-  value?: T
+  value?: T;
+  err?: Error
 } {
   try {
     const obj = parseSONFileSync(fname);
@@ -526,8 +549,21 @@ export function parseFileWithStatus<T>(fname: string, parser: ConfigParser<Objec
   } catch (e) {
     return {
       status: false,
+      err: e,
     };
   }
+}
+
+export function parseFileAsync<T>(fname: string, parser: ConfigParser<Object, T>): Promise<T> {
+  return new Promise<Object>((resolve, reject) => {
+    parseSONFile(fname, (err, result) => {
+      if (err !== undefined) {
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  }).then((obj) => parser.parseAsync(obj));
 }
 
 /**

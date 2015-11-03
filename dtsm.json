@@ -27,6 +27,9 @@
     },
     "node/node.d.ts": {
       "ref": "4b6b5a13525ed5dda1a08024444ecd1dff9341f1"
+    },
+    "es6-promises/es6-promises.d.ts": {
+      "ref": "0dd29bf8253536ae24e61c109524e924ea510046"
     }
   }
 }
