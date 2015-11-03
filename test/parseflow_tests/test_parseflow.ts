@@ -12,6 +12,7 @@ const {
   ConfigParseError,
   parseFile,
   parseFileWithStatus,
+  parseFileAsync,
 } = sonparse;
 
 const {
@@ -54,6 +55,16 @@ describe("parse methods test", () => {
       );
     });
 
+    it("should return a promise parsing result", () => {
+      const resultSuccess = sonparse.boolean.parseAsync(false);
+      const resultFailure = sonparse.boolean.parseAsync("notexpected");
+
+      return Promise.all([
+        assert.becomes(resultSuccess, false),
+        assert.isRejected(resultFailure, ConfigParseError)
+      ]);
+    });
+
   });
 
   describe("parse file test", () => {
@@ -85,7 +96,7 @@ describe("parse methods test", () => {
       assertThrow(() => parseFile(resolvePath("data/valid.json"), sonparse.boolean), ConfigParseError);
     });
 
-    it("should be through only son file and return result", () => {
+    it("should be through only son file and return result with status", () => {
       function statusAssert<T>(result: {status: boolean; value?: T;}, expstatus: boolean, expvalue?: T, deep?: boolean) {
         assert.propertyVal(result, "status", expstatus);
         const fDeepEq = deep === undefined ? true : deep;
@@ -107,6 +118,18 @@ describe("parse methods test", () => {
       statusAssert(parseFileWithStatus(resolvePath("data/normal.txt"), sonparse.object), false);
       statusAssert(parseFileWithStatus(resolvePath("data/valid.json"), sonparse.boolean), false);
     });
+
+    it("should be through only son file and return result on promise", () => Promise.all([
+      assert.becomes(parseFileAsync(resolvePath("data/valid.json"), sonparse.object), dataObj),
+      assert.becomes(parseFileAsync(resolvePath("data/valid.cson"), sonparse.object), dataObj),
+      assert.becomes(parseFileAsync(resolvePath("data/json.txt"), sonparse.object), dataObj),
+      assert.becomes(parseFileAsync(resolvePath("data/cson.txt"), sonparse.object), dataObj),
+      assert.isRejected(parseFileAsync(resolvePath("data/invalid.json"), sonparse.object), Error),
+      assert.isRejected(parseFileAsync(resolvePath("data/invalid.cson"), sonparse.object), Error),
+      assert.isRejected(parseFileAsync(resolvePath("data/nosuchfile"), sonparse.object), Error),
+      assert.isRejected(parseFileAsync(resolvePath("data/normal.txt"), sonparse.object), Error),
+      assert.isRejected(parseFileAsync(resolvePath("data/valid.json"), sonparse.boolean), ConfigParseError),
+    ]));
 
   });
 

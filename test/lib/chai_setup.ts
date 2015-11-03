@@ -1,4 +1,10 @@
+/// <reference path="../../lib/lib/typings.d.ts" />
+/* tslint:disable:no-require-imports */
+
 import * as chai from "chai";
+import chaiAsPromised = require("chai-as-promised");
+
+chai.use(chaiAsPromised);
 
 function escapeRegExp(str: string){
   return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");

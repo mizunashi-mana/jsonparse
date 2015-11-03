@@ -177,10 +177,10 @@ export function parseSONFile(fname: string, cb: (e: any, obj: Object) => any): v
     try {
       const result = parseSONContent(fname, data.toString());
       if (result.isRight()) {
-        throw new Error(`${fname} is not parsable son file`);
+        return cb(new Error(`${fname} is not parsable son file`), undefined);
       }
 
-      return cb(undefined, result);
+      return cb(undefined, result.value(undefined));
     } catch (e) {
       return cb(e, undefined);
     }

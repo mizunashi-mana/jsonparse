@@ -1,9 +1,12 @@
+/// <reference path="./lib/typings.d.ts" />
+
 import {
   BaseCustomError
 } from "./lib/customerror/node-customerror";
 
 import {
-  parseSONFileSync
+  parseSONFileSync,
+  parseSONFile,
 } from "./lib/util/node-util";
 
 import {
@@ -304,11 +307,12 @@ ConfigParserMonadPlus<T, U>
    * parse object and return parsed value with parse status
    *
    * @param obj target object
-   * @returns status false on fail and parsed value with status true on success
+   * @returns error with status false on fail and parsed value with status true on success
    */
   parseWithStatus(obj: T): {
     status: boolean;
-    value?: U
+    value?: U;
+    err?: ConfigParseError;
   } {
     const res = this.parser.parse({
       value: obj,
@@ -316,12 +320,19 @@ ConfigParserMonadPlus<T, U>
         isReport: false,
       },
     });
+    let error: ConfigParseError = undefined;
+    if (!res.isSuccess()) {
+      res.valueFailure(undefined).value.report((msg: string) => {
+        error = new ConfigParseError(msg);
+      });
+    }
     return {
       status: res.isSuccess(),
       value: res.valueSuccess({
         value: undefined,
         flags: undefined,
       }).value,
+      err: error,
     };
   }
 
@@ -352,6 +363,23 @@ ConfigParserMonadPlus<T, U>
         throw new ConfigParseError(msg);
       });
     }
+  }
+
+  /**
+   * parse object and return parsed value on promise
+   *
+   * @param obj target object
+   * @returns a promise returning parsed value on success and error on fail
+   */
+  parseAsync(obj: T): Promise<U> {
+    return new Promise<U>((resolve, reject) => {
+      const res = this.parseWithStatus(obj);
+      if (res.status) {
+        resolve(res.value);
+      } else {
+        reject(res.err);
+      }
+    });
   }
 
   /**
@@ -518,7 +546,8 @@ export function parseFile<T>(fname: string, parser: ConfigParser<Object, T>): T 
  */
 export function parseFileWithStatus<T>(fname: string, parser: ConfigParser<Object, T>): {
   status: boolean;
-  value?: T
+  value?: T;
+  err?: Error;
 } {
   try {
     const obj = parseSONFileSync(fname);
@@ -526,8 +555,28 @@ export function parseFileWithStatus<T>(fname: string, parser: ConfigParser<Objec
   } catch (e) {
     return {
       status: false,
+      err: e,
     };
   }
+}
+
+/**
+ * parse son file using object parser on promise
+ *
+ * @param fname target son file name
+ * @param parser custom parser using to parse
+ * @returns a promise parsing son file using given parser
+ */
+export function parseFileAsync<T>(fname: string, parser: ConfigParser<Object, T>): Promise<T> {
+  return new Promise<Object>((resolve, reject) => {
+    parseSONFile(fname, (err, result) => {
+      if (err !== undefined) {
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  }).then((obj) => parser.parseAsync(obj));
 }
 
 /**

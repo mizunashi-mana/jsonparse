@@ -49,6 +49,7 @@ module.exports = (gulp, $, conf) ->
     gulp.src [
       paths.libTyping
       paths.testDir.srcDir.typingTest
+      paths.srcDir.typings
     ]
       .pipe $.typescript tsProject
 
