@@ -134,7 +134,8 @@ function prconcat<T>(
     ), (r2) => ParseResult.fail<T[]>(l1)),
     (r1) => res2.caseOf((l2) => makeFailureP<Object, T[]>(
       sObj,
-      "failed to parse elem of 'array'", "array",
+      "failed to parse elem of 'array'",
+      "array",
       [buildErrorChild(index, l2.value)]
     ), (r2) => makeSuccessP(sObj, r1.value.concat([r2.value])))
   );

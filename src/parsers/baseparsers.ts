@@ -331,7 +331,7 @@ export function bindParser<T, U1, U2>(
 export function customParser<T, U>(
   f: (
     mkS: (convObj: U) => ParseResult<U>,
-    mkF: (msg?: string, exp?: string) => ParseResult<U>
+    mkF: (msg?: string, exp?: string, act?: string) => ParseResult<U>
   ) => MapperParseResult<T, U>
 ): Parser<T, U> {
   const parseF = mapParseResult<T, U>(f);
