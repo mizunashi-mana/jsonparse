@@ -65,7 +65,7 @@ result = ExampleTsConfParser.parse({
 ### Typescript
 
 ```typescript
-/// <reference path="node_modules/lib-typings/sonparser.d.ts" />
+/// <reference path="node_modules/sonparser/lib-typings/sonparser.d.ts" />
 
 import * as sonparser from "sonparser";
 
