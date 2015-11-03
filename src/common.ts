@@ -39,9 +39,29 @@ export function makeSuccess<T, U>(obj: SuccessObjType<T>, convObj: U) {
  * @param T source object type
  * @param U converted object type
  */
-export function makeFailure<T, U>(obj: SuccessObjType<T>, msg?: string, exp?: string, childs?: ParseErrorNode[]) {
+export function makeFailure<T, U>(
+  obj: SuccessObjType<T>, msg?: string, exp?: string, childs?: ParseErrorNode[]
+): ParseResult<U>;
+export function makeFailure<T, U>(
+  obj: SuccessObjType<T>, msg?: string, exp?: string, act?: string, childs?: ParseErrorNode[]
+): ParseResult<U>;
+export function makeFailure<T, U>(
+  obj: SuccessObjType<T>,
+  msg?: string,
+  exp?: string,
+  arg4?: string|ParseErrorNode[],
+  arg5?: ParseErrorNode[]
+): ParseResult<U> {
+  const actual = typeof arg4 === "string"
+    ? arg4
+    : JSON.stringify(obj.value)
+    ;
+  const childs = typeof arg4 === "string"
+    ? arg5
+    : arg4
+    ;
   return ParseResult.fail<U>({
-    value: new ParseErrorStocker(msg, exp, JSON.stringify(obj.value), childs),
+    value: new ParseErrorStocker(msg, exp, actual, childs),
     flags: obj.flags,
   });
 }
@@ -67,11 +87,11 @@ export type MapperParseResult<T, U> = (obj: T) => ParseResult<U>;
  */
 export function mapParseResult<T, U>(f: (
   mkS: (obj: U) => ParseResult<U>,
-  mkF: (msg?: string, exp?: string) => ParseResult<U>
+  mkF: (msg?: string, exp?: string, act?: string) => ParseResult<U>
 ) => MapperParseResult<T, U>): ParseFunc<T, U> {
   return (obj) => f(
     (convObj: U) => makeSuccess<T, U>(obj, convObj),
-    (msg?: string, exp?: string) => makeFailure<T, U>(obj, msg, exp)
+    (msg?: string, exp?: string, act?: string) => makeFailure<T, U>(obj, msg, exp, act)
   )(obj.value);
 }
 

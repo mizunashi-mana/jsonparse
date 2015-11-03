@@ -50,7 +50,8 @@ function probjconcat(
     ), (r2) => ParseResult.fail<{[key: string]: any}>(l1)),
     (r1) => res2.caseOf((l2) => makeFailureP<Object, {[key: string]: any}>(
       sObj,
-      "failed to parse elem of 'object'", "object",
+      "failed to parse elem of 'object'",
+      "object",
       <[string, ParseErrorStocker][]>[[pnames[index], l2.value]]
     ), (r2) => {
       const result = clone(r1.value);
