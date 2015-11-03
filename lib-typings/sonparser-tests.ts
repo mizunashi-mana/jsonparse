@@ -79,10 +79,12 @@ var FmplusParser: ConfigParser<Object, boolean> = booleanParser.mplus(booleanPar
 var FplusParser: ConfigParser<Object, boolean> = booleanParser.plus(booleanParser);
 
 var methodParse: boolean = booleanParser.parse(obj);
-var methodParseWithStatus: {status: boolean; value?: boolean;} = booleanParser.parseWithStatus(obj);
+var methodParseWithStatus: {status: boolean; value?: boolean; err?: sparse.ConfigParseError} = booleanParser.parseWithStatus(obj);
+var methodPraseAsync: Promise<boolean> = booleanParser.parseAsync(obj);
 
 var funcParseFile: boolean = sparse.parseFile(str, booleanParser);
-var funcParseFileWithStatus: {status: boolean; value?: boolean;} = sparse.parseFileWithStatus(str, booleanParser);
+var funcParseFileWithStatus: {status: boolean; value?: boolean; err?: Error} = sparse.parseFileWithStatus(str, booleanParser);
+var funcParseAsync: Promise<boolean> = sparse.parseFileAsync(str, booleanParser);
 
 var nestReporter: sparse.ReporterType = sparse.Reporters.nestReporter(console.log, num);
 var listReporter: sparse.ReporterType = sparse.Reporters.listReporter(console.log, num);

@@ -180,7 +180,7 @@ export function parseSONFile(fname: string, cb: (e: any, obj: Object) => any): v
         return cb(new Error(`${fname} is not parsable son file`), undefined);
       }
 
-      return cb(undefined, result);
+      return cb(undefined, result.value(undefined));
     } catch (e) {
       return cb(e, undefined);
     }

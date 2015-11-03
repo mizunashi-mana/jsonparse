@@ -1,4 +1,5 @@
 /// <reference path="ftypes.d.ts" />
+/// <reference path="../typings/es6-promises/es6-promises.d.ts" />
 
 declare module "sonparser" {
 
@@ -150,11 +151,12 @@ declare module "sonparser" {
      * parse object and return parsed value with parse status
      *
      * @param obj target object
-     * @returns status false on fail and parsed value with status true on success
+     * @returns error with status false on fail and parsed value with status true on success
      */
     parseWithStatus(obj: T): {
       status: boolean;
       value?: U;
+      err?: ConfigParseError;
     };
     /**
      * parse object and return parsed value and report failure on fail
@@ -165,6 +167,13 @@ declare module "sonparser" {
      * @throws ConfigParseError failed to parse error
      */
     parseWithReporter(obj: T, reporter?: ReporterType): U;
+    /**
+     * parse object and return parsed value on promise
+     *
+     * @param obj target object
+     * @returns a promise returning parsed value on success and error on fail
+     */
+    parseAsync(obj: T): Promise<U>;
     /**
      * Fantasy area
      */
@@ -258,7 +267,16 @@ declare module "sonparser" {
   export function parseFileWithStatus<T>(fname: string, parser: ConfigParser<Object, T>): {
     status: boolean;
     value?: T;
+    err?: Error;
   };
+  /**
+   * parse son file using object parser on promise
+   *
+   * @param fname target son file name
+   * @param parser custom parser using to parse
+   * @returns a promise parsing son file using given parser
+   */
+  export function parseFileAsync<T>(fname: string, parser: ConfigParser<Object, T>): Promise<T>;
   /**
    * reporter type
    *
