@@ -6,6 +6,7 @@ gulp:
 tsconf     : 'tsconfig.json'
 dtsmconf   : 'dtsm.json'
 libTyping  : 'lib-typings/*.d.ts'
+examplesSrcJs : 'docs/examples/**/*.js'
 srcDir:
   base     : 'src'
   srcIndex : 'index.ts'

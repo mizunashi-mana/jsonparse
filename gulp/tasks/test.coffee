@@ -53,7 +53,25 @@ module.exports = (gulp, $, conf) ->
     ]
       .pipe $.typescript tsProject
 
+  gulp.task 'test:examples:js', ->
+    gulp.src [
+      paths.examplesSrcJs
+    ]
+      .pipe $.data (file) ->
+        file.contents = new Buffer(String file.contents
+          .replace 'require("sonparser")', """
+            require(\"#{path.relative (do process.cwd), file.path}\")
+          """)
+      .pipe $.header '/* eslint-env es6 *//* eslint no-var: 1 */'
+      .pipe do $.eslint
+      .pipe do $.eslint.format
+      .pipe do $.eslint.failOnError
+
+  gulp.task 'test:examples', ->
+    runSequence 'test:examples:js'
+
   gulp.task 'test', (cb) ->
     runSequence 'test:src'
       , 'test:typings'
+      , 'test:examples'
       , cb
