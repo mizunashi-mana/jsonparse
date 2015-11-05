@@ -22,6 +22,5 @@ BaseCustomError.prototype.initializeError = function (extendConstructor) {
     this.name = extendConstructor.name;
   }
 
-  if (Error.captureStackTrace !== undefined)
-    Error.captureStackTrace(this, extendConstructor);
+  Error.captureStackTrace(this, extendConstructor);
 };

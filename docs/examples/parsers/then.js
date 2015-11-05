@@ -18,7 +18,7 @@ assert.strictEqual(
  */
 assert.throws(
   function() {
-    return sparse.boolean.catch(function(obj) {
+    return sparse.boolean.then(function(obj) {
       throw new Error("This function will not be called.");
     }, function(msg, exp, act) {
       console.log("Error: " + msg);
