@@ -1,18 +1,18 @@
-const sparse = require("sonparser");
-const assert = require("assert");
+var sparse = require("sonparser");
+var assert = require("assert");
 
-const jsonReporter = sparse.Reporters.jsonReporter;
+var jsonReporter = sparse.Reporters.jsonReporter;
 
-const jsonConsoleReporter = jsonReporter(
+var jsonConsoleReporter = jsonReporter(
   console.log
 );
-const jsonShConsoleReporter = jsonReporter(
+var jsonShConsoleReporter = jsonReporter(
   console.log, 1
 );
-const jsonOLConsoleReporter = jsonReporter(
+var jsonOLConsoleReporter = jsonReporter(
   console.log, {isOneLine: true}
 );
-const jsonOLShConsoleReporter = jsonReporter(
+var jsonOLShConsoleReporter = jsonReporter(
   console.log, {isOneLine: true}, 1
 );
 
@@ -21,10 +21,12 @@ const jsonOLShConsoleReporter = jsonReporter(
  * "\"not boolean\" is not 'boolean'"
  */
 assert.throws(
-  () => sparse.boolean.parseWithReporter(
-    "not boolean",
-    jsonConsoleReporter
-  ),
+  function() {
+    return sparse.boolean.parseWithReporter(
+      "not boolean",
+      jsonConsoleReporter
+    );
+  },
   sparse.ConfigParseError
 );
 
@@ -43,23 +45,25 @@ assert.throws(
  * }
  */
 assert.throws(
-  () => sparse.hasProperties([
-    ["pB", sparse.boolean],
-    ["pP1", sparse.hasProperties([
+  function() {
+    return sparse.hasProperties([
       ["pB", sparse.boolean],
-      ["pA", sparse.array(sparse.boolean)],
-    ])],
-    ["pP2", sparse.hasProperties([
-      ["pB", sparse.boolean],
-    ])],
-  ]).parseWithReporter({
-    "pB": "not boolean",
-    "pP1": {
+      ["pP1", sparse.hasProperties([
+        ["pB", sparse.boolean],
+        ["pA", sparse.array(sparse.boolean)],
+      ])],
+      ["pP2", sparse.hasProperties([
+        ["pB", sparse.boolean],
+      ])],
+    ]).parseWithReporter({
       "pB": "not boolean",
-      "pA": [0, true, "str"],
-    },
-    "pP2": "not object",
-  }, jsonConsoleReporter),
+      "pP1": {
+        "pB": "not boolean",
+        "pA": [0, true, "str"],
+      },
+      "pP2": "not object",
+    }, jsonConsoleReporter);
+  },
   sparse.ConfigParseError
 );
 
@@ -72,23 +76,25 @@ assert.throws(
  * }
  */
 assert.throws(
-  () => sparse.hasProperties([
-    ["pB", sparse.boolean],
-    ["pP1", sparse.hasProperties([
+  function() {
+    return sparse.hasProperties([
       ["pB", sparse.boolean],
-      ["pA", sparse.array(sparse.boolean)],
-    ])],
-    ["pP2", sparse.hasProperties([
-      ["pB", sparse.boolean],
-    ])],
-  ]).parseWithReporter({
-    "pB": "not boolean",
-    "pP1": {
+      ["pP1", sparse.hasProperties([
+        ["pB", sparse.boolean],
+        ["pA", sparse.array(sparse.boolean)],
+      ])],
+      ["pP2", sparse.hasProperties([
+        ["pB", sparse.boolean],
+      ])],
+    ]).parseWithReporter({
       "pB": "not boolean",
-      "pA": [0, true, "str"],
-    },
-    "pP2": "not object",
-  }, jsonShConsoleReporter),
+      "pP1": {
+        "pB": "not boolean",
+        "pA": [0, true, "str"],
+      },
+      "pP2": "not object",
+    }, jsonShConsoleReporter);
+  },
   sparse.ConfigParseError
 );
 
@@ -97,23 +103,25 @@ assert.throws(
  * {"pB":"\"not boolean\" is not 'boolean'","pP1":{"pB":"\"not boolean\" is not 'boolean'","pA":{"[0]":"0 is not 'boolean'","[2]":"\"str\" is not 'boolean'"}},"pP2":"\"not object\" is not 'object'"}
  */
 assert.throws(
-  () => sparse.hasProperties([
-    ["pB", sparse.boolean],
-    ["pP1", sparse.hasProperties([
+  function() {
+    return sparse.hasProperties([
       ["pB", sparse.boolean],
-      ["pA", sparse.array(sparse.boolean)],
-    ])],
-    ["pP2", sparse.hasProperties([
-      ["pB", sparse.boolean],
-    ])],
-  ]).parseWithReporter({
-    "pB": "not boolean",
-    "pP1": {
+      ["pP1", sparse.hasProperties([
+        ["pB", sparse.boolean],
+        ["pA", sparse.array(sparse.boolean)],
+      ])],
+      ["pP2", sparse.hasProperties([
+        ["pB", sparse.boolean],
+      ])],
+    ]).parseWithReporter({
       "pB": "not boolean",
-      "pA": [0, true, "str"],
-    },
-    "pP2": "not object",
-  }, jsonOLConsoleReporter),
+      "pP1": {
+        "pB": "not boolean",
+        "pA": [0, true, "str"],
+      },
+      "pP2": "not object",
+    }, jsonOLConsoleReporter);
+  },
   sparse.ConfigParseError
 );
 
@@ -122,22 +130,24 @@ assert.throws(
  * {"pB":"\"not boolean\" is not 'boolean'","pP1":"failed to parse elem of 'object'","pP2":"\"not object\" is not 'object'"}
  */
 assert.throws(
-  () => sparse.hasProperties([
-    ["pB", sparse.boolean],
-    ["pP1", sparse.hasProperties([
+  function() {
+    return sparse.hasProperties([
       ["pB", sparse.boolean],
-      ["pA", sparse.array(sparse.boolean)],
-    ])],
-    ["pP2", sparse.hasProperties([
-      ["pB", sparse.boolean],
-    ])],
-  ]).parseWithReporter({
-    "pB": "not boolean",
-    "pP1": {
+      ["pP1", sparse.hasProperties([
+        ["pB", sparse.boolean],
+        ["pA", sparse.array(sparse.boolean)],
+      ])],
+      ["pP2", sparse.hasProperties([
+        ["pB", sparse.boolean],
+      ])],
+    ]).parseWithReporter({
       "pB": "not boolean",
-      "pA": [0, true, "str"],
-    },
-    "pP2": "not object",
-  }, jsonOLShConsoleReporter),
+      "pP1": {
+        "pB": "not boolean",
+        "pA": [0, true, "str"],
+      },
+      "pP2": "not object",
+    }, jsonOLShConsoleReporter);
+  },
   sparse.ConfigParseError
 );

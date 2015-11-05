@@ -1,20 +1,20 @@
-const sparse = require("sonparser");
-const assert = require("assert");
+var sparse = require("sonparser");
+var assert = require("assert");
 
 /**
  * This parser converts "bool string" to boolean
  */
-const boolStrParser = sparse.custom(function(makeSuccess, makeFailure) {
+var boolStrParser = sparse.custom(function(makeSuccess, makeFailure) {
   return function(obj) {
     if(["true", "yes", "on"].indexOf(obj) != -1) {
       return makeSuccess(true);
     } else if(["false", "no", "off"].indexOf(obj) != -1) {
       return makeSuccess(false);
     }
-    return makeFailure(`${JSON.stringify(obj)} is not bool string`, "bool string(yes/no)");
+    return makeFailure(JSON.stringify(obj) + " is not bool string", "bool string(yes/no)");
   };
 });
-const convertBoolParser = sparse.boolean.or(boolStrParser);
+var convertBoolParser = sparse.boolean.or(boolStrParser);
 
 assert.strictEqual(
   convertBoolParser.parse(true),
@@ -32,16 +32,22 @@ assert.strictEqual(
 ); // success
 
 assert.throws(
-  () => convertBoolParser.parse(0),
+  function() {
+    return convertBoolParser.parse(0);
+  },
   sparse.ConfigParseError
 ); // failure
 
 assert.throws(
-  () => convertBoolParser.parse("str"),
+  function() {
+    return convertBoolParser.parse("str");
+  },
   sparse.ConfigParseError
 ); // failure
 
 assert.throws(
-  () => convertBoolParser.parse([]),
+  function() {
+    return convertBoolParser.parse([]);
+  },
   sparse.ConfigParseError
 ); // failure

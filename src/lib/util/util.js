@@ -12,14 +12,14 @@ var clone = module.exports.clone = function(obj, deepcopy) {
     for (i = 0, len = obj.length; i < len; i++) {
       copy[i] = dcopyf ? clone(obj[i], dcopyf) : obj[i];
     }
-    return copy
+    return copy;
   }
 
   for (attr in obj) {
     if (obj.hasOwnProperty(attr)) copy[attr] = dcopyf ? clone(obj[attr]) : obj[attr];
   }
   return copy;
-}
+};
 
 var objClone = module.exports.objClone = function(obj) {
   try {
@@ -27,7 +27,7 @@ var objClone = module.exports.objClone = function(obj) {
   } catch(e) {
     return obj;
   }
-}
+};
 
 var inherits = module.exports.inherits = function(ctor, superCtor) {
 

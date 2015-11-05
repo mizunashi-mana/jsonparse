@@ -1,5 +1,5 @@
-const sparse = require("sonparser");
-const assert = require("assert");
+var sparse = require("sonparser");
+var assert = require("assert");
 
 assert.strictEqual(
   sparse.succeed(true).parse("anything!"),

@@ -1,26 +1,28 @@
-const sparse = require("sonparser");
-const assert = require("assert");
+var sparse = require("sonparser");
+var assert = require("assert");
 
-const nestConsoleReporter = sparse.Reporters.nestReporter(console.log);
+var nestConsoleReporter = sparse.Reporters.nestReporter(console.log);
 
 /**
  * check boolean
  */
-const booleanParser = sparse.boolean;
+var booleanParser = sparse.boolean;
 
-const resultCheckBoolean = booleanParser.parse(true);
+var resultCheckBoolean = booleanParser.parse(true);
 assert.strictEqual(
   resultCheckBoolean,
   true
 );
 
 assert.throws(
-  () => booleanParser.parse("not boolean!"),
+  function() {
+    return booleanParser.parse("not boolean!");
+  },
   sparse.ConfigParseError
 );
 
 // if you don't want to use try-catch
-const resultCheckBooleanSafetySuccess = booleanParser.parseWithStatus(false);
+var resultCheckBooleanSafetySuccess = booleanParser.parseWithStatus(false);
 assert.strictEqual(
   resultCheckBooleanSafetySuccess.status,
   true
@@ -30,7 +32,7 @@ assert.strictEqual(
   false
 );
 
-const resultCheckBooleanSafetyFailure = booleanParser.parseWithStatus("not boolean!");
+var resultCheckBooleanSafetyFailure = booleanParser.parseWithStatus("not boolean!");
 assert.strictEqual(
   resultCheckBooleanSafetyFailure.status,
   false
@@ -50,7 +52,7 @@ try {
 /**
  * check and convert my object
  */
-const myObjectParser = sparse.hasProperties([
+var myObjectParser = sparse.hasProperties([
   ["private", sparse.boolean.option(false)],
   ["name", sparse.string],
   ["version", sparse.string],
@@ -66,7 +68,7 @@ const myObjectParser = sparse.hasProperties([
   })],
 ]);
 
-const resultCheckMyObject = myObjectParser.parse({
+var resultCheckMyObject = myObjectParser.parse({
   "name": "example-sonparser",
   "version": "0.0.0",
   "description": "An example of sonparser",
@@ -100,7 +102,9 @@ assert.deepEqual(
 );
 
 assert.throws(
-  () => myObjectParser.parse("not my object!"),
+  function() {
+    return myObjectParser.parse("not my object!");
+  },
   sparse.ConfigParseError
 );
 

@@ -55,17 +55,18 @@ module.exports = (gulp, $, conf) ->
 
   gulp.task 'test:examples:js', ->
     gulp.src [
-      paths.examplesSrcJs
+      paths.docsDir.examples.srcJs
     ]
-      .pipe $.data (file) ->
-        file.contents = new Buffer(String file.contents
-          .replace 'require("sonparser")', """
-            require(\"#{path.relative (do process.cwd), file.path}\")
-          """)
-      .pipe $.header '/* eslint-env es6 *//* eslint no-var: 1 */'
-      .pipe do $.eslint
-      .pipe do $.eslint.format
-      .pipe do $.eslint.failOnError
+      .pipe $.replace 'require("sonparser")', '''
+        require(require("path").join(
+          require("path").relative(___dirname, process.cwd()),
+          "lib/"
+        ))
+      '''
+      .pipe $.replace 'console.log', '(function(){})'
+      .pipe $.header '"use strict";'
+      .pipe do $.jstester
+      .pipe $.jstester.reporter true
 
   gulp.task 'test:examples', ->
     runSequence 'test:examples:js'

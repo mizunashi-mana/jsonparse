@@ -54,6 +54,9 @@ conf =
   runOptions : argv
   pkgInfo    : pkg
 
+gulpPlugins.replace = require './gulp/lib/gulp-replace-ex/'
+gulpPlugins.jstester = require './gulp/lib/gulp-jstester/'
+
 requireTask = (taskname) ->
   taskReq = require path.resolve gulpDir, 'tasks/' + taskname
   taskReq gulp, gulpPlugins, conf

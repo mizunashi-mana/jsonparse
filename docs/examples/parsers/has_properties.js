@@ -1,10 +1,10 @@
-const sparse = require("sonparser");
-const assert = require("assert");
+var sparse = require("sonparser");
+var assert = require("assert");
 
 /**
  * This parser filters my enum values.
  */
-const MyEnumParseFunc = function(makeSuccess, makeFailure) {
+function MyEnumParseFunc(makeSuccess, makeFailure) {
   return function(obj) {
     if (["VAL1", "VAL2", "VAL3"].indexOf(obj) != -1) {
       return makeSuccess(obj);
@@ -12,12 +12,12 @@ const MyEnumParseFunc = function(makeSuccess, makeFailure) {
     return makeFailure('expected "VAL1", "VAL2" or "VAL3"', '"VAL1" | "VAL2" | "VAL3"');
   };
 };
-const MyEnumParser = sparse.custom(MyEnumParseFunc);
+var MyEnumParser = sparse.custom(MyEnumParseFunc);
 
 /**
  * This parser checks object type structure.
  */
-const MyObjectParser = sparse.hasProperties([
+var MyObjectParser = sparse.hasProperties([
   ["propBool", sparse.boolean],
   ["propNum", sparse.number],
   ["propStr", sparse.string],
@@ -66,32 +66,40 @@ assert.deepEqual(MyObjectParser.parse({
 }); // success
 
 assert.throws(
-  () => MyObjectParser.parse({}),
+  function() {
+    return MyObjectParser.parse({});
+  },
   sparse.ConfigParseError
 ); // failure
 
 assert.throws(
-  () => MyObjectParser.parse({
-    "propBool": true,
-    "propStr": "str",
-  }),
+  function() {
+    return MyObjectParser.parse({
+      "propBool": true,
+      "propStr": "str",
+    });
+  },
   sparse.ConfigParseError
 ); // failure
 
 assert.throws(
-  () => MyObjectParser.parse({
-    "propBool": true,
-    "propNum": 1,
-    "propStr": true,
-    "propObj": {
-      "propNumArr": [0,1,2],
-      "propEnum": "VAL2",
-    },
-  }),
+  function() {
+    return MyObjectParser.parse({
+      "propBool": true,
+      "propNum": 1,
+      "propStr": true,
+      "propObj": {
+        "propNumArr": [0,1,2],
+        "propEnum": "VAL2",
+      },
+    });
+  },
   sparse.ConfigParseError
 ); // failure
 
 assert.throws(
-  () => MyObjectParser.parse(true),
+  function() {
+    return MyObjectParser.parse(true);
+  },
   sparse.ConfigParseError
 ); // failure

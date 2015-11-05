@@ -1,10 +1,10 @@
-const sparse = require("sonparser");
-const assert = require("assert");
+var sparse = require("sonparser");
+var assert = require("assert");
 
 /**
  * This parser fileters my enum value.
  */
-const MyEnumParser = sparse.string.and(sparse.custom(
+var MyEnumParser = sparse.string.and(sparse.custom(
   function(makeSuccess, makeFailure) {
     return function(obj) {
       if (["VAL1", "VAL2", "VAL3"].indexOf(obj) != -1) {
@@ -26,5 +26,5 @@ try {
   assert(false, "Don't reach here!");
 } catch (e) {
   assert(e instanceof sparse.ConfigParseError);
-  console.log(`Got Error: ${e.message}`);
+  console.log("Got Error: " + e.message);
 }
