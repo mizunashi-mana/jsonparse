@@ -23,10 +23,12 @@
   "keywords": [
     "json",
     "cson",
+    "type",
     "parser",
     "parse",
     "config",
-    "strict"
+    "strict",
+    "configparser"
   ],
   "author": {
     "name": "Mizunashi Mana",
