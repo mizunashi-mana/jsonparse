@@ -53,7 +53,26 @@ module.exports = (gulp, $, conf) ->
     ]
       .pipe $.typescript tsProject
 
+  gulp.task 'test:examples:js', ->
+    gulp.src [
+      paths.docsDir.examples.srcJs
+    ]
+      .pipe $.replace 'require("sonparser")', '''
+        require(require("path").join(
+          require("path").relative(___dirname, process.cwd()),
+          "lib/"
+        ))
+      '''
+      .pipe $.replace 'console.log', '(function(){})'
+      .pipe $.header '"use strict";'
+      .pipe do $.jstester
+      .pipe $.jstester.reporter true
+
+  gulp.task 'test:examples', ->
+    runSequence 'test:examples:js'
+
   gulp.task 'test', (cb) ->
     runSequence 'test:src'
       , 'test:typings'
+      , 'test:examples'
       , cb

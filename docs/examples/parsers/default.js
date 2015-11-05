@@ -1,10 +1,10 @@
-const sparse = require("sonparser");
-const assert = require("assert");
+var sparse = require("sonparser");
+var assert = require("assert");
 
 /**
  * This parser sets default value(true) on last parse failed.
  */
-const defaultTrueParser = sparse.boolean.default(true);
+var defaultTrueParser = sparse.boolean.default(true);
 
 assert.strictEqual(
   defaultTrueParser.parse(false),

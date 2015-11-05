@@ -1,6 +1,6 @@
-const sparse = require("sonparser");
-const assert = require("assert");
-const path = require("path");
+var sparse = require("sonparser");
+var assert = require("assert");
+var path = require("path");
 
 function resolvePath(pathStr) {
   return path.isAbsolute(pathStr)
@@ -9,7 +9,7 @@ function resolvePath(pathStr) {
     ;
 }
 
-const myConfParser = sparse.hasProperties([
+var myConfParser = sparse.hasProperties([
   ["private", sparse.boolean.option(false)],
   ["name", sparse.string],
   ["version", sparse.string],
@@ -103,14 +103,16 @@ try {
   assert(false, "Don't reach here!");
 } catch (e) {
   assert(e instanceof sparse.ConfigParseError);
-  console.log(`Got Error: ${e.message}`);
+  console.log("Got Error: " + e.message);
 }
 
 /**
  * errno error will be recept
  */
 assert.throws(
-  () => sparse.parseFile("not exists file!", myConfParser),
+  function() {
+    return sparse.parseFile("not exists file!", myConfParser);
+  },
   Error
 ); // failure
 
@@ -118,7 +120,9 @@ assert.throws(
  * parse format error will be recept.
  */
 assert.throws(
-  () => sparse.parseFile(resolvePath("datas/invalid.cson"), myConfParser),
+  function() {
+    return sparse.parseFile(resolvePath("datas/invalid.cson"), myConfParser);
+  },
   Error
 ); // failure
 
@@ -126,12 +130,14 @@ assert.throws(
  * not son file will also receive parse format error.
  */
 assert.throws(
-  () => sparse.parseFile(resolvePath("datas/normal.txt"), myConfParser),
+  function() {
+    return sparse.parseFile(resolvePath("datas/normal.txt"), myConfParser);
+  },
   Error
 ); // failure
 
 // you can use with status method.
-const resultConfig = sparse.parseFileWithStatus(resolvePath("datas/config.conf"), myConfParser);
+var resultConfig = sparse.parseFileWithStatus(resolvePath("datas/config.conf"), myConfParser);
 assert.strictEqual(resultConfig.status, true);
 assert.deepEqual(
   resultConfig.value,

@@ -3,6 +3,10 @@ gulp:
   file     : '../gulpfile.coffee'
   tasks    : 'tasks/**/*.coffee'
   conf     : 'conf/**/*.cson'
+  libDir   :
+    base   : 'lib'
+    srcJs  : '**/*.js'
+    isrcJs : '**/tmp/**/*.js'
 tsconf     : 'tsconfig.json'
 dtsmconf   : 'dtsm.json'
 libTyping  : 'lib-typings/*.d.ts'
@@ -41,3 +45,4 @@ docsDir:
   examples :
     base   : 'examples'
     srcJs  : '**/*.js'
+    srcTs  : '**/*.ts'

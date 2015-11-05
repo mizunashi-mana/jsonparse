@@ -29,11 +29,11 @@ npm install sonparser --save
 ### Javascript
 
 ```javascript
-const sonparser = require("sonparser");
+var sonparser = require("sonparser");
 
-let result;
+var result;
 
-const ExampleTsConfParser = sonparser.hasProperties([
+var ExampleTsConfParser = sonparser.hasProperties([
   ["compilerOptions", sonparser.hasProperties([
     ["target", sonparser.string],
     ["module", sonparser.string],

@@ -1,12 +1,12 @@
-const sparse = require("sonparser");
-const assert = require("assert");
+var sparse = require("sonparser");
+var assert = require("assert");
 
-const listReporter = sparse.Reporters.listReporter;
+var listReporter = sparse.Reporters.listReporter;
 
-const listConsoleReporter = listReporter(
+var listConsoleReporter = listReporter(
   console.log
 );
-const listShConsoleReporter = listReporter(
+var listShConsoleReporter = listReporter(
   console.log, 1
 );
 
@@ -15,10 +15,12 @@ const listShConsoleReporter = listReporter(
  * this : "not boolean" is not 'boolean'
  */
 assert.throws(
-  () => sparse.boolean.parseWithReporter(
-    "not boolean",
-    listConsoleReporter
-  ),
+  function() {
+    return sparse.boolean.parseWithReporter(
+      "not boolean",
+      listConsoleReporter
+    );
+  },
   sparse.ConfigParseError
 );
 
@@ -31,23 +33,25 @@ assert.throws(
  * this.pP2 : "not object" is not 'object'
  */
 assert.throws(
-  () => sparse.hasProperties([
-    ["pB", sparse.boolean],
-    ["pP1", sparse.hasProperties([
+  function() {
+    return sparse.hasProperties([
       ["pB", sparse.boolean],
-      ["pA", sparse.array(sparse.boolean)],
-    ])],
-    ["pP2", sparse.hasProperties([
-      ["pB", sparse.boolean],
-    ])],
-  ]).parseWithReporter({
-    "pB": "not boolean",
-    "pP1": {
+      ["pP1", sparse.hasProperties([
+        ["pB", sparse.boolean],
+        ["pA", sparse.array(sparse.boolean)],
+      ])],
+      ["pP2", sparse.hasProperties([
+        ["pB", sparse.boolean],
+      ])],
+    ]).parseWithReporter({
       "pB": "not boolean",
-      "pA": [0, true, "str"],
-    },
-    "pP2": "not object",
-  }, listConsoleReporter),
+      "pP1": {
+        "pB": "not boolean",
+        "pA": [0, true, "str"],
+      },
+      "pP2": "not object",
+    }, listConsoleReporter);
+  },
   sparse.ConfigParseError
 );
 
@@ -58,22 +62,24 @@ assert.throws(
  * this.pP2 : "not object" is not 'object'
  */
 assert.throws(
-  () => sparse.hasProperties([
-    ["pB", sparse.boolean],
-    ["pP1", sparse.hasProperties([
+  function() {
+    return sparse.hasProperties([
       ["pB", sparse.boolean],
-      ["pA", sparse.array(sparse.boolean)],
-    ])],
-    ["pP2", sparse.hasProperties([
-      ["pB", sparse.boolean],
-    ])],
-  ]).parseWithReporter({
-    "pB": "not boolean",
-    "pP1": {
+      ["pP1", sparse.hasProperties([
+        ["pB", sparse.boolean],
+        ["pA", sparse.array(sparse.boolean)],
+      ])],
+      ["pP2", sparse.hasProperties([
+        ["pB", sparse.boolean],
+      ])],
+    ]).parseWithReporter({
       "pB": "not boolean",
-      "pA": [0, true, "str"],
-    },
-    "pP2": "not object",
-  }, listShConsoleReporter),
+      "pP1": {
+        "pB": "not boolean",
+        "pA": [0, true, "str"],
+      },
+      "pP2": "not object",
+    }, listShConsoleReporter);
+  },
   sparse.ConfigParseError
 );

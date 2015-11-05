@@ -1,10 +1,10 @@
-const sparse = require("sonparser");
-const assert = require("assert");
+var sparse = require("sonparser");
+var assert = require("assert");
 
 /**
  * Option parser sets option value when target value is `undefined`.
  */
-const MyFlagObjParser = sparse.hasProperties([
+var MyFlagObjParser = sparse.hasProperties([
   ["flag", sparse.boolean.option(false)],
 ]);
 
@@ -24,6 +24,8 @@ assert.deepEqual(
 ); // success with option value(false)
 
 assert.throws(
-  () => MyFlagObjParser.parse({"flag": "true"}),
-  ConfigParseError
+  function() {
+    return MyFlagObjParser.parse({"flag": "true"});
+  },
+  sparse.ConfigParseError
 ); // failure

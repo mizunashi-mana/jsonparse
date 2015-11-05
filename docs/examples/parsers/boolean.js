@@ -1,5 +1,5 @@
-const sparse = require("sonparser");
-const assert = require("assert");
+var sparse = require("sonparser");
+var assert = require("assert");
 
 assert.strictEqual(
   sparse.boolean.parse(false),
@@ -12,11 +12,15 @@ assert.strictEqual(
 ); // success
 
 assert.throws(
-  () => sparse.boolean.parse(0),
+  function() {
+    return sparse.boolean.parse(0);
+  },
   sparse.ConfigParseError
 ); // failure
 
 assert.throws(
-  () => sparse.boolean.parse("true"),
+  function() {
+    return sparse.boolean.parse("true");
+  },
   sparse.ConfigParseError
 ); // failure

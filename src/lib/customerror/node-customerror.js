@@ -8,20 +8,19 @@ var BaseCustomError = module.exports.BaseCustomError = function(message) {
 
   this.message = message;
   this.initializeError(this.constructor);
-}
+};
 
 require("../util/util").inherits(BaseCustomError, Error);
 
 BaseCustomError.prototype.initializeError = function (extendConstructor) {
   "use strict";
 
-  if (!extendConstructor){
+  if (!extendConstructor) {
     // defaults
     this.name = "Error";
   } else {
     this.name = extendConstructor.name;
   }
 
-  if (Error.captureStackTrace !== undefined)
-    Error.captureStackTrace(this, extendConstructor);
-}
+  Error.captureStackTrace(this, extendConstructor);
+};

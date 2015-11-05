@@ -1,8 +1,8 @@
-const sparse = require("sonparser");
-const assert = require("assert");
+var sparse = require("sonparser");
+var assert = require("assert");
 
-let flag;
-const FlagParser = sparse.boolean
+var flag;
+var FlagParser = sparse.boolean
   .desc("`flag` should be boolean object.");
 
 flag = true;
@@ -13,7 +13,9 @@ assert.strictEqual(
 
 flag = "true";
 assert.throws(
-  () => FlagParser.parse(flag),
+  function() {
+    return FlagParser.parse(flag);
+  },
   sparse.ConfigParseError,
   "`flag` should be boolean object."
 ); // failure with custom description

@@ -1,9 +1,10 @@
 module.exports = (gulp, $, conf) ->
   merge = require 'merge2'
+  runSequence = require 'run-sequence'
 
   {paths} = conf
 
-  gulp.task 'lint:gulp', ->
+  gulp.task 'lint:gulp:coffee', ->
     gulp.src [
       paths.gulp.file
       paths.gulp.tasks
@@ -11,6 +12,19 @@ module.exports = (gulp, $, conf) ->
       .pipe do $.coffeelint
       .pipe do $.coffeelint.reporter
       .pipe $.coffeelint.reporter 'fail'
+
+  gulp.task 'lint:gulp:js', ->
+    gulp.src [
+      paths.gulp.libDir.srcJs
+      "!#{paths.gulp.libDir.isrcJs}"
+    ]
+      .pipe do $.eslint
+      .pipe do $.eslint.format
+      .pipe do $.eslint.failAfterError
+
+  gulp.task 'lint:gulp', ->
+    runSequence 'lint:gulp:coffee'
+      , 'lint:gulp:js'
 
   gulp.task 'lint:config', ->
     throw new Error 'not implement!'
@@ -22,6 +36,11 @@ module.exports = (gulp, $, conf) ->
     ]
       .pipe do $.tslint
       .pipe $.tslint.report 'verbose'
+    gulp.src [
+      paths.docsDir.examples.srcTs
+    ]
+      .pipe do $.tslint
+      .pipe $.tslint.report 'verbose'
 
   gulp.task 'lint:js', ->
     merge [
@@ -30,14 +49,14 @@ module.exports = (gulp, $, conf) ->
       ]
         .pipe do $.eslint
         .pipe do $.eslint.format
-        .pipe do $.eslint.failOnError
+        .pipe do $.eslint.failAfterError
       gulp.src [
         paths.docsDir.examples.srcJs
       ]
-        .pipe $.header '/* eslint-env es6 *//* eslint no-var: 1 */'
+        .pipe $.header '/* eslint-disable vars-on-top */'
         .pipe do $.eslint
         .pipe do $.eslint.format
-        .pipe do $.eslint.failOnError
+        .pipe do $.eslint.failAfterError
     ]
 
   gulp.task 'lint:typing', ->
@@ -47,10 +66,9 @@ module.exports = (gulp, $, conf) ->
       .pipe do $.tslint
       .pipe $.tslint.report 'verbose'
 
-  gulp.task 'lint', [
-    'lint:gulp'
-    # 'lint:config'
-    'lint:ts'
-    'lint:js'
-    'lint:typing'
-  ]
+  gulp.task 'lint', ->
+    runSequence 'lint:gulp'
+      #, 'lint:config'
+      , 'lint:ts'
+      , 'lint:js'
+      , 'lint:typing'

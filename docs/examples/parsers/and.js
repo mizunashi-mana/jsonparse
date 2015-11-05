@@ -1,18 +1,18 @@
-const sparse = require("sonparser");
-const assert = require("assert");
+var sparse = require("sonparser");
+var assert = require("assert");
 
 /**
  * This parser converts natural number to is even.
  */
-const IsEvenNatualParser = sparse.custom(function(makeSuccess, makeFailure) {
+var IsEvenNatualParser = sparse.custom(function(makeSuccess, makeFailure) {
   return function(obj) {
     if (Number.isInteger(obj) && obj >= 0) {
       return makeSuccess(obj % 2 == 0);
     }
-    return makeFailure(`${obj} is not natural number`, "natural number");
+    return makeFailure(obj + " is not natural number", "natural number");
   };
 });
-const IsEvenNaturalNumberParser = sparse.number.and(IsEvenNatualParser);
+var IsEvenNaturalNumberParser = sparse.number.and(IsEvenNatualParser);
 
 assert.strictEqual(
   IsEvenNaturalNumberParser.parse(0),
@@ -25,16 +25,22 @@ assert.strictEqual(
 ); // success
 
 assert.throws(
-  () => IsEvenNaturalNumberParser.parse(-101),
+  function() {
+    return IsEvenNaturalNumberParser.parse(-101);
+  },
   sparse.ConfigParseError
 ); // failure
 
 assert.throws(
-  () => IsEvenNaturalNumberParser.parse(2.7),
+  function() {
+    return IsEvenNaturalNumberParser.parse(2.7);
+  },
   sparse.ConfigParseError
 ); // failure
 
 assert.throws(
-  () => IsEvenNaturalNumberParser.parse("str"),
+  function() {
+    return IsEvenNaturalNumberParser.parse("str");
+  },
   sparse.ConfigParseError
 ); // failure

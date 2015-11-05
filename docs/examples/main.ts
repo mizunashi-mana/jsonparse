@@ -1,28 +1,28 @@
-var sparse = require("sonparser");
-var assert = require("assert");
+/// <reference path="../../lib-typings/sonparser.d.ts" />
 
-var nestConsoleReporter = sparse.Reporters.nestReporter(console.log);
+import * as sparse from "sonparser";
+import * as assert from "assert";
+
+const nestConsoleReporter = sparse.Reporters.nestReporter(console.log);
 
 /**
  * check boolean
  */
-var booleanParser = sparse.boolean;
+const booleanParser = sparse.boolean;
 
-var resultCheckBoolean = booleanParser.parse(true);
+const resultCheckBoolean = booleanParser.parse(true);
 assert.strictEqual(
   resultCheckBoolean,
   true
 );
 
 assert.throws(
-  function() {
-    return booleanParser.parse("not boolean!");
-  },
+  () => booleanParser.parse("not boolean!"),
   sparse.ConfigParseError
 );
 
 // if you don't want to use try-catch
-var resultCheckBooleanSafetySuccess = booleanParser.parseWithStatus(false);
+const resultCheckBooleanSafetySuccess = booleanParser.parseWithStatus(false);
 assert.strictEqual(
   resultCheckBooleanSafetySuccess.status,
   true
@@ -32,7 +32,7 @@ assert.strictEqual(
   false
 );
 
-var resultCheckBooleanSafetyFailure = booleanParser.parseWithStatus("not boolean!");
+const resultCheckBooleanSafetyFailure = booleanParser.parseWithStatus("not boolean!");
 assert.strictEqual(
   resultCheckBooleanSafetyFailure.status,
   false
@@ -49,10 +49,23 @@ try {
   // catch Error
 }
 
+interface PkgInfo {
+  private?: boolean;
+  name: string;
+  version: string;
+  description: string;
+  keywords?: string[];
+  scripts: Object;
+  repository?: {
+    type: string;
+    url: string;
+  };
+}
+
 /**
  * check and convert my object
  */
-var myObjectParser = sparse.hasProperties([
+const myObjectParser = sparse.hasProperties<PkgInfo>([
   ["private", sparse.boolean.option(false)],
   ["name", sparse.string],
   ["version", sparse.string],
@@ -68,43 +81,41 @@ var myObjectParser = sparse.hasProperties([
   })],
 ]);
 
-var resultCheckMyObject = myObjectParser.parse({
-  "name": "example-sonparser",
-  "version": "0.0.0",
-  "description": "An example of sonparser",
-  "keywords": [
+const resultCheckMyObject = myObjectParser.parse({
+  name: "example-sonparser",
+  version: "0.0.0",
+  description: "An example of sonparser",
+  keywords: [
     "example",
     "more", "complexible",
   ],
-  "scripts": {
-    "test": "echo \"not implements!\" && exit 1",
+  scripts: {
+    test: "echo \"not implements!\" && exit 1",
   },
 });
 assert.deepEqual(
   resultCheckMyObject,
   {
-    "private": false,
-    "name": "example-sonparser",
-    "version": "0.0.0",
-    "description": "An example of sonparser",
-    "keywords": [
+    private: false,
+    name: "example-sonparser",
+    version: "0.0.0",
+    description: "An example of sonparser",
+    keywords: [
       "example",
       "more", "complexible",
     ],
-    "scripts": {
-      "test": "echo \"not implements!\" && exit 1",
+    scripts: {
+      test: "echo \"not implements!\" && exit 1",
     },
-    "repository": {
-      "type": "git",
-      "url": "",
+    repository: {
+      type: "git",
+      url: "",
     },
   }
 );
 
 assert.throws(
-  function() {
-    return myObjectParser.parse("not my object!");
-  },
+  () => myObjectParser.parse("not my object!"),
   sparse.ConfigParseError
 );
 
@@ -122,17 +133,17 @@ assert.throws(
  */
 try {
   myObjectParser.parseWithReporter({
-    "private": "not boolean!",
-    "name": "example-sonparser",
-    "version": 0,
-    "description": "An example of sonparser",
-    "keywords": [
+    private: "not boolean!",
+    name: "example-sonparser",
+    version: 0,
+    description: "An example of sonparser",
+    keywords: [
       "example",
       true,
     ],
-    "repository": {
-      "type": 0,
-      "url": "",
+    repository: {
+      type: 0,
+      url: "",
     },
   }, nestConsoleReporter);
 } catch (e) {

@@ -1,10 +1,10 @@
-const sparse = require("sonparser");
-const assert = require("assert");
+var sparse = require("sonparser");
+var assert = require("assert");
 
 /**
  * This parser converts number to is integer.
  */
-const IsIntegerParser = sparse.number.map(Number.isInteger);
+var IsIntegerParser = sparse.number.map(Number.isInteger);
 
 assert.strictEqual(
   IsIntegerParser.parse(-1),
@@ -17,6 +17,8 @@ assert.strictEqual(
 ); // success
 
 assert.throws(
-  () => IsIntegerParser.parse("str"),
+  function() {
+    return IsIntegerParser.parse("str");
+  },
   sparse.ConfigParseError
 ); // failure

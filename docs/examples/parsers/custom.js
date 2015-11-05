@@ -1,10 +1,10 @@
-const sparse = require("sonparser");
-const assert = require("assert");
+var sparse = require("sonparser");
+var assert = require("assert");
 
 /**
  * This parser filters my enum values.
  */
-const MyEnumParseFunc = function(makeSuccess, makeFailure) {
+function MyEnumParseFunc(makeSuccess, makeFailure) {
   return function(obj) {
     if (["VAL1", "VAL2", "VAL3"].indexOf(obj) != -1) {
       return makeSuccess(obj);
@@ -12,7 +12,7 @@ const MyEnumParseFunc = function(makeSuccess, makeFailure) {
     return makeFailure('expected "VAL1", "VAL2" or "VAL3"', '"VAL1" | "VAL2" | "VAL3"');
   };
 };
-const MyEnumParser = sparse.custom(MyEnumParseFunc);
+var MyEnumParser = sparse.custom(MyEnumParseFunc);
 
 assert.strictEqual(
   MyEnumParser.parse("VAL1"),
@@ -25,12 +25,16 @@ assert.strictEqual(
 ); // success
 
 assert.throws(
-  () => MyEnumParser.parse(0),
+  function() {
+    return MyEnumParser.parse(0);
+  },
   sparse.ConfigParseError
 ); // failure
 
 assert.throws(
-  () => MyEnumParser.parse("str"),
+  function() {
+    return MyEnumParser.parse("str");
+  },
   sparse.ConfigParseError
 ); // failure
 
@@ -42,7 +46,7 @@ function MyConvertParseFunc(makeSuccess, makeFailure) {
     if (typeof obj === "boolean") {
       return makeSuccess(obj);
     } else if (typeof obj === "number") {
-      return makeSuccess(obj == 0);
+      return makeSuccess(obj != 0);
     } else if (typeof obj === "string") {
       switch(obj) {
         case "true":
@@ -54,12 +58,12 @@ function MyConvertParseFunc(makeSuccess, makeFailure) {
         case "off":
           return makeSuccess(false);
       }
-      return makeFailure(`${JSON.stringify(obj)} is not flag string`, "flag string(yes/no)");
+      return makeFailure(JSON.stringify(obj) + " is not flag string", "flag string(yes/no)");
     }
     return makeFailure("This is not bool object", "bool object");
   };
 };
-const MyConvertParser = sparse.custom(MyConvertParseFunc);
+var MyConvertParser = sparse.custom(MyConvertParseFunc);
 
 assert.strictEqual(
   MyConvertParser.parse(true),
@@ -82,16 +86,22 @@ assert.strictEqual(
 ); // success
 
 assert.throws(
-  MyConvertParser.parse("str"),
+  function() {
+    return MyConvertParser.parse("str");
+  },
   sparse.ConfigParseError
 ); // failure
 
 assert.throws(
-  MyConvertParser.parse({}),
+  function() {
+    return MyConvertParser.parse({});
+  },
   sparse.ConfigParseError
 ); // failure
 
 assert.throws(
-  MyConvertParser.parse([]),
+  function() {
+    return MyConvertParser.parse([]);
+  },
   sparse.ConfigParseError
 ); // failure
