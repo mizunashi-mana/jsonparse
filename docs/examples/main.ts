@@ -3,7 +3,7 @@
 import * as sparse from "sonparser";
 import * as assert from "assert";
 
-const nestConsoleReporter = sparse.Reporters.nestReporter(console.log);
+const nestConsoleReporter = sparse.reporters.nestReporter(console.log);
 
 /**
  * check boolean

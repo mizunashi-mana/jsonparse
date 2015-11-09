@@ -1,12 +1,14 @@
 /// <reference path="ftypes.d.ts" />
 /// <reference path="../typings/es6-promises/es6-promises.d.ts" />
+/// <reference path="../typings/node/node.d.ts" />
 
 declare module "sonparser" {
+  import * as events from "events";
 
   /**
    * Error class of ConfigParser
    */
-  export interface ConfigParseError extends Error {
+  export class ConfigParseError extends Error {
     /**
      * @param msg error message
      */
@@ -289,14 +291,65 @@ declare module "sonparser" {
   /**
    * any reporters
    */
-  export const Reporters: {
-    nestReporter: (logFunc: (msg: string) => any, depth?: number) => ReporterType;
-    listReporter: (logFunc: (msg: string) => any, depth?: number) => ReporterType;
-    jsonReporter: {
-      (logFunc: (msg: string) => any, flags?: {
+  export namespace reporters {
+    /**
+     * custom report function type
+     *
+     * @param customReportFunc.reportInfo report information
+     * @param customReportFunc.reportInfo.message fail message
+     * @param customReportFunc.reportInfo.expected expected type
+     * @param customReportFunc.reportInfo.actual actual recept object
+     * @param customReportFunc.data extra report data
+     * @param customReportFunc.data.depth called depth count
+     * @param customReportFunc.data.isLeaf the flag of is leaf
+     * @param customReportFunc.data.propertyName full propertyname
+     */
+    export type customReportFunc = (reportInfo: {
+        message?: string;
+        expected?: string;
+        actual?: string;
+    }, data?: {
+        depth: number;
+        isLeaf: boolean;
+        propertyName: string;
+    }) => void;
+    /**
+     * A builder of reporter with nested show
+     *
+     * @param logFunc print function for log
+     * @param depth depth count (if not set, all logged)
+     * @returns nested show reporter
+     */
+    export function nestReporter(logFunc: (msg: string) => any, depth?: number): ReporterType;
+    /**
+     * A builder of reporter with listed show
+     *
+     * @param logFunc print function for log
+     * @param depth depth count (if not set, all logged)
+     * @returns listed show reporter
+     */
+    export function listReporter(logFunc: (msg: string) => any, depth?: number): ReporterType;
+    /**
+     * A builder of reporter with json show
+     *
+     * @param logFunc print function for log
+     * @param flags reporter options
+     * @param flags.isOneLine is report one line (default: false)
+     * @param depth depth count (if not set, all logged)
+     * @returns json show reporter
+     */
+    export function jsonReporter(
+      logFunc: (msg: string) => any, flags?: {
         isOneLine?: boolean;
-      }, depth?: number): ReporterType;
-      (logFunc: (msg: string) => any, depth?: number): ReporterType;
-    };
-  };
+      }, depth?: number
+    ): ReporterType;
+    export function jsonReporter(logFunc: (msg: string) => any, depth?: number): ReporterType;
+    /**
+     * A builder of customize reporter with given function
+     *
+     * @param reportFunc custom report function
+     * @returns a reporter with given function
+     */
+    export function customReporter(reportFunc: customReportFunc, emitterObj?: events.EventEmitter): ReporterType;
+  }
 }

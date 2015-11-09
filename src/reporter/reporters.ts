@@ -203,7 +203,7 @@ export type customReportFunc = (
 ) => void;
 
 /**
- * custom report function type
+ * A builder of customize reporter with given function
  *
  * @param reportFunc custom report function
  * @returns a reporter with given function
@@ -237,7 +237,7 @@ export function customReporter(reportFunc: customReportFunc, emitterObj?: EventE
     try{
       emitFunc("start", msg, exp, act);
       emitFunc("begin", msg, exp, act);
-      reportF("this", "", 0);
+      reportF("this", "", 0)(msg, exp, act, childs);
       emitFunc("end", msg, exp, act);
     } catch(e) {
       emitFunc("error", e);

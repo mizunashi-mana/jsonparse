@@ -1,7 +1,7 @@
 var sparse = require("sonparser");
 var assert = require("assert");
 
-var nestReporter = sparse.Reporters.nestReporter;
+var nestReporter = sparse.reporters.nestReporter;
 
 var nestConsoleReporter = nestReporter(
   console.log

@@ -592,7 +592,7 @@ export type ReporterType = (msg: string, exp?: string, act?: string, childs?: Pa
 /**
  * any reporters
  */
-export namespace Reporters {
+export namespace reporters {
   /** a reporter with nested show */
   export const nestReporter = nestReporterInstance;
 

@@ -1,6 +1,7 @@
 /// <reference path="sonparser.d.ts" />
 
 import * as sparse from "sonparser";
+import * as events from "events";
 
 var bool: boolean;
 var num: number;
@@ -8,6 +9,7 @@ var str: string;
 var strarr: string[];
 var metadata: any;
 var obj: Object = {};
+var emitter: events.EventEmitter = new events.EventEmitter;
 
 interface objT { a: string; }
 
@@ -86,8 +88,9 @@ var funcParseFile: boolean = sparse.parseFile(str, booleanParser);
 var funcParseFileWithStatus: {status: boolean; value?: boolean; err?: Error} = sparse.parseFileWithStatus(str, booleanParser);
 var funcParseAsync: Promise<boolean> = sparse.parseFileAsync(str, booleanParser);
 
-var nestReporter: sparse.ReporterType = sparse.Reporters.nestReporter(console.log, num);
-var listReporter: sparse.ReporterType = sparse.Reporters.listReporter(console.log, num);
-var jsonReporter: sparse.ReporterType = sparse.Reporters.jsonReporter(console.log, num);
-var jsonReporter2: sparse.ReporterType = sparse.Reporters.jsonReporter(console.log, {isOneLine: bool}, num);
+var nestReporter: sparse.ReporterType = sparse.reporters.nestReporter(console.log, num);
+var listReporter: sparse.ReporterType = sparse.reporters.listReporter(console.log, num);
+var jsonReporter: sparse.ReporterType = sparse.reporters.jsonReporter(console.log, num);
+var jsonReporter2: sparse.ReporterType = sparse.reporters.jsonReporter(console.log, {isOneLine: bool}, num);
+var customReporter: sparse.ReporterType = sparse.reporters.customReporter(() => {}, emitter);
 var methodParseWithReporter: boolean = booleanParser.parseWithReporter(obj, nestReporter);
