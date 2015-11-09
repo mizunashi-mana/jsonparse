@@ -44,3 +44,16 @@ export function id<T>(a: T) {
 export function exists<T>(a: T) {
   return a !== null && a !== undefined;
 }
+
+/**
+ * JSON stringify wrapper
+ *
+ * @param obj JSON object
+ * @returns stringify JSON string
+ */
+export function JSONstringify(obj: Object) {
+  return obj === undefined
+    ? "undefined"
+    : JSON.stringify(obj)
+    ;
+}

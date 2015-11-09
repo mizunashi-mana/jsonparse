@@ -1,7 +1,7 @@
 var sparse = require("sonparser");
 var assert = require("assert");
 
-var jsonReporter = sparse.Reporters.jsonReporter;
+var jsonReporter = sparse.reporters.jsonReporter;
 
 var jsonConsoleReporter = jsonReporter(
   console.log
@@ -18,7 +18,9 @@ var jsonOLShConsoleReporter = jsonReporter(
 
 /**
  * Output:
+ * ```
  * "\"not boolean\" is not 'boolean'"
+ * ```
  */
 assert.throws(
   function() {
@@ -32,6 +34,7 @@ assert.throws(
 
 /**
  * Output:
+ * ```
  * {
  *  "pB": "\"not boolean\" is not 'boolean'",
  *  "pP1": {
@@ -43,6 +46,7 @@ assert.throws(
  *  },
  *  "pP2": "\"not object\" is not 'object'"
  * }
+ * ```
  */
 assert.throws(
   function() {
@@ -69,11 +73,13 @@ assert.throws(
 
 /**
  * Output:
+ * ```
  * {
  *  "pB": "\"not boolean\" is not 'boolean'",
  *  "pP1": "failed to parse elem of 'object'",
  *  "pP2": "\"not object\" is not 'object'"
  * }
+ * ```
  */
 assert.throws(
   function() {
@@ -100,7 +106,9 @@ assert.throws(
 
 /**
  * Output:
+ * ```
  * {"pB":"\"not boolean\" is not 'boolean'","pP1":{"pB":"\"not boolean\" is not 'boolean'","pA":{"[0]":"0 is not 'boolean'","[2]":"\"str\" is not 'boolean'"}},"pP2":"\"not object\" is not 'object'"}
+ * ```
  */
 assert.throws(
   function() {
@@ -127,7 +135,9 @@ assert.throws(
 
 /**
  * Output:
+ * ```
  * {"pB":"\"not boolean\" is not 'boolean'","pP1":"failed to parse elem of 'object'","pP2":"\"not object\" is not 'object'"}
+ * ```
  */
 assert.throws(
   function() {

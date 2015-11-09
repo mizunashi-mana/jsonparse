@@ -17,7 +17,7 @@ const {
 
 const {
   nestReporter,
-} = sonparse.Reporters;
+} = sonparse.reporters;
 
 describe("parse methods test", () => {
 

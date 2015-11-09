@@ -45,7 +45,7 @@ function enum(enumerators) {
    * `success` is make success function.
    * `failure` is make failure function.
    */
-  return sonparse.custom(function (success, failure) {
+  return sonparser.custom(function (success, failure) {
     // custom parser needs parse function
     return function(obj) {
       if (enumerators.indexOf(obj) != -1) {

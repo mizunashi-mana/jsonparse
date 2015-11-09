@@ -14,7 +14,7 @@ const {
   nestReporter,
   listReporter,
   jsonReporter,
-} = sonparse.Reporters;
+} = sonparse.reporters;
 
 describe("reporters test", () => {
   function assertDataWithReport<T, U>(data: {

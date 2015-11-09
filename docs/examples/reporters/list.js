@@ -1,7 +1,7 @@
 var sparse = require("sonparser");
 var assert = require("assert");
 
-var listReporter = sparse.Reporters.listReporter;
+var listReporter = sparse.reporters.listReporter;
 
 var listConsoleReporter = listReporter(
   console.log
