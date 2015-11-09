@@ -53,14 +53,7 @@ import {
 
 import {
   ParseErrorNode,
-  ParseErrorStocker,
 } from "./parseresult/parseerr";
-
-import {
-  nestReporter,
-  listReporter,
-  jsonReporter,
-} from "./reporter/node-reporters";
 
 import {
   Monad,
@@ -69,6 +62,13 @@ import {
   Monoid,
   Applicative,
 } from "./lib/basetypes/basetypes";
+
+import {
+  nestReporter as nestReporterInstance,
+  listReporter as listReporterInstance,
+  jsonReporter as jsonReporterInstance,
+  customReporter as customReporterInstance,
+} from "./reporter/reporters";
 
 /**
  * Error class of ConfigParser
@@ -348,7 +348,7 @@ ConfigParserMonadPlus<T, U>
     obj: T,
     reporter?: ReporterType
   ): U {
-    const reporterF = typeof reporter === "undefined" ? nestReporter(console.log) : reporter;
+    const reporterF = typeof reporter === "undefined" ? nestReporterInstance(console.log) : reporter;
     const res = this.parser.parse({
       value: obj,
       flags: {
@@ -592,12 +592,16 @@ export type ReporterType = (msg: string, exp?: string, act?: string, childs?: Pa
 /**
  * any reporters
  */
-export const Reporters = {
+export namespace Reporters {
   /** a reporter with nested show */
-  nestReporter,
+  export const nestReporter = nestReporterInstance;
+
   /** a reporter with listed show */
-  listReporter,
+  export const listReporter = listReporterInstance;
+
   /** a reporter with json show */
-  jsonReporter,
-  ParseErrorStocker,
+  export const jsonReporter = jsonReporterInstance;
+
+  /** a reporter customize with given function */
+  export const customReporter = customReporterInstance;
 };

@@ -86,10 +86,16 @@ export class ParseErrorStocker {
    *
    * @param msg new failure message
    * @param exp new expected type
+   * @param act new actual string
    * @returns new stocker redescing
    */
-  desc(msg: string, exp?: string) {
-    return new ParseErrorStocker(msg, (typeof exp === "undefined") ? this.innerExpected : exp, this.innerChilds);
+  desc(msg: string, exp?: string, act?: string) {
+    return new ParseErrorStocker(
+      msg,
+      (typeof exp === "undefined") ? this.innerExpected : exp,
+      (typeof act === "undefined") ? this.innerActual : act,
+      this.innerChilds
+    );
   }
 
   /**

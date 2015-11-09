@@ -9,6 +9,10 @@ import {
   mapSuccess,
 } from "./parseresult/result";
 
+import {
+  JSONstringify,
+} from "./lib/util/ts-util";
+
 /**
  * base function type of [[Parser]]
  * @param ParseFunc.obj success object
@@ -52,16 +56,24 @@ export function makeFailure<T, U>(
   arg4?: string|ParseErrorNode[],
   arg5?: ParseErrorNode[]
 ): ParseResult<U> {
+  const message = typeof msg === "string"
+    ? msg
+    : "failed to parse"
+    ;
+  const expected = typeof exp === "string"
+    ? exp
+    : "unknown"
+    ;
   const actual = typeof arg4 === "string"
     ? arg4
-    : JSON.stringify(obj.value)
+    : JSONstringify(obj.value)
     ;
   const childs = typeof arg4 === "string"
     ? arg5
     : arg4
     ;
   return ParseResult.fail<U>({
-    value: new ParseErrorStocker(msg, exp, actual, childs),
+    value: new ParseErrorStocker(message, expected, actual, childs),
     flags: obj.flags,
   });
 }
