@@ -1,4 +1,4 @@
-var sparse = require("../../../lib/");
+var sparse = require("sonparser");
 var assert = require("assert");
 var EventEmitter = require("events").EventEmitter;
 
