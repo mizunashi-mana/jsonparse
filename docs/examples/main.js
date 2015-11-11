@@ -22,17 +22,17 @@ assert.throws(
 );
 
 // if you don't want to use try-catch
-var resultCheckBooleanSafetySuccess = booleanParser.parseWithStatus(false);
+var resultCheckBooleanSafetySuccess = booleanParser.parseWithResult(false);
 assert.strictEqual(
   resultCheckBooleanSafetySuccess.status,
   true
 );
 assert.strictEqual(
-  resultCheckBooleanSafetySuccess.value,
+  resultCheckBooleanSafetySuccess.ok,
   false
 );
 
-var resultCheckBooleanSafetyFailure = booleanParser.parseWithStatus("not boolean!");
+var resultCheckBooleanSafetyFailure = booleanParser.parseWithResult("not boolean!");
 assert.strictEqual(
   resultCheckBooleanSafetyFailure.status,
   false
@@ -44,7 +44,7 @@ assert.strictEqual(
  * this : "not boolean!" is not 'boolean'
  */
 try {
-  booleanParser.parseWithReporter("not boolean!", nestConsoleReporter);
+  booleanParser.parseWithResult("not boolean!", nestConsoleReporter);
 } catch (e) {
   // catch Error
 }
@@ -121,7 +121,7 @@ assert.throws(
  *   └── .type : 0 is not 'string'
  */
 try {
-  myObjectParser.parseWithReporter({
+  myObjectParser.parseWithResult({
     "private": "not boolean!",
     "name": "example-sonparser",
     "version": 0,
@@ -134,7 +134,8 @@ try {
       "type": 0,
       "url": "",
     },
-  }, nestConsoleReporter);
+  }).report(nestConsoleReporter)
+    .except(); // throw Error
 } catch (e) {
   // catch Error
 }

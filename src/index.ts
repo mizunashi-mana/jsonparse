@@ -1,7 +1,7 @@
 /// <reference path="./lib/typings.d.ts" />
 
 import {
-  BaseCustomError
+  BaseCustomError,
 } from "./lib/customerror/node-customerror";
 
 import {
@@ -53,6 +53,7 @@ import {
 
 import {
   ParseErrorNode,
+  ParseErrorStocker,
 } from "./parseresult/parseerr";
 
 import {
@@ -83,13 +84,121 @@ export class ConfigParseError extends BaseCustomError {
 }
 
 // Fantasy area
-export interface ConfigParserMonoid<T, U> extends Monoid<U> {};
-export interface ConfigParserFunctor<T, U> extends Functor<U> {};
-export interface ConfigParserApplicative<T, U> extends Applicative<U> {};
-export interface ConfigParserMonad<T, U> extends Monad<U> {};
-export interface ConfigParserMonadPlus<T, U> extends MonadPlus<U> {};
+export interface ConfigParserMonoid<T, U> extends Monoid<U> { };
+export interface ConfigParserFunctor<T, U> extends Functor<U> { };
+export interface ConfigParserApplicative<T, U> extends Applicative<U> { };
+export interface ConfigParserMonad<T, U> extends Monad<U> { };
+export interface ConfigParserMonadPlus<T, U> extends MonadPlus<U> { };
 
 let emptyFail: ConfigParser<any, any>;
+
+/**
+ * ConfigParserResult class including some helper methods
+ *
+ * @param T result type
+ */
+export class ConfigParserResult<T> implements Functor<T>, Applicative<T>, Monad<T> {
+  private v: ParseResult<T>;
+
+  constructor(pr: ParseResult<T>) {
+    this.v = pr;
+  }
+
+  isSuccess(): boolean {
+    return this.v.isSuccess();
+  }
+
+  get status(): boolean {
+    return this.isSuccess();
+  }
+
+  report(reporter: ReporterType): ConfigParserResult<T> {
+    if (!this.isSuccess()) {
+      const reporterF = typeof reporter === "undefined"
+        ? nestReporterInstance(console.log)
+        : reporter
+        ;
+      this.v.valueFailure(undefined).value.report(reporterF);
+    }
+    return this;
+  }
+
+  except(msg?: string): T {
+    if (!this.isSuccess()) {
+      this.v.valueFailure(undefined).value.report((errMsg) => {
+        const message = typeof msg === "undefined"
+          ? errMsg
+          : msg
+          ;
+        throw new ConfigParseError(message);
+      });
+    }
+    return this.v.valueSuccess(undefined).value;
+  }
+
+  get ok(): T {
+    return this.except();
+  }
+
+  toSuccess(val: T): T {
+    return this.v.valueSuccess({value: val, flags: undefined}).value;
+  }
+
+  toError(err: Error): Error {
+    let reserr: Error = err;
+    if (!this.isSuccess()) {
+      this.v.valueFailure(undefined).value.report((errMsg) => {
+        reserr = new ConfigParseError(errMsg);
+      });
+    }
+    return reserr;
+  }
+
+  caseOf<R>(onSuccess: (obj: T) => R, onFailure: (err: ConfigParseError) => R): R {
+    return this.v.caseOf(
+      (obj) => {
+        let msg: string;
+        obj.value.report((errMsg) => {
+          msg = errMsg;
+        });
+        return onFailure(new ConfigParseError(msg));
+      },
+      (obj) => onSuccess(obj.value)
+    );
+  }
+
+  toPromise() {
+    return new Promise<T>((resolve, reject) => {
+      this.caseOf(
+        (convObj) => resolve(convObj),
+        (err) => reject(err)
+      );
+    });
+  }
+
+  map<R>(fn: (obj: T) => R): ConfigParserResult<R> {
+    return new ConfigParserResult<R>(this.v.lift((obj) => mapSuccess(fn, obj)));
+  }
+  fmap = this.map;
+  lift = this.fmap;
+
+  of<R>(val: R): ConfigParserResult<R> {
+    return new ConfigParserResult<R>(this.v.lift((obj) => mapSuccess((inObj) => val, obj)));
+  };
+  unit = this.of;
+
+  ap<R>(u: ConfigParserResult<(t: T) => R>): ConfigParserResult<R> {
+    return u.chain<R>((fn) => this.map(fn));
+  };
+
+  bind<R>(f: (t: T) => ConfigParserResult<R>): ConfigParserResult<R> {
+    return this.v.caseOf(
+      (obj) => new ConfigParserResult(ParseResult.fail<R>(obj)),
+      (obj) => f(obj.value)
+    );
+  }
+  chain = this.bind;
+}
 
 /**
  * ConfigParser class including some helper methods
@@ -98,9 +207,9 @@ let emptyFail: ConfigParser<any, any>;
  * @param U out object type
  */
 export class ConfigParser<T, U> implements
-ConfigParserMonoid<T, U>, ConfigParserFunctor<T, U>,
-ConfigParserApplicative<T, U>, ConfigParserMonad<T, U>,
-ConfigParserMonadPlus<T, U>
+  ConfigParserMonoid<T, U>, ConfigParserFunctor<T, U>,
+  ConfigParserApplicative<T, U>, ConfigParserMonad<T, U>,
+  ConfigParserMonadPlus<T, U>
 {
   /**
    * ConfigParser have parser object
@@ -307,62 +416,16 @@ ConfigParserMonadPlus<T, U>
    * parse object and return parsed value with parse status
    *
    * @param obj target object
-   * @returns error with status false on fail and parsed value with status true on success
+   * @returns result object ([[ConfigParserResult]])
    */
-  parseWithStatus(obj: T): {
-    status: boolean;
-    value?: U;
-    err?: ConfigParseError;
-  } {
-    const res = this.parser.parse({
-      value: obj,
-      flags: {
-        isReport: false,
-      },
-    });
-    let error: ConfigParseError = undefined;
-    if (!res.isSuccess()) {
-      res.valueFailure(undefined).value.report((msg: string) => {
-        error = new ConfigParseError(msg);
-      });
-    }
-    return {
-      status: res.isSuccess(),
-      value: res.valueSuccess({
-        value: undefined,
-        flags: undefined,
-      }).value,
-      err: error,
-    };
-  }
-
-  /**
-   * parse object and return parsed value and report failure on fail
-   *
-   * @param obj target object
-   * @param reporter reporter function
-   * @returns parsed value
-   * @throws ConfigParseError failed to parse error
-   */
-  parseWithReporter(
-    obj: T,
-    reporter?: ReporterType
-  ): U {
-    const reporterF = typeof reporter === "undefined" ? nestReporterInstance(console.log) : reporter;
+  parseWithResult(obj: T): ConfigParserResult<U> {
     const res = this.parser.parse({
       value: obj,
       flags: {
         isReport: true,
       },
     });
-    if (res.isSuccess()) {
-      return res.valueSuccess(undefined).value;
-    } else {
-      res.valueFailure(undefined).value.report((msg, exp, act, childs) => {
-        reporterF(msg, exp, act, childs);
-        throw new ConfigParseError(msg);
-      });
-    }
+    return new ConfigParserResult(res);
   }
 
   /**
@@ -373,12 +436,11 @@ ConfigParserMonadPlus<T, U>
    */
   parseAsync(obj: T): Promise<U> {
     return new Promise<U>((resolve, reject) => {
-      const res = this.parseWithStatus(obj);
-      if (res.status) {
-        resolve(res.value);
-      } else {
-        reject(res.err);
-      }
+      const res = this.parseWithResult(obj);
+      res.caseOf(
+        (convObj) => resolve(convObj),
+        (err) => reject(err)
+      );
     });
   }
 
@@ -544,20 +606,22 @@ export function parseFile<T>(fname: string, parser: ConfigParser<Object, T>): T 
  * @param parser custom parser using to parse
  * @returns result of parsed with status
  */
-export function parseFileWithStatus<T>(fname: string, parser: ConfigParser<Object, T>): {
-  status: boolean;
-  value?: T;
-  err?: Error;
-} {
+export function parseFileWithResult<T>(
+  fname: string,
+  parser: ConfigParser<Object, T>
+): ConfigParserResult<T> {
+  let obj: Object;
   try {
-    const obj = parseSONFileSync(fname);
-    return parser.parseWithStatus(obj);
+    obj = parseSONFileSync(fname);
   } catch (e) {
-    return {
-      status: false,
-      err: e,
-    };
+    return new ConfigParserResult(ParseResult.fail<T>({
+      value: new ParseErrorStocker(<string>e.message),
+      flags: {
+        isReport: true,
+      },
+    }));
   }
+  return parser.parseWithResult(obj);
 }
 
 /**

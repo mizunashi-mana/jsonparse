@@ -136,11 +136,11 @@ assert.throws(
   Error
 ); // failure
 
-// you can use with status method.
-var resultConfig = sparse.parseFileWithStatus(resolvePath("datas/config.conf"), myConfParser);
+// you can use with result method.
+var resultConfig = sparse.parseFileWithResult(resolvePath("datas/config.conf"), myConfParser);
 assert.strictEqual(resultConfig.status, true);
 assert.deepEqual(
-  resultConfig.value,
+  resultConfig.ok,
   {
     "private": false,
     "name": "example-sonparser",

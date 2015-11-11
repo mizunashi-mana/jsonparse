@@ -65,9 +65,19 @@ export class ParseErrorStocker {
   addChild(pname: string, stocker: ParseErrorStocker): ParseErrorStocker;
   addChild(arg1: (string|ParseErrorNode), arg2?: ParseErrorStocker) {
     if (typeof arg1 === "string") {
-      return new ParseErrorStocker(this.innerMsg, this.innerExpected, this.innerChilds.concat([[arg1, arg2]]));
+      return new ParseErrorStocker(
+        this.innerMsg,
+        this.innerExpected,
+        this.innerActual,
+        this.innerChilds.concat([[arg1, arg2]])
+      );
     } else {
-      return new ParseErrorStocker(this.innerMsg, this.innerExpected, this.innerChilds.concat([arg1]));
+      return new ParseErrorStocker(
+        this.innerMsg,
+        this.innerExpected,
+        this.innerActual,
+        this.innerChilds.concat([arg1])
+      );
     }
   }
 
@@ -78,7 +88,12 @@ export class ParseErrorStocker {
    * @returns new stocker including new children
    */
   addChilds(nodes: ParseErrorNode[]) {
-    return new ParseErrorStocker(this.innerMsg, this.innerExpected, this.innerChilds.concat(nodes));
+    return new ParseErrorStocker(
+      this.innerMsg,
+      this.innerExpected,
+      this.innerActual,
+      this.innerChilds.concat(nodes)
+    );
   }
 
   /**

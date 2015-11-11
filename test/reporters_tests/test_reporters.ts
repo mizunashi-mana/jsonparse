@@ -27,10 +27,12 @@ describe("reporters test", () => {
       assert.strictEqual(msg, data.output[calledCount++]);
     };
 
-    assertThrow(() => data.parser.parseWithReporter(
-      data.input,
-      reporter(assertOutputFunc)
-    ), ConfigParseError);
+    assertThrow(
+      () => data.parser.parseWithResult(data.input)
+        .report(reporter(assertOutputFunc))
+        .except(),
+      ConfigParseError
+    );
     assert.strictEqual(calledCount, data.output.length, "should be called same as output count");
   }
 

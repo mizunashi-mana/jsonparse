@@ -11,7 +11,7 @@ import * as sonparse from "../../lib/";
 const {
   ConfigParseError,
   parseFile,
-  parseFileWithStatus,
+  parseFileWithResult,
   parseFileAsync,
 } = sonparse;
 
@@ -32,36 +32,40 @@ describe("parse methods test", () => {
 
     it("should return result with status", () => {
       const result1 = sonparse
-        .boolean.parseWithStatus(true);
-      assert.propertyVal(result1, "status", true);
-      assert.propertyVal(result1, "value", true);
+        .boolean.parseWithResult(true);
+      assert.strictEqual(result1.isSuccess(), true);
+      assert.strictEqual(result1.except(), true);
 
       const result2 = sonparse
-        .boolean.parseWithStatus(1);
-      assert.propertyVal(result2, "status", false);
+        .boolean.parseWithResult(1);
+      assert.strictEqual(result2.isSuccess(), false);
     });
 
     it("should return result on success and report on fail", () => {
-      const reporter = nestReporter((msg) => {
-        return;
-      });
-      assert.strictEqual(sonparse
-        .boolean.parseWithReporter(true, reporter),
+      const reporter = nestReporter((msg) => { return; });
+      assert.strictEqual(sonparse.boolean
+        .parseWithResult(true).report(reporter).except(),
         true
       );
       assertThrow(() => sonparse
-        .boolean.parseWithReporter("str", reporter),
+        .boolean.parseWithResult("str").report(reporter).except(),
         ConfigParseError, "\"str\" is not 'boolean'"
       );
     });
 
     it("should return a promise parsing result", () => {
       const resultSuccess = sonparse.boolean.parseAsync(false);
-      const resultFailure = sonparse.boolean.parseAsync("notexpected");
+      const resultFailure = sonparse.boolean.parseAsync("not expected");
+      const resultOnResultSuccess = sonparse.boolean
+        .parseWithResult(false).toPromise();
+      const resultOnResultFailure = sonparse.boolean
+        .parseWithResult("not expected").toPromise();
 
       return Promise.all([
         assert.becomes(resultSuccess, false),
-        assert.isRejected(resultFailure, ConfigParseError)
+        assert.isRejected(resultFailure, ConfigParseError),
+        assert.becomes(resultOnResultSuccess, false),
+        assert.isRejected(resultOnResultFailure, ConfigParseError),
       ]);
     });
 
@@ -97,26 +101,26 @@ describe("parse methods test", () => {
     });
 
     it("should be through only son file and return result with status", () => {
-      function statusAssert<T>(result: {status: boolean; value?: T;}, expstatus: boolean, expvalue?: T, deep?: boolean) {
-        assert.propertyVal(result, "status", expstatus);
+      function statusAssert<T>(result: sonparse.ConfigParserResult<T>, expstatus: boolean, expvalue?: T, deep?: boolean) {
+        assert.strictEqual(result.isSuccess(), expstatus);
         const fDeepEq = deep === undefined ? true : deep;
         if (expstatus) {
           if (fDeepEq) {
-            assert.deepEqual(result.value, expvalue);
+            assert.deepEqual(result.except(), expvalue);
           } else {
-            assert.strictEqual(result.value, expvalue);
+            assert.strictEqual(result.except(), expvalue);
           }
         }
       }
-      statusAssert(parseFileWithStatus(resolvePath("data/valid.json"), sonparse.object), true, dataObj);
-      statusAssert(parseFileWithStatus(resolvePath("data/valid.cson"), sonparse.object), true, dataObj);
-      statusAssert(parseFileWithStatus(resolvePath("data/json.txt"), sonparse.object), true, dataObj);
-      statusAssert(parseFileWithStatus(resolvePath("data/cson.txt"), sonparse.object), true, dataObj);
-      statusAssert(parseFileWithStatus(resolvePath("data/invalid.json"), sonparse.object), false);
-      statusAssert(parseFileWithStatus(resolvePath("data/invalid.cson"), sonparse.object), false);
-      statusAssert(parseFileWithStatus(resolvePath("data/nosuchfile"), sonparse.object), false);
-      statusAssert(parseFileWithStatus(resolvePath("data/normal.txt"), sonparse.object), false);
-      statusAssert(parseFileWithStatus(resolvePath("data/valid.json"), sonparse.boolean), false);
+      statusAssert(parseFileWithResult(resolvePath("data/valid.json"), sonparse.object), true, dataObj);
+      statusAssert(parseFileWithResult(resolvePath("data/valid.cson"), sonparse.object), true, dataObj);
+      statusAssert(parseFileWithResult(resolvePath("data/json.txt"), sonparse.object), true, dataObj);
+      statusAssert(parseFileWithResult(resolvePath("data/cson.txt"), sonparse.object), true, dataObj);
+      statusAssert(parseFileWithResult(resolvePath("data/invalid.json"), sonparse.object), false);
+      statusAssert(parseFileWithResult(resolvePath("data/invalid.cson"), sonparse.object), false);
+      statusAssert(parseFileWithResult(resolvePath("data/nosuchfile"), sonparse.object), false);
+      statusAssert(parseFileWithResult(resolvePath("data/normal.txt"), sonparse.object), false);
+      statusAssert(parseFileWithResult(resolvePath("data/valid.json"), sonparse.boolean), false);
     });
 
     it("should be through only son file and return result on promise", () => Promise.all([
