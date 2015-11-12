@@ -331,10 +331,7 @@ export class ConfigParser<T, U> implements
    */
   map<R>(fn: (obj: U) => R) {
     return new ConfigParser(mapParser(
-      (innerObj) => <SuccessObjType<R>>{
-        value: fn(innerObj.value),
-        flags: innerObj.flags,
-      },
+      (innerObj) => mapSuccess(fn, innerObj),
       this.parser
     ));
   }
@@ -629,12 +626,12 @@ export function array<T>(parser: ConfigParser<Object, T>) {
  * @returns a type parser for specify object type with custom type parser
  */
 export function hasProperties<T>(
-  props: [string, ConfigParser<any, any>][]
+  props: [string, ConfigParser<Object, any>][]
 ) {
   return new ConfigParser(andParser(
     isObject(),
     hasPropertiesObj<T>(
-      props.map((e) => <[string, Parser<any, any>]>[e[0], e[1].parser])
+      props.map((e) => <[string, Parser<Object, any>]>[e[0], e[1].parser])
     )
   ));
 }
@@ -681,9 +678,9 @@ export function parseFileWithResult<T>(
   fname: string,
   parser: ConfigParser<Object, T>
 ): ConfigParserResult<T> {
-  let obj: Object;
   try {
-    obj = parseSONFileSync(fname);
+    const obj = parseSONFileSync(fname);
+    return parser.parseWithResult(obj);
   } catch (e) {
     return new ConfigParserResult(ParseResult.fail<T>({
       value: new ParseErrorStocker(<string>e.message),
@@ -692,7 +689,6 @@ export function parseFileWithResult<T>(
       },
     }));
   }
-  return parser.parseWithResult(obj);
 }
 
 /**
@@ -722,7 +718,7 @@ export function parseFileAsync<T>(fname: string, parser: ConfigParser<Object, T>
  * @param ReporterType.act actual object
  * @param ReporterType.childs nodes of error
  */
-export type ReporterType = (msg: string, exp?: string, act?: string, childs?: ParseErrorNode[]) => void;
+export type ReporterType = (msg: string, exp: string, act: string, childs: ParseErrorNode[]) => void;
 
 /**
  * any reporters

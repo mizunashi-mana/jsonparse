@@ -17,6 +17,35 @@ import {
   MapperParseResult,
 } from "../common";
 
+import {
+  JSONstringify
+} from "../lib/util/ts-util";
+
+/**
+ * A builder of or parser using map function for failures
+ *
+ * @param parser1 first parser
+ * @param parser2 second parser
+ * @param mapFailures merge function for two failures
+ * @returns a parser returns first parser value if first parser succeeded, else second parser result
+ */
+function innerOrParser<T, U>(
+  parser1: Parser<T, U>,
+  parser2: Parser<T, U>,
+  mapFailures: (fail1: FailObjType, fail2: FailObjType) => FailObjType
+) {
+  return new Parser<T, U>((obj) => {
+    const res1 = parser1.parse(obj);
+    return res1.caseOf(
+      (convObj1) => parser2.parse(obj).caseOf(
+        (convObj2) => ParseResult.fail<U>(mapFailures(convObj1, convObj2)),
+        (convObj2) => ParseResult.success(convObj2)
+      ),
+      (convObj1) => ParseResult.success(convObj1)
+    );
+  });
+}
+
 /**
  * merge two Fail Objects for or parser
  *
@@ -51,16 +80,7 @@ function mergeFailuresForOr(convObj1: FailObjType, convObj2: FailObjType) {
  * @returns a parser returns first parser value if first parser succeeded, else second parser result
  */
 export function orParser<T, U>(parser1: Parser<T, U>, parser2: Parser<T, U>) {
-  return new Parser<T, U>((obj) => {
-    const res1 = parser1.parse(obj);
-    return res1.caseOf(
-      (convObj1) => parser2.parse(obj).caseOf(
-        (convObj2) => ParseResult.fail<U>(mergeFailuresForOr(convObj1, convObj2)),
-        (convObj2) => ParseResult.success(convObj2)
-      ),
-      (convObj1) => ParseResult.success(convObj1)
-    );
-  });
+  return innerOrParser(parser1, parser2, mergeFailuresForOr);
 }
 
 /**
@@ -71,16 +91,7 @@ export function orParser<T, U>(parser1: Parser<T, U>, parser2: Parser<T, U>) {
  * @returns a parser returns first parser value if first parser succeeded, else second parser result with first parser description
  */
 export function orExtraParser<T, U>(parser1: Parser<T, U>, parser2: Parser<T, U>) {
-  return new Parser<T, U>((obj) => {
-    const res1 = parser1.parse(obj);
-    return res1.caseOf(
-      (convObj1) => parser2.parse(obj).caseOf(
-        (convObj2) => ParseResult.fail<U>(convObj1),
-        (convObj2) => ParseResult.success(convObj2)
-      ),
-      (convObj1) => ParseResult.success(convObj1)
-    );
-  });
+  return innerOrParser(parser1, parser2, (f1, f2) => f1);
 }
 
 /**
@@ -91,11 +102,11 @@ export function orExtraParser<T, U>(parser1: Parser<T, U>, parser2: Parser<T, U>
  * @returns a parser returns map each parsers result value
  */
 export function andParser<T1, T2, T3>(parser1: Parser<T1, T2>, parser2: Parser<T2, T3>) {
-  return new Parser<T1, T3>((obj) => {
-    return parser1
+  return new Parser<T1, T3>(
+    (obj) => parser1
       .parse(obj)
-      .chain((val) => parser2.parse(val));
-  });
+      .chain((val) => parser2.parse(val))
+  );
 }
 
 /**
@@ -130,9 +141,12 @@ export function descParser<T, U>(fail: {
 }, parser: Parser<T, U>) {
   return new Parser<T, U>((obj) => {
     const res = parser.parse(obj);
-    return res.caseOf((l) => ParseResult.fail<U>(
-      mapFailure((s) => s.desc(fail.msg, fail.expected), l)
-    ), (r) => ParseResult.success(r));
+    return res.caseOf(
+      (l) => ParseResult.fail<U>(
+        mapFailure((s) => s.desc(fail.msg, fail.expected), l)
+      ),
+      (r) => ParseResult.success(r)
+    );
   });
 }
 
@@ -144,7 +158,7 @@ export function descParser<T, U>(fail: {
  * @returns message from actual and expected
  */
 function createMsgFromExpected<T>(obj: SuccessObjType<T>, expected: string[]) {
-  const objStr = JSON.stringify(obj.value);
+  const objStr = JSONstringify(obj.value);
 
   const subExps = expected.slice(0, expected.length - 1);
   const expsStr = subExps.length == 0
@@ -170,16 +184,19 @@ export function descFromExpectedParser<T, U>(expected: (string|string[]), parser
   return new Parser<T, U>((obj) => {
     const msg = createMsgFromExpected(obj, exps);
     const res = parser.parse(obj);
-    return res.caseOf((l) => ParseResult.fail<U>(
-      mapFailure((s) => s.desc(msg, expsStr), l)
-    ), (r) => ParseResult.success(r));
+    return res.caseOf(
+      (l) => ParseResult.fail<U>(
+        mapFailure((s) => s.desc(msg, expsStr), l)
+      ),
+      (r) => ParseResult.success(r)
+    );
   });
 }
 
 /**
  * A builder of parse event receive parser
  *
- * A value of receiver's return is throw away and no effect.
+ * The value returned by receiver is throw away and no effect.
  *
  * @param onSuccess receiver on success
  * @param onSuccess.obj receive success object
@@ -229,13 +246,9 @@ export function catchParser<T, U>(
   onFail: (obj: FailObjType) => SuccessObjType<U>,
   parser: Parser<T, U>
 ) {
-  return new Parser<T, U>((obj) => {
-    const res = parser.parse(obj);
-    return res.caseOf(
-      (err) => ParseResult.success(onFail(err)),
-      (convObj) => ParseResult.success(convObj)
-    );
-  });
+  return new Parser<T, U>(
+    (obj) => parser.parse(obj).catch(onFail)
+  );
 }
 
 /**
@@ -250,11 +263,9 @@ export function mapParser<T1, T2, T3>(
   fn: (obj: SuccessObjType<T2>) => SuccessObjType<T3>,
   parser: Parser<T1, T2>
 ) {
-  return new Parser<T1, T3>((obj) => {
-    return parser
-      .parse(obj)
-      .lift(fn);
-  });
+  return new Parser<T1, T3>(
+    (obj) => parser.parse(obj).lift(fn)
+  );
 }
 
 /**
@@ -265,9 +276,9 @@ export function mapParser<T1, T2, T3>(
  * @returns a parser this result is fail
  */
 export function failParser<T>(msg: string, exp?: string) {
-  return new Parser<any, T>((obj) => {
-    return makeFailureP<any, T>(obj, msg, exp);
-  });
+  return new Parser<any, T>(
+    (obj) => makeFailureP<any, T>(obj, msg, exp)
+  );
 }
 
 /**
@@ -277,9 +288,9 @@ export function failParser<T>(msg: string, exp?: string) {
  * @returns a parser this result is success
  */
 export function successParser<T>(value: T) {
-  return new Parser<any, T>((obj) => {
-    return makeSuccessP(obj, value);
-  });
+  return new Parser<any, T>(
+    (obj) => makeSuccessP(obj, value)
+  );
 }
 
 /**
@@ -295,10 +306,7 @@ export function seq2Parser<T, U1, U2>(parser1: Parser<T, U1>, parser2: Parser<T,
   );
   return new Parser<T, [U1, U2]>((obj) => {
     const res1 = parser1.parse(obj);
-    if (!res1.isSuccess()) {
-      return res1.chain<[U1, U2]>((convObj) => res1.of<[U1, U2]>(undefined));
-    }
-    return seqFunc(res1, parser2.parse(obj));
+    return res1.chain((convObj) => seqFunc(res1, parser2.parse(obj)));
   });
 }
 
@@ -314,7 +322,9 @@ export function bindParser<T, U1, U2>(
   f: (convObj: SuccessObjType<U1>) => ParseResult<U2>,
   parser: Parser<T, U1>
 ): Parser<T, U2> {
-  return new Parser<T, U2>((obj) => parser.parse(obj).chain(f));
+  return new Parser<T, U2>(
+    (obj) => parser.parse(obj).chain(f)
+  );
 }
 
 /**

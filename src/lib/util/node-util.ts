@@ -65,7 +65,7 @@ class SONParseResult<L, R> {
     type: ResultType,
     left?: L,
     right?: R
-    ) {
+  ) {
     this.t = type;
     this.lv = left;
     this.rv = right;
@@ -83,10 +83,14 @@ class SONParseResult<L, R> {
     return SONParseResult.right<L, T>(t);
   }
 
+  isRight() {
+    return this.t === ResultType.Right;
+  }
+
   chain<T>(f: (r: R) => SONParseResult<L, T>) {
-    return this.t === ResultType.Left
-      ? SONParseResult.left<L, T>(this.lv)
-      : f(this.rv)
+    return this.isRight()
+      ? f(this.rv)
+      : SONParseResult.left<L, T>(this.lv)
       ;
   }
 
@@ -95,14 +99,10 @@ class SONParseResult<L, R> {
   }
 
   value(def: L) {
-    return this.t === ResultType.Left
-      ? this.lv
-      : def
+    return this.isRight()
+      ? def
+      : this.lv
       ;
-  }
-
-  isRight() {
-    return this.t === ResultType.Right;
   }
 
   trycatch(f: (r: R) => L) {
@@ -134,9 +134,12 @@ const parseSONTable: [string, (content: string) => Object][] = [
  */
 function parseSONContent(filename: string, content: string): SONParseResult<Object, string> {
   const sResult = parseSONTable.map((e) => "." + e[0]).indexOf(path.extname(filename));
+
   if (sResult >= 0){
+    // found in table
     return SONParseResult.left<Object, string>(parseSONTable[sResult][1](content));
   } else {
+    // not found in table
     return parseSONTable.reduce(
       (p, c) => p.trycatch(c[1]),
       SONParseResult.right<Object, string>(content)
@@ -170,6 +173,7 @@ export function parseSONFileSync(filename: string): Object {
  */
 export function parseSONFile(fname: string, cb: (e: any, obj: Object) => any): void {
   fs.readFile(fname, (err: NodeJS.ErrnoException, data: Buffer) => {
+    // read error
     if (err) {
       return cb(err, undefined);
     }
@@ -177,11 +181,14 @@ export function parseSONFile(fname: string, cb: (e: any, obj: Object) => any): v
     try {
       const result = parseSONContent(fname, data.toString());
       if (result.isRight()) {
+        // parse error
         return cb(new Error(`${fname} is not parsable son file`), undefined);
       }
 
+      // success
       return cb(undefined, result.value(undefined));
     } catch (e) {
+      // some exception
       return cb(e, undefined);
     }
   });

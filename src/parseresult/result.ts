@@ -40,6 +40,14 @@ export interface SuccessObjType<S> extends BaseObjType {
   value: S;
 }
 
+/**
+ * map function of success object
+ *
+ * @param f map function
+ * @param f.s received success value
+ * @param v target success object
+ * @returns converted success object with given map function
+ */
 export function mapSuccess<S, T>(f: (s: S) => T, v: SuccessObjType<S>) {
   return {
     value: f(v.value),
@@ -47,6 +55,14 @@ export function mapSuccess<S, T>(f: (s: S) => T, v: SuccessObjType<S>) {
   };
 }
 
+/**
+ * map function of failure object
+ *
+ * @param f map function
+ * @param f.s received failure value
+ * @param v target failure object
+ * @returns converted failure object with given map function
+ */
 export function mapFailure(f: (s: ParseErrorStocker) => ParseErrorStocker, v: FailObjType) {
   return {
     value: f(v.value),
@@ -104,13 +120,9 @@ export class ParseResult<S> {
     return (
       res1: ParseResult<T1>,
       res2: ParseResult<T2>
-    ) => {
-      return res1.chain<T3>((val1) => {
-        return res2.chain<T3>((val2) => {
-          return f(val1, val2);
-        });
-      });
-    };
+    ) => res1.chain(
+      (val1) => res2.chain<T3>((val2) => f(val1, val2))
+    );
   }
 
   /**

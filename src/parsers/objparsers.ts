@@ -10,6 +10,7 @@ import {
   ParseResult,
   SuccessObjType,
   mapFailure,
+  mapSuccess,
 } from "../parseresult/result";
 
 import {
@@ -45,19 +46,49 @@ function probjconcat(
     res2: ParseResult<[string, any]>,
     index: number
   ) => res1.caseOf(
-    (l1) => res2.caseOf((l2) => ParseResult.fail<{[key: string]: any}>(
-      mapFailure((s) => s.addChild(pnames[index], l2.value), l1)
-    ), (r2) => ParseResult.fail<{[key: string]: any}>(l1)),
-    (r1) => res2.caseOf((l2) => makeFailureP<Object, {[key: string]: any}>(
-      sObj,
-      "failed to parse elem of 'object'",
-      "object",
-      <[string, ParseErrorStocker][]>[[pnames[index], l2.value]]
-    ), (r2) => {
-      const result = clone(r1.value);
-      result[r2.value[0]] = r2.value[1];
-      return makeSuccessP(sObj, result);
-    })
+    (l1) => res2.caseOf(
+      (l2) => ParseResult.fail<{[key: string]: any}>(
+        mapFailure((s) => s.addChild(pnames[index], l2.value), l1)
+      ),
+      (r2) => ParseResult.fail<{[key: string]: any}>(l1)
+    ),
+    (r1) => res2.caseOf(
+      (l2) => makeFailureP<Object, {[key: string]: any}>(
+        sObj,
+        "failed to parse elem of 'object'",
+        "object",
+        <[string, ParseErrorStocker][]>[[pnames[index], l2.value]]
+      ),
+      (r2) => {
+        const result = clone(r1.value);
+        result[r2.value[0]] = r2.value[1];
+        return makeSuccessP(sObj, result);
+      }
+    )
+  );
+}
+
+/**
+ * wrapper of mapSuccess
+ *
+ * @param sObj source success object
+ * @param obj success value
+ * @returns a success object with given value
+ */
+function makeSuccessObject<T, U>(sObj: SuccessObjType<T>, obj: U) {
+  return mapSuccess((s) => obj, sObj);
+}
+
+/**
+ * for escape function refer scope problem
+ *
+ * @param propname property name
+ * @param res target result
+ * @returns a result with property name and result value
+ */
+function addPropnameOnResult<T>(propname: string, res: ParseResult<T>) {
+  return res.lift(
+    (e) => mapSuccess((obj) => <[string, T]>[propname, obj], e)
   );
 }
 
@@ -76,23 +107,15 @@ function parsePropertiesObj<T>(
 ): ParseResult<T> {
   const results: ParseResult<[string, Parser<Object, any>]>[] = [];
 
-  let i: number;
-  for (i = 0; i < props.length; i++) {
-    const convObj = props[i][1]
-      .parse({
-        value: obj[props[i][0]],
-        flags: sObj.flags,
-      })
-      .chain((e) => makeSuccessP(
-        sObj,
-        <[string, any]>[props[i][0], e.value]
-      ));
-    if (!convObj.isSuccess()) {
-      if (!sObj.flags.isReport) {
-        break;
-      }
+  for (const prop of props) {
+    const convObj = prop[1]
+      .parse(
+        makeSuccessObject(sObj, obj[prop[0]])
+      );
+    if (!convObj.isSuccess() && !sObj.flags.isReport) {
+      break;
     }
-    results.push(convObj);
+    results.push(addPropnameOnResult(prop[0], convObj));
   }
 
   if (results.length != props.length) {
@@ -118,8 +141,7 @@ function parsePropertiesObj<T>(
 export function hasPropertiesObj<T>(
   props: [string, Parser<Object, any>][]
 ) {
-  return new Parser<Object, T>((obj) => {
-    const result = parsePropertiesObj(obj.value, props, obj);
-    return <ParseResult<T>>result;
-  });
+  return new Parser<Object, T>(
+    (obj) => parsePropertiesObj<T>(obj.value, props, obj)
+  );
 }

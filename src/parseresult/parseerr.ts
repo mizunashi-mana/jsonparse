@@ -20,8 +20,8 @@ export class ParseErrorStocker {
    */
   constructor(childs?: ParseErrorNode[]);
   constructor(msg: string, childs?: ParseErrorNode[]);
-  constructor(msg: string, exp?: string, childs?: ParseErrorNode[]);
-  constructor(msg: string, exp?: string, act?: string, childs?: ParseErrorNode[]);
+  constructor(msg: string, exp: string, childs?: ParseErrorNode[]);
+  constructor(msg: string, exp: string, act: string, childs?: ParseErrorNode[]);
   constructor(
     arg1?: (ParseErrorNode[]|string),
     arg2?: (ParseErrorNode[]|string),
@@ -122,7 +122,7 @@ export class ParseErrorStocker {
    * @param f.act actual value
    * @param f.childs child nodes of result
    */
-  report(f: (msg: string, exp?: string, act?: string, childs?: ParseErrorNode[]) => any): void {
+  report(f: (msg?: string, exp?: string, act?: string, childs?: ParseErrorNode[]) => any): void {
     f(this.innerMsg, this.innerExpected, this.innerActual, this.innerChilds);
   }
 

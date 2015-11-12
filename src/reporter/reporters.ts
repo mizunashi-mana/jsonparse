@@ -53,7 +53,7 @@ export function nestReporter(
     depthCount: number,
     prefix: string,
     last: boolean
-  ) => (msg: string, exp?: string, act?: string, childs?: ParseErrorNode[]) => {
+  ) => (msg: string, exp: string, act: string, childs: ParseErrorNode[]) => {
     if (typeof depth !== "undefined" && depthCount > depth) {
       return;
     }
@@ -96,7 +96,7 @@ export function listReporter(
     pname: string,
     basename: string,
     depthCount: number
-  ) => (msg: string, exp?: string, act?: string, childs?: ParseErrorNode[]) => {
+  ) => (msg: string, exp: string, act: string, childs: ParseErrorNode[]) => {
     const propertyFullName = propertyJoin(basename, pname);
     if (typeof depth !== "undefined" && depthCount === depth || childs.length === 0) {
       logFunc(`${propertyFullName} : ${msg}`);
@@ -220,7 +220,7 @@ export function customReporter(reportFunc: customReportFunc, emitterObj?: EventE
     pname: string,
     basename: string,
     depthCount: number
-  ) => (msg: string, exp?: string, act?: string, childs?: ParseErrorNode[]) => {
+  ) => (msg: string, exp: string, act: string, childs: ParseErrorNode[]) => {
     const propertyFullName = propertyJoin(basename, pname);
     const data = {
       depth: depthCount,
@@ -233,7 +233,7 @@ export function customReporter(reportFunc: customReportFunc, emitterObj?: EventE
     });
   };
 
-  return (msg: string, exp?: string, act?: string, childs?: ParseErrorNode[]) => {
+  return (msg: string, exp: string, act: string, childs: ParseErrorNode[]) => {
     try{
       emitFunc("start", msg, exp, act);
       emitFunc("begin", msg, exp, act);
