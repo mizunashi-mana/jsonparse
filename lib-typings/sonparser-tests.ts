@@ -9,7 +9,8 @@ var str: string;
 var strarr: string[];
 var metadata: any;
 var obj: Object = {};
-var emitter: events.EventEmitter = new events.EventEmitter;
+var emitter: events.EventEmitter = new events.EventEmitter();
+var err: Error = new Error();
 
 interface objT { a: string; }
 
@@ -19,7 +20,7 @@ var baseParser: ConfigParser<Object, Object> = sparse.base;
 var booleanParser: ConfigParser<Object, boolean> = sparse.boolean;
 var numberParser: ConfigParser<Object, number> = sparse.number;
 var stringParser: ConfigParser<Object, string> = sparse.string;
-var baseParser: ConfigParser<Object, Object> = sparse.object;
+var objectParser: ConfigParser<Object, Object> = sparse.object;
 
 var arrayParser: ConfigParser<Object, number[]> = sparse.array(numberParser);
 var arrayParser2: ConfigParser<Object, number[][]> = sparse.array(sparse.array(numberParser));
@@ -48,7 +49,6 @@ var thenParser: ConfigParser<Object, boolean> = booleanParser.then((o: boolean) 
 var catchParser: ConfigParser<Object, boolean> = booleanParser.catch((m: string, e: string, a: string) => {});
 
 var seq2Parser: ConfigParser<Object, [boolean, string]> = booleanParser.seq2(stringParser);
-var innerMapParser: ConfigParser<Object, string> = booleanParser.innerMap((o) => ({flags: o.flags, value: str}));
 
 // Monoid
 var FmemptyParser: ConfigParser<Object, boolean> = booleanParser.mempty;
@@ -80,17 +80,24 @@ var FzeroParser: ConfigParser<Object, boolean> = booleanParser.zero;
 var FmplusParser: ConfigParser<Object, boolean> = booleanParser.mplus(booleanParser);
 var FplusParser: ConfigParser<Object, boolean> = booleanParser.plus(booleanParser);
 
-var methodParse: boolean = booleanParser.parse(obj);
-var methodParseWithStatus: {status: boolean; value?: boolean; err?: sparse.ConfigParseError} = booleanParser.parseWithStatus(obj);
-var methodPraseAsync: Promise<boolean> = booleanParser.parseAsync(obj);
-
-var funcParseFile: boolean = sparse.parseFile(str, booleanParser);
-var funcParseFileWithStatus: {status: boolean; value?: boolean; err?: Error} = sparse.parseFileWithStatus(str, booleanParser);
-var funcParseAsync: Promise<boolean> = sparse.parseFileAsync(str, booleanParser);
-
 var nestReporter: sparse.ReporterType = sparse.reporters.nestReporter(console.log, num);
 var listReporter: sparse.ReporterType = sparse.reporters.listReporter(console.log, num);
 var jsonReporter: sparse.ReporterType = sparse.reporters.jsonReporter(console.log, num);
 var jsonReporter2: sparse.ReporterType = sparse.reporters.jsonReporter(console.log, {isOneLine: bool}, num);
 var customReporter: sparse.ReporterType = sparse.reporters.customReporter(() => {}, emitter);
-var methodParseWithReporter: boolean = booleanParser.parseWithReporter(obj, nestReporter);
+
+var methodParse: boolean = booleanParser.parse(obj);
+var methodParseWithResult: sparse.ConfigParserResult<boolean> = booleanParser.parseWithResult(obj);
+bool = methodParseWithResult.isSuccess();
+bool = methodParseWithResult.status;
+bool = methodParseWithResult.except(str);
+bool = methodParseWithResult.ok;
+bool = methodParseWithResult.toSuccess(bool);
+err = methodParseWithResult.toError(err);
+var resultPromise: Promise<boolean> = methodParseWithResult.toPromise();
+methodParseWithResult = methodParseWithResult.report(nestReporter);
+var methodParseAsync: Promise<boolean> = booleanParser.parseAsync(obj);
+
+var funcParseFile: boolean = sparse.parseFile(str, booleanParser);
+var funcParseFileWithResult: sparse.ConfigParserResult<boolean> = sparse.parseFileWithResult(str, booleanParser);
+var funcParseAsync: Promise<boolean> = sparse.parseFileAsync(str, booleanParser);

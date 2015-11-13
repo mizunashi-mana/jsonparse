@@ -22,25 +22,100 @@ declare module "sonparser" {
   export interface ConfigParserMonadPlus<T, U> extends ftypes.MonadPlus<U> {}
 
   /**
-   * parser's object type on success
-   */
-  export interface SuccessObjType<S> {
-    flags: {};
-    value: S;
-  }
-
-  /**
    * Parse result class (like either)
    *
    * @param S parsed value type
    */
-  export interface ParseResult<T> {
+  export interface ParseResult<S> {
     /**
      * check this result is success
      *
      * @returns is this success
      */
     isSuccess(): boolean;
+  }
+
+  /**
+   * ConfigParserResult class including some helper methods
+   *
+   * @param T result type
+   */
+  export class ConfigParserResult<T> implements ftypes.Functor<T>, ftypes.Applicative<T>, ftypes.Monad<T> {
+    /**
+     * check this result is success
+     *
+     * @returns is this success
+     */
+    isSuccess(): boolean;
+    /**
+     * an alias of [[isSuccess]]
+     *
+     * @returns is this success
+     */
+    status: boolean;
+    /**
+     * report on failure using given reporter
+     *
+     * @param reporter a reporter (default: nest console reporter)
+     * @returns this object as it is
+     */
+    report(reporter?: ReporterType): ConfigParserResult<T>;
+    /**
+     * except success method,
+     * return converted object on success and throw error
+     *
+     * @param msg failure message (default: config parser error message)
+     * @returns success value
+     */
+    except(msg?: string): T;
+    /**
+     * an alias of [[except]]
+     * if fail, throw default error
+     *
+     * @returns success value
+     */
+    ok: T;
+    /**
+     * convert result to success value
+     *
+     * @param val default value
+     * @returns success value on success and default value on failure
+     */
+    toSuccess(val: T): T;
+    /**
+     * convert result to error
+     *
+     * @param err default value
+     * @returns error on failure and default value on success
+     */
+    toError(err: Error): Error;
+    /**
+     * convert result to other by casing
+     *
+     * @param onSuccess convert success value function
+     * @param onSuccess.obj success result value
+     * @param onFailure convert error function
+     * @param onFailure.err convert error
+     * @returns convert success on success and error on failure
+     */
+    caseOf<R>(onSuccess: (obj: T) => R, onFailure: (err: ConfigParseError) => R): R;
+    /**
+     * convert result to promise
+     *
+     * @returns a promise return converted value
+     */
+    toPromise(): Promise<T>;
+    /**
+     * Fantasy area
+     */
+    map<R>(fn: (obj: T) => R): ConfigParserResult<R>;
+    fmap: <R>(fn: (obj: T) => R) => ConfigParserResult<R>;
+    lift: <R>(fn: (obj: T) => R) => ConfigParserResult<R>;
+    of<R>(val: R): ConfigParserResult<R>;
+    unit: <R>(val: R) => ConfigParserResult<R>;
+    ap<R>(u: ConfigParserResult<(t: T) => R>): ConfigParserResult<R>;
+    bind<R>(f: (t: T) => ConfigParserResult<R>): ConfigParserResult<R>;
+    chain: <R>(f: (t: T) => ConfigParserResult<R>) => ConfigParserResult<R>;
   }
 
   /**
@@ -75,14 +150,6 @@ declare module "sonparser" {
      * @returns a map parser of this with arg function
      */
     map<R>(fn: (obj: U) => R): ConfigParser<T, R>;
-    /**
-     * build a map parser of this for deep developer
-     *
-     * @param fn map function
-     * @param fn.obj target converted success inner object
-     * @returns a map parser of this with arg function
-     */
-    innerMap<R>(fn: (obj: SuccessObjType<U>) => SuccessObjType<R>): ConfigParser<T, R>;
     /**
      * build a description parser of this
      *
@@ -153,22 +220,9 @@ declare module "sonparser" {
      * parse object and return parsed value with parse status
      *
      * @param obj target object
-     * @returns error with status false on fail and parsed value with status true on success
+     * @returns result object ([[ConfigParserResult]])
      */
-    parseWithStatus(obj: T): {
-      status: boolean;
-      value?: U;
-      err?: ConfigParseError;
-    };
-    /**
-     * parse object and return parsed value and report failure on fail
-     *
-     * @param obj target object
-     * @param reporter reporter function
-     * @returns parsed value
-     * @throws ConfigParseError failed to parse error
-     */
-    parseWithReporter(obj: T, reporter?: ReporterType): U;
+    parseWithResult(obj: T): ConfigParserResult<U>;
     /**
      * parse object and return parsed value on promise
      *
@@ -235,7 +289,7 @@ declare module "sonparser" {
    * @param props property and custom parser list
    * @returns a type parser for specify object type with custom type parser
    */
-  export function hasProperties<T>(props: [string, ConfigParser<any, any>][]): ConfigParser<Object, T>;
+  export function hasProperties<T>(props: [string, ConfigParser<Object, any>][]): ConfigParser<Object, T>;
   /**
    * build a custom parser with custom parse function
    *
@@ -248,9 +302,12 @@ declare module "sonparser" {
    * @param fn.onFailure.act actual object
    * @returns a parser with custom parse function
    */
-  export function custom<T, U>(fn: (
-    onSuccess: (obj: U) => ParseResult<U>, onFailure: (msg?: string, exp?: string, act?: string) => ParseResult<U>
-  ) => (obj: T) => ParseResult<U>): ConfigParser<T, U>;
+  export function custom<T, U>(
+    fn: (
+      onSuccess: (obj: U) => ParseResult<U>,
+      onFailure: (msg?: string, exp?: string, act?: string) => ParseResult<U>
+    ) => (obj: T) => ParseResult<U>
+  ): ConfigParser<T, U>;
   /**
    * parse son file with object parser
    *
@@ -266,11 +323,7 @@ declare module "sonparser" {
    * @param parser custom parser using to parse
    * @returns result of parsed with status
    */
-  export function parseFileWithStatus<T>(fname: string, parser: ConfigParser<Object, T>): {
-    status: boolean;
-    value?: T;
-    err?: Error;
-  };
+  export function parseFileWithResult<T>(fname: string, parser: ConfigParser<Object, T>): ConfigParserResult<T>;
   /**
    * parse son file using object parser on promise
    *
@@ -287,7 +340,7 @@ declare module "sonparser" {
    * @param ReporterType.act actual object
    * @param ReporterType.childs nodes of error
    */
-  export type ReporterType = (msg: string, exp?: string, act?: string, childs?: any[]) => void;
+  export type ReporterType = (msg: string, exp: string, act: string, childs: any[]) => void;
   /**
    * any reporters
    */
