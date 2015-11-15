@@ -211,10 +211,15 @@ export type customReportFunc = (
 export function customReporter(reportFunc: customReportFunc, emitterObj?: EventEmitter): ReporterType {
   const emitFunc: Function = (
     typeof emitterObj === "undefined"
-    ? () => { return; }
+    ? (name: string, arg1: any) => {
+      if (name == "error") {
+        throw arg1;
+      }
+    }
     : emitterObj.emit
   )
     .bind(emitterObj);
+
 
   const reportF = (
     pname: string,
