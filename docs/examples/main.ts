@@ -22,20 +22,25 @@ assert.throws(
 );
 
 // if you don't want to use try-catch
-const resultCheckBooleanSafetySuccess = booleanParser.parseWithStatus(false);
+const resultCheckBooleanSafetySuccess = booleanParser.parseWithResult(false);
 assert.strictEqual(
   resultCheckBooleanSafetySuccess.status,
   true
 );
 assert.strictEqual(
-  resultCheckBooleanSafetySuccess.value,
+  resultCheckBooleanSafetySuccess.except(),
   false
 );
 
-const resultCheckBooleanSafetyFailure = booleanParser.parseWithStatus("not boolean!");
+const resultCheckBooleanSafetyFailure = booleanParser.parseWithResult("not boolean!");
 assert.strictEqual(
   resultCheckBooleanSafetyFailure.status,
   false
+);
+assert.throws(
+  () => resultCheckBooleanSafetyFailure.except("parse fail"),
+  sparse.ConfigParseError,
+  "parse fail"
 );
 
 // you can see more human readable message by using reporters
@@ -43,11 +48,7 @@ assert.strictEqual(
  * Output:
  * this : "not boolean!" is not 'boolean'
  */
-try {
-  booleanParser.parseWithReporter("not boolean!", nestConsoleReporter);
-} catch (e) {
-  // catch Error
-}
+resultCheckBooleanSafetyFailure.report(nestConsoleReporter);
 
 interface PkgInfo {
   private?: boolean;
@@ -131,21 +132,17 @@ assert.throws(
  * └─┬ .repository : failed to parse elem of 'object'
  *   └── .type : 0 is not 'string'
  */
-try {
-  myObjectParser.parseWithReporter({
-    private: "not boolean!",
-    name: "example-sonparser",
-    version: 0,
-    description: "An example of sonparser",
-    keywords: [
-      "example",
-      true,
-    ],
-    repository: {
-      type: 0,
-      url: "",
-    },
-  }, nestConsoleReporter);
-} catch (e) {
-  // catch Error
-}
+myObjectParser.parseWithResult({
+  private: "not boolean!",
+  name: "example-sonparser",
+  version: 0,
+  description: "An example of sonparser",
+  keywords: [
+    "example",
+    true,
+  ],
+  repository: {
+    type: 0,
+    url: "",
+  },
+}).report(nestConsoleReporter);

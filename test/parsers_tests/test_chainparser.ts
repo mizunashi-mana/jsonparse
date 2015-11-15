@@ -5,32 +5,32 @@ import {
   assertThrow,
 } from "../lib/chai_setup";
 
-import * as sonparse from "../../lib/";
+import * as sparse from "../../lib/";
 const {
   ConfigParseError,
-} = sonparse;
+} = sparse;
 
 describe("chain parser test", () => {
 
   describe("base parsers test", () => {
 
     it("should be using second parser when first parser failed", () => {
-      const CustomParser1 = sonparse.custom<Object, boolean>((makeSuccess, makeFailure) => {
-        return (obj) => {
+      const CustomParser1 = sparse.custom<Object, boolean>(
+        (makeSuccess, makeFailure) => (obj) => {
           if (typeof obj === "number") {
             return makeSuccess(true);
           }
           return makeFailure();
-        };
-      });
-      const CustomParser2 = sonparse.custom<Object, boolean>((makeSuccess, makeFailure) => {
-        return (obj) => {
+        }
+      );
+      const CustomParser2 = sparse.custom<Object, boolean>(
+        (makeSuccess, makeFailure) => (obj) => {
           if (typeof obj === "string") {
             return makeSuccess(false);
           }
           return makeFailure();
-        };
-      });
+        }
+      );
       const MyParser = CustomParser1.or(CustomParser2);
 
       assert.strictEqual(MyParser.parse(1), true);
@@ -39,8 +39,8 @@ describe("chain parser test", () => {
     });
 
     it("should be using second parser when first parser succeeded", () => {
-      const CustomParser1 = sonparse.custom<Object, number>((makeSuccess, makeFailure) => {
-        return (obj) => {
+      const CustomParser1 = sparse.custom<Object, number>(
+        (makeSuccess, makeFailure) => (obj) => {
           if (typeof obj === "boolean") {
             return makeSuccess(0);
           } else if (typeof obj === "number") {
@@ -49,18 +49,18 @@ describe("chain parser test", () => {
             return makeSuccess(2);
           }
           return makeFailure();
-        };
-      });
-      const CustomParser2 = sonparse.custom<number, boolean>((makeSuccess, makeFailure) => {
-        return (obj) => {
-          if (obj === 0) {
+        }
+      );
+      const CustomParser2 = sparse.custom<number, boolean>(
+        (makeSuccess, makeFailure) => (obj) => {
+          if (obj == 0) {
             return makeSuccess(false);
-          } else if (obj === 1) {
+          } else if (obj == 1) {
             return makeSuccess(true);
           }
           return makeFailure();
-        };
-      });
+        }
+      );
       const MyParser = CustomParser1.and(CustomParser2);
 
       assert.strictEqual(MyParser.parse(true), false);
@@ -70,8 +70,8 @@ describe("chain parser test", () => {
     });
 
     it("should be converted by my function", () => {
-      const MyParser = sonparse.string
-        .map((str) => str === "true");
+      const MyParser = sparse.string
+        .map((str) => str == "true");
 
       assert.strictEqual(MyParser.parse("true"), true);
       assert.strictEqual(MyParser.parse("false"), false);
@@ -84,20 +84,26 @@ describe("chain parser test", () => {
   describe("extra parsers test", () => {
 
     it("should be not converted and added desc by my description", () => {
-      const MyParser = sonparse.string
-        .desc("this should be string value");
+      const MyParser = sparse.string
+        .desc("This should be string value");
 
       assert.strictEqual(MyParser.parse(""), "");
       assert.strictEqual(MyParser.parse("str"), "str");
-      assertThrow(() => MyParser.parse({}),
-      ConfigParseError, "this should be string value");
-      assertThrow(() => MyParser.parse(true),
-      ConfigParseError, "this should be string value");
+      assertThrow(
+        () => MyParser.parse({}),
+        ConfigParseError,
+        "This should be string value"
+      );
+      assertThrow(
+        () => MyParser.parse(true),
+        ConfigParseError,
+        "This should be string value"
+      );
     });
 
     it("should be not converted and added desc by my description from expected", () => {
-      const MyParser1 = sonparse.custom<Object, number>((makeSuccess, makeFailure) => {
-        return (obj) => {
+      const MyParser1 = sparse.custom<Object, number>(
+        (makeSuccess, makeFailure) =>  (obj) => {
           if (typeof obj === "boolean") {
             return makeSuccess(0);
           } else if (obj === "special") {
@@ -106,10 +112,10 @@ describe("chain parser test", () => {
             return makeSuccess(2);
           }
           return makeFailure();
-        };
-      })
+        }
+      )
         .descFromExpected(["boolean", "number", "special"]);
-      const MyParser2 = sonparse.string
+      const MyParser2 = sparse.string
         .descFromExpected("string");
 
       assert.strictEqual(MyParser1.parse(true), 0);
@@ -117,25 +123,29 @@ describe("chain parser test", () => {
       assert.strictEqual(MyParser1.parse(10), 2);
       assertThrow(
         () => MyParser1.parse({a: 1}),
-        ConfigParseError, "{\"a\":1} is neither 'boolean', 'number' or 'special'"
+        ConfigParseError,
+        "{\"a\":1} is neither 'boolean', 'number' or 'special'"
       );
       assertThrow(
         () => MyParser1.parse("str"),
-        ConfigParseError, "\"str\" is neither 'boolean', 'number' or 'special'"
+        ConfigParseError,
+        "\"str\" is neither 'boolean', 'number' or 'special'"
       );
       assert.strictEqual(MyParser2.parse("str"), "str");
       assertThrow(
         () => MyParser2.parse({a: 1}),
-        ConfigParseError, "{\"a\":1} is not 'string'"
+        ConfigParseError,
+        "{\"a\":1} is not 'string'"
       );
-      assert.throw(
+      assertThrow(
         () => MyParser2.parse(true),
-        ConfigParseError, "true is not 'string'"
+        ConfigParseError,
+        "true is not 'string'"
       );
     });
 
     it("should be sent event after converting", () => {
-      const MyParser = sonparse.string;
+      const MyParser = sparse.string;
 
       assert.strictEqual(MyParser
         .then(
@@ -152,27 +162,29 @@ describe("chain parser test", () => {
     });
 
     it("should be cacthed failed after converting", () => {
-      const MyParser = sonparse.string;
+      const MyParser = sparse.string;
 
       assert.strictEqual(MyParser
         .catch(() => assert(false, "unexpected call on fail"))
         .parse("str"), "str");
-      assertThrow(() => MyParser
-        .catch(() => assert(true, "called on fail"))
-        .parse(1), ConfigParseError);
+      assertThrow(
+        () => MyParser
+          .catch(() => assert(true, "called on fail"))
+          .parse(1),
+        ConfigParseError
+      );
     });
 
     it("should be set default value on fail after converting", () => {
-      const MyParser = sonparse
-        .boolean.default(false);
+      const MyParser = sparse.boolean.default(false);
 
       assert.strictEqual(MyParser.parse(true), true);
       assert.strictEqual(MyParser.parse(1), false);
+      assert.strictEqual(MyParser.parse(undefined), false);
     });
 
     it("should be optional value for no value received", () => {
-      const MyParser = sonparse
-        .boolean.option(false);
+      const MyParser = sparse.boolean.option(false);
 
       assert.strictEqual(MyParser.parse(true), true);
       assert.strictEqual(MyParser.parse(undefined), false);
@@ -181,29 +193,30 @@ describe("chain parser test", () => {
     });
 
     it("should return merged of two results", () => {
-      const MyParser = sonparse.boolean.map((bool) => bool ? [] : [1,2]);
+      const MyParser = sparse.boolean.map((bool) => bool ? [] : [1,2]);
 
       assert.deepEqual(
-        sonparse.boolean.seq2(sonparse.boolean).parse(true),
+        sparse.boolean.seq2(sparse.boolean).parse(true),
         [true, true]
       );
       assert.deepEqual(
-        sonparse.boolean.seq2(MyParser).parse(true),
+        sparse.boolean.seq2(MyParser).parse(true),
         [true, []]
       );
-      assert.throws(
-        () => sonparse.boolean.seq2(sonparse.string).parse(false),
+      assertThrow(
+        () => sparse.boolean.seq2(sparse.string).parse(false),
         ConfigParseError
       );
-      assert.throws(
-        () => sonparse.boolean.seq2(sonparse.string).parse("str"),
+      assertThrow(
+        () => sparse.boolean.seq2(sparse.string).parse("str"),
         ConfigParseError
       );
-      assert.throws(
-        () => sonparse.boolean.seq2(sonparse.boolean).parse("not expected"),
+      assertThrow(
+        () => sparse.boolean.seq2(sparse.boolean).parse("not expected"),
         ConfigParseError
       );
     });
+
   });
 
 });

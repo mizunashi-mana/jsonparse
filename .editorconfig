@@ -1,6 +1,13 @@
 root = true
 
-[{src/**.ts, gulpfile.coffee}]
+[**.ts]
+indent_style = space
+indent_size = 2
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[**.coffee]
 indent_style = space
 indent_size = 2
 charset = utf-8
@@ -13,5 +20,5 @@ indent_size = 2
 charset = utf-8
 trim_trailing_whitespace = true
 
-[README.md]
+[**.md]
 trim_trailing_whitespace = false

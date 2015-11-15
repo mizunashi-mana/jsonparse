@@ -16,13 +16,10 @@ export function assertThrow(
   msg?: string|RegExp
 ) {
   const regMsg = typeof msg === "string"
-    ? new RegExp("(^| )" + escapeRegExp(msg) + "( |$)")
+    ? new RegExp(`(^| )${escapeRegExp(msg)}( |$)`)
     : msg
     ;
-  return chai.assert.throw(
-    fn, err,
-    (typeof msg === "undefined") ? undefined : regMsg
-  );
+  return chai.assert.throw(fn, err, regMsg);
 }
 
 export {

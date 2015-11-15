@@ -20,8 +20,8 @@ export class ParseErrorStocker {
    */
   constructor(childs?: ParseErrorNode[]);
   constructor(msg: string, childs?: ParseErrorNode[]);
-  constructor(msg: string, exp?: string, childs?: ParseErrorNode[]);
-  constructor(msg: string, exp?: string, act?: string, childs?: ParseErrorNode[]);
+  constructor(msg: string, exp: string, childs?: ParseErrorNode[]);
+  constructor(msg: string, exp: string, act: string, childs?: ParseErrorNode[]);
   constructor(
     arg1?: (ParseErrorNode[]|string),
     arg2?: (ParseErrorNode[]|string),
@@ -65,9 +65,19 @@ export class ParseErrorStocker {
   addChild(pname: string, stocker: ParseErrorStocker): ParseErrorStocker;
   addChild(arg1: (string|ParseErrorNode), arg2?: ParseErrorStocker) {
     if (typeof arg1 === "string") {
-      return new ParseErrorStocker(this.innerMsg, this.innerExpected, this.innerChilds.concat([[arg1, arg2]]));
+      return new ParseErrorStocker(
+        this.innerMsg,
+        this.innerExpected,
+        this.innerActual,
+        this.innerChilds.concat([[arg1, arg2]])
+      );
     } else {
-      return new ParseErrorStocker(this.innerMsg, this.innerExpected, this.innerChilds.concat([arg1]));
+      return new ParseErrorStocker(
+        this.innerMsg,
+        this.innerExpected,
+        this.innerActual,
+        this.innerChilds.concat([arg1])
+      );
     }
   }
 
@@ -78,7 +88,12 @@ export class ParseErrorStocker {
    * @returns new stocker including new children
    */
   addChilds(nodes: ParseErrorNode[]) {
-    return new ParseErrorStocker(this.innerMsg, this.innerExpected, this.innerChilds.concat(nodes));
+    return new ParseErrorStocker(
+      this.innerMsg,
+      this.innerExpected,
+      this.innerActual,
+      this.innerChilds.concat(nodes)
+    );
   }
 
   /**
@@ -107,7 +122,7 @@ export class ParseErrorStocker {
    * @param f.act actual value
    * @param f.childs child nodes of result
    */
-  report(f: (msg: string, exp?: string, act?: string, childs?: ParseErrorNode[]) => any): void {
+  report(f: (msg?: string, exp?: string, act?: string, childs?: ParseErrorNode[]) => any): void {
     f(this.innerMsg, this.innerExpected, this.innerActual, this.innerChilds);
   }
 
