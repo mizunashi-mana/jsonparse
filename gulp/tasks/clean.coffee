@@ -60,5 +60,7 @@ module.exports = (gulp, $, conf) ->
   gulp.task 'remove', [
     'clean'
   ], ->
-    $.util.log $.util.colors.red 'You need to run `npm install` after the end of this task!'
+    $.util.log $.util.colors.red '''
+      You need to run `npm install` after the end of this task!
+    '''
     runSequence 'clean:pkgs'

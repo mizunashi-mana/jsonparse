@@ -1,7 +1,6 @@
 rootconfs:
   tsconf     : 'tsconfig.json'
   dtsmconf   : 'dtsm.json'
-  libTypings : 'lib-typings/*.d.ts'
 gulp:
   base       : 'gulp'
   file       : '../gulpfile.coffee'
@@ -18,6 +17,7 @@ srcDir:
   srcJs      : '**/*.js'
   srcDts     : '**/*.d.ts'
   typings    : '../typings/**/*.d.ts'
+  libTypings : '../lib-typings/*.d.ts'
 distDir:
   prod:
     base     : 'lib'
