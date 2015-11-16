@@ -10,7 +10,7 @@
     "lint": "gulp lint",
     "build": "gulp build --production",
     "doc": "gulp build:doc",
-    "test": "gulp lint && gulp test",
+    "test": "gulp lint && gulp test --production",
     "devBuild": "gulp lint && gulp build --debug",
     "devTest": "gulp test --debug",
     "dinstall": "dtsm --config ./dtsm.json install --save",

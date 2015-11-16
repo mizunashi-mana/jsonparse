@@ -9,27 +9,27 @@ module.exports = (gulp, $, conf) ->
     , paths.tests.distDir.mapDir
 
   tsProject =
-    $.typescript.createProject paths.tsconf, tsOptions
+    $.typescript.createProject paths.rootconfs.tsconf, tsOptions
 
   gulp.task 'build:test', ['clean:test'], ->
     merge [
       gulp.src [
-        paths.testDir.srcDir.srcTs
-        paths.testDir.srcDir.typings
-        paths.testDir.srcDir.libs
-      ], {base: paths.testDir.srcDir.base}
+        paths.tests.srcDir.srcTs
+        paths.tests.srcDir.typings
+        paths.tests.srcDir.libs
+      ], {base: paths.tests.srcDir.base}
         .pipe do $.sourcemaps.init
         .pipe $.typescript tsProject
         .js
         .pipe $.sourcemaps.write distMapDir
           ,
             sourceRoot: path.join do process.cwd
-              , path.basename paths.testDir.srcDir.base
-        .pipe gulp.dest paths.testDir.distDir.base
+              , path.basename paths.tests.srcDir.base
+        .pipe gulp.dest paths.tests.distDir.base
       gulp.src [
-        paths.testDir.srcDir.datas
-      ], {base: paths.testDir.srcDir.base}
-        .pipe gulp.dest paths.testDir.distDir.base
+        paths.tests.srcDir.datas
+      ], {base: paths.tests.srcDir.base}
+        .pipe gulp.dest paths.tests.distDir.base
     ]
 
   gulpMochaTest = (srcs) ->
@@ -42,14 +42,14 @@ module.exports = (gulp, $, conf) ->
 
   gulp.task 'test:src', ['build:test'], ->
     gulpMochaTest [
-      paths.testDir.distDir.testTs
+      paths.tests.distDir.libTests
     ]
 
   gulp.task 'test:typings', ->
     gulp.src [
-      paths.libTyping
-      paths.testDir.srcDir.typingTest
-      paths.srcDir.typings
+      paths.srcDir.libTypings
+      paths.tests.srcDir.typingTests
+      paths.tests.srcDir.typings
     ]
       .pipe $.typescript tsProject
 
@@ -68,8 +68,17 @@ module.exports = (gulp, $, conf) ->
       .pipe do $.jstester
       .pipe $.jstester.reporter true
 
+  gulp.task 'test:examples:ts', ->
+    gulp.src [
+      paths.docsDir.examples.srcTs
+      paths.srcDir.libTypings
+      paths.tests.srcDir.typings
+    ]
+      .pipe $.typescript tsProject
+
   gulp.task 'test:examples', ->
     runSequence 'test:examples:js'
+      , 'test:examples:ts'
 
   gulp.task 'test', (cb) ->
     runSequence 'test:src'
