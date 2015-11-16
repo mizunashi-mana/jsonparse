@@ -5,14 +5,14 @@
   "main": "./lib/index.js",
   "scripts": {
     "prepublish": "dtsm --config ./dtsm.json install && gulp build --production",
-    "init": "dtsm --config ./dtsm.json install",
     "clean": "gulp clean",
+    "remove": "gulp remove",
     "lint": "gulp lint",
     "build": "gulp build --production",
     "doc": "gulp build:doc",
     "test": "gulp lint && gulp test",
     "devBuild": "gulp lint && gulp build --debug",
-    "devTest": "gulp test",
+    "devTest": "gulp test --debug",
     "dinstall": "dtsm --config ./dtsm.json install --save",
     "dupdate": "dtsm --config ./dtsm.json update --save"
   },

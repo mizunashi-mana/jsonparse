@@ -1,48 +1,48 @@
+rootconfs:
+  tsconf     : 'tsconfig.json'
+  dtsmconf   : 'dtsm.json'
+  libTypings : 'lib-typings/*.d.ts'
 gulp:
-  base     : 'gulp'
-  file     : '../gulpfile.coffee'
-  tasks    : 'tasks/**/*.coffee'
-  conf     : 'conf/**/*.cson'
-  libDir   :
-    base   : 'lib'
-    srcJs  : '**/*.js'
-    isrcJs : '**/tmp/**/*.js'
-tsconf     : 'tsconfig.json'
-dtsmconf   : 'dtsm.json'
-libTyping  : 'lib-typings/*.d.ts'
+  base       : 'gulp'
+  file       : '../gulpfile.coffee'
+  tasks      : 'tasks/**/*.coffee'
+  conf       : 'conf/**/*.cson'
+  libDir     :
+    base     : 'lib'
+    srcJs    : '**/*.js'
+    isrcJs   : '**/tmp/**/*.js'
 srcDir:
-  base     : 'src'
-  srcIndex : 'index.ts'
-  srcTs    : '**/*.ts'
-  srcJs    : '**/*.js'
-  srcDts   : '**/*.d.ts'
-  typings  : '../typings/**/*.d.ts'
+  base       : 'src'
+  srcIndex   : 'index.ts'
+  srcTs      : '**/*.ts'
+  srcJs      : '**/*.js'
+  srcDts     : '**/*.d.ts'
+  typings    : '../typings/**/*.d.ts'
 distDir:
   prod:
-    base   : 'lib'
+    base     : 'lib'
   debug:
-    base   : 'dist'
-    jsDir  : 'js'
-    dtsDir : 'definitions'
-    mapDir : 'maps'
-  docs:
-    base   : 'docs'
-    refsDir: 'reference'
-testDir:
+    base     : 'dist'
+    jsDir    : 'js'
+    dtsDir   : 'definitions'
+    mapDir   : 'maps'
+tests:
   srcDir:
-    base   : 'test'
-    srcTs  : '**/*.ts'
-    typings: '../typings/**/*.d.ts'
-    libs   : '../lib/**/*.d.ts'
-    datas  : '**/data/*'
-    typingTest : '../lib-typings/*-tests.ts'
+    base     : 'test'
+    srcTs    : '**/*.ts'
+    typings  : '../typings/**/*.d.ts'
+    libs     : '../lib/**/*.d.ts'
+    datas    : '**/data/*'
+    typingTests : '../lib-typings/*-tests.ts'
   distDir:
-    base   : 'test-build'
-    mapDir : 'maps'
-    testTs : '**/test_*.js'
+    base     : 'test-build'
+    mapDir   : 'maps'
+    libTests : '**/test_*.js'
 docsDir:
   base     : 'docs'
   examples :
     base   : 'examples'
     srcJs  : '**/*.js'
     srcTs  : '**/*.ts'
+  distDir  :
+    refsDir  : 'reference'
