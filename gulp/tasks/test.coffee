@@ -5,8 +5,8 @@ module.exports = (gulp, $, conf) ->
 
   {paths, tsOptions, runOptions, pkgInfo} = conf
 
-  distMapDir = path.relative paths.testDir.distDir.base
-    , paths.testDir.distDir.mapDir
+  distMapDir = path.relative paths.tests.distDir.base
+    , paths.tests.distDir.mapDir
 
   tsProject =
     $.typescript.createProject paths.tsconf, tsOptions
