@@ -45,8 +45,10 @@ You can see really patterns on [main examples][main example], and file patterns 
   ```javascript
   return chainParser.parse(true);
 
-  // with the reporter
-  return chainParser.parseWithReporter("not expected!", nestReporter);
+  // with the result for report and safety
+  return chainParser.parseWithResult("not expected!")
+    .report(nestReporter)
+    .except("Failed to parse!");
   ```
 
  4. Accept parsed result (try-catch error or choose safe method and check)
