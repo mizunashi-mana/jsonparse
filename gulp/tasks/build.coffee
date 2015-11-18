@@ -85,12 +85,13 @@ module.exports = (gulp, $, conf) ->
           sourceRoot: path.join do process.cwd, 'src'
       .pipe gulp.dest paths.distDir.debug.jsDir
 
-  gulp.task 'build:debug', ->
+  gulp.task 'build:debug', (cb) ->
     runSequence 'build:debug:ts'
       , [
         'build:debug:typings'
         'build:debug:js'
       ]
+      , cb
 
   gulp.task 'build:prod:ts', ->
     tsResult = gulp.src [
@@ -117,12 +118,13 @@ module.exports = (gulp, $, conf) ->
     ], {base: paths.srcDir.base}
       .pipe gulp.dest paths.distDir.prod.base
 
-  gulp.task 'build:prod', ->
+  gulp.task 'build:prod', (cb) ->
     runSequence 'build:prod:ts'
       , [
         'build:prod:typings'
         'build:prod:js'
       ]
+      , cb
 
   gulp.task 'build'
   ,

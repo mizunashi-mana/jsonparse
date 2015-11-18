@@ -22,9 +22,10 @@ module.exports = (gulp, $, conf) ->
       .pipe do $.eslint.format
       .pipe do $.eslint.failAfterError
 
-  gulp.task 'lint:gulp', ->
+  gulp.task 'lint:gulp', (cb) ->
     runSequence 'lint:gulp:coffee'
       , 'lint:gulp:js'
+      , cb
 
   gulp.task 'lint:config', ->
     throw new Error 'not implement!'
@@ -45,9 +46,10 @@ module.exports = (gulp, $, conf) ->
       .pipe do $.eslint.format
       .pipe do $.eslint.failAfterError
 
-  gulp.task 'lint:docs', ->
+  gulp.task 'lint:docs', (cb) ->
     runSequence 'lint:docs:ts'
       , 'lint:docs:js'
+      , cb
 
   gulp.task 'lint:src:ts', ->
     gulp.src [
@@ -66,12 +68,14 @@ module.exports = (gulp, $, conf) ->
       .pipe do $.eslint.format
       .pipe do $.eslint.failAfterError
 
-  gulp.task 'lint:src', ->
+  gulp.task 'lint:src', (cb) ->
     runSequence 'lint:src:ts'
       , 'lint:src:js'
+      , cb
 
-  gulp.task 'lint', ->
+  gulp.task 'lint', (cb) ->
     runSequence 'lint:gulp'
       #, 'lint:config'
       , 'lint:docs'
       , 'lint:src'
+      , cb

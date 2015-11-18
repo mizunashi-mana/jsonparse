@@ -4,6 +4,7 @@ var vm = require("vm");
 var path = require("path");
 var fs = require("fs");
 var mkdirp = require("mkdirp").sync;
+var reload = require("require-reload")(require);
 
 module.exports.runJsFile = function(filename, content) {
   var result = undefined;
@@ -28,7 +29,7 @@ module.exports.runJsFile = function(filename, content) {
 
   // running
   try {
-    result = require(tmpfilename);
+    result = reload(tmpfilename);
   } catch(e) {
     is_error = true;
     result = e;

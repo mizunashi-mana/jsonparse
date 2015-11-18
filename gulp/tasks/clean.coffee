@@ -14,10 +14,14 @@ module.exports = (gulp, $, conf) ->
   gulp.task 'clean:dist:debug:map', (cb) ->
     rimraf paths.distDir.debug.mapDir, cb
 
+  gulp.task 'clean:dist:debug:test', (cb) ->
+    rimraf paths.tests.distDir.debug.base, cb
+
   gulp.task 'clean:dist:debug', [
     'clean:dist:debug:js'
     'clean:dist:debug:dts'
     'clean:dist:debug:map'
+    'clean:dist:debug:test'
   ], (cb) ->
     rimraf paths.distDir.debug.base, cb
 
@@ -30,16 +34,16 @@ module.exports = (gulp, $, conf) ->
   ]
 
   gulp.task 'clean:test:map', (cb) ->
-    rimraf paths.tests.distDir.mapDir, cb
+    rimraf paths.tests.distDir.prod.mapDir, cb
 
   gulp.task 'clean:test:dist', (cb) ->
-    rimraf paths.tests.distDir.libTests, cb
+    rimraf paths.tests.distDir.prod.libTests, cb
 
   gulp.task 'clean:test', [
     'clean:test:map'
     'clean:test:dist'
   ], (cb) ->
-    rimraf paths.tests.distDir.base, cb
+    rimraf paths.tests.distDir.prod.base, cb
 
   gulp.task 'clean:node_modules', (cb) ->
     rimraf 'node_modules', cb
@@ -59,8 +63,9 @@ module.exports = (gulp, $, conf) ->
 
   gulp.task 'remove', [
     'clean'
-  ], ->
+  ], (cb) ->
     $.util.log $.util.colors.red '''
       You need to run `npm install` after the end of this task!
     '''
     runSequence 'clean:pkgs'
+      , cb

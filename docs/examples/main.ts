@@ -1,4 +1,4 @@
-/// <reference path="../../lib-typings/sonparser.d.ts" />
+/// <reference path="node_modules/sonparser/lib-typings/sonparser.d.ts" />
 
 import * as sparse from "sonparser";
 import * as assert from "assert";

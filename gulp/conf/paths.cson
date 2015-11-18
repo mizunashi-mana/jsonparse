@@ -1,48 +1,53 @@
 rootconfs:
-  tsconf     : 'tsconfig.json'
-  dtsmconf   : 'dtsm.json'
+  tsconf        : 'tsconfig.json'
+  dtsmconf      : 'dtsm.json'
 gulp:
-  base       : 'gulp'
-  file       : '../gulpfile.coffee'
-  tasks      : 'tasks/**/*.coffee'
-  conf       : 'conf/**/*.cson'
-  libDir     :
-    base     : 'lib'
-    srcJs    : '**/*.js'
-    isrcJs   : '**/tmp/**/*.js'
+  base          : 'gulp'
+  file          : '../gulpfile.coffee'
+  tasks         : 'tasks/**/*.coffee'
+  conf          : 'conf/**/*.cson'
+  libDir:
+    base        : 'lib'
+    srcJs       : '**/*.js'
+    isrcJs      : '**/tmp/**/*.js'
 srcDir:
-  base       : 'src'
-  srcIndex   : 'index.ts'
-  srcTs      : '**/*.ts'
-  srcJs      : '**/*.js'
-  srcDts     : '**/*.d.ts'
-  typings    : '../typings/**/*.d.ts'
-  libTypings : '../lib-typings/*.d.ts'
+  base          : 'src'
+  srcIndex      : 'index.ts'
+  srcTs         : '**/*.ts'
+  srcJs         : '**/*.js'
+  srcDts        : '**/*.d.ts'
+  typings       : '../typings/**/*.d.ts'
+  libTypings    : '../lib-typings/*.d.ts'
 distDir:
   prod:
-    base     : 'lib'
+    base        : 'lib'
   debug:
-    base     : 'dist'
-    jsDir    : 'js'
-    dtsDir   : 'definitions'
-    mapDir   : 'maps'
+    base        : 'dist'
+    jsDir       : 'js'
+    dtsDir      : 'definitions'
+    mapDir      : 'maps'
 tests:
   srcDir:
-    base     : 'test'
-    srcTs    : '**/*.ts'
-    typings  : '../typings/**/*.d.ts'
-    libs     : '../lib/**/*.d.ts'
-    datas    : '**/data/*'
+    base        : 'test'
+    srcTs       : '**/*.ts'
+    typings     : '../typings/**/*.d.ts'
+    libs        : '../lib/**/*.d.ts'
+    datas       : '**/data/*'
     typingTests : '../lib-typings/*-tests.ts'
   distDir:
-    base     : 'test-build'
-    mapDir   : 'maps'
-    libTests : '**/test_*.js'
+    prod:
+      base      : 'test-build'
+      mapDir    : 'maps'
+      libTests  : '**/test_*.js'
+    debug:
+      base      : 'dist/test'
+      mapDir    : 'maps'
+      libTests  : '**/test_*.js'
 docsDir:
-  base     : 'docs'
-  examples :
-    base   : 'examples'
-    srcJs  : '**/*.js'
-    srcTs  : '**/*.ts'
-  distDir  :
-    refsDir  : 'reference'
+  base          : 'docs'
+  examples:
+    base        : 'examples'
+    srcJs       : '**/*.js'
+    srcTs       : '**/*.ts'
+  distDir:
+    refsDir     : 'reference'
