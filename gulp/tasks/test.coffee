@@ -5,31 +5,64 @@ module.exports = (gulp, $, conf) ->
 
   {paths, tsOptions, runOptions, pkgInfo} = conf
 
-  distMapDir = path.relative paths.testDir.distDir.base
-    , paths.testDir.distDir.mapDir
-
   tsProject =
-    $.typescript.createProject paths.tsconf, tsOptions
+    $.typescript.createProject paths.rootconfs.tsconf, tsOptions
 
-  gulp.task 'build:test', ['clean:test'], ->
+  gulp.task 'build:debug:test', [
+    'clean:dist:debug:test'
+    'build:prod'
+  ], ->
+    distMapDir = path.relative paths.tests.distDir.debug.base
+      , paths.tests.distDir.debug.mapDir
+
     merge [
       gulp.src [
-        paths.testDir.srcDir.srcTs
-        paths.testDir.srcDir.typings
-        paths.testDir.srcDir.libs
-      ], {base: paths.testDir.srcDir.base}
+        paths.tests.srcDir.srcTs
+        paths.tests.srcDir.typings
+        paths.tests.srcDir.libs
+      ], {base: paths.tests.srcDir.base}
+        .pipe do $.sourcemaps.init
+        .pipe $.typescript tsProject
+        .js
+        .pipe $.replace 'require("../../lib/")'
+          , 'require("../../js/")'
+        .pipe $.sourcemaps.write distMapDir
+          ,
+            sourceRoot: path.join do process.cwd
+              , path.basename paths.tests.srcDir.base
+        .pipe gulp.dest paths.tests.distDir.debug.base
+      gulp.src [
+        paths.tests.srcDir.datas
+      ], {base: paths.tests.srcDir.base}
+        .pipe gulp.dest paths.tests.distDir.debug.base
+    ]
+
+  gulp.task 'build:debug:fortest', ['build:debug:test'], (cb) ->
+    runSequence 'build:debug'
+      , cb
+
+  gulp.task 'build:prod:test', ['clean:test'], ->
+    distMapDir = path.relative paths.tests.distDir.prod.base
+      , paths.tests.distDir.prod.mapDir
+
+    merge [
+      gulp.src [
+        paths.tests.srcDir.srcTs
+        paths.tests.srcDir.typings
+        paths.tests.srcDir.libs
+      ], {base: paths.tests.srcDir.base}
         .pipe do $.sourcemaps.init
         .pipe $.typescript tsProject
         .js
         .pipe $.sourcemaps.write distMapDir
           ,
             sourceRoot: path.join do process.cwd
-              , path.basename paths.testDir.srcDir.base
-        .pipe gulp.dest paths.testDir.distDir.base
+              , path.basename paths.tests.srcDir.base
+        .pipe gulp.dest paths.tests.distDir.prod.base
       gulp.src [
-        paths.testDir.srcDir.datas
-      ], {base: paths.testDir.srcDir.base}
-        .pipe gulp.dest paths.testDir.distDir.base
+        paths.tests.srcDir.datas
+      ], {base: paths.tests.srcDir.base}
+        .pipe gulp.dest paths.tests.distDir.prod.base
     ]
 
   gulpMochaTest = (srcs) ->
@@ -40,16 +73,21 @@ module.exports = (gulp, $, conf) ->
           'source-map-support/register'
         ]
 
-  gulp.task 'test:src', ['build:test'], ->
+  gulp.task 'test:debug:src', ['build:debug:fortest'], ->
     gulpMochaTest [
-      paths.testDir.distDir.testTs
+      paths.tests.distDir.debug.libTests
+    ]
+
+  gulp.task 'test:prod:src', ['build:prod:test'], ->
+    gulpMochaTest [
+      paths.tests.distDir.prod.libTests
     ]
 
   gulp.task 'test:typings', ->
     gulp.src [
-      paths.libTyping
-      paths.testDir.srcDir.typingTest
-      paths.srcDir.typings
+      paths.srcDir.libTypings
+      paths.tests.srcDir.typingTests
+      paths.tests.srcDir.typings
     ]
       .pipe $.typescript tsProject
 
@@ -68,11 +106,39 @@ module.exports = (gulp, $, conf) ->
       .pipe do $.jstester
       .pipe $.jstester.reporter true
 
-  gulp.task 'test:examples', ->
+  gulp.task 'test:examples:ts', ->
+    gulp.src [
+      paths.docsDir.examples.srcTs
+      paths.srcDir.libTypings
+      paths.tests.srcDir.typings
+    ]
+      .pipe $.replace '"node_modules/sonparser/lib-typings/sonparser.d.ts"'
+        , '"../../lib-typings/sonparser.d.ts"'
+      .pipe $.typescript tsProject
+      .js
+      .pipe $.rename {extname: '.ts'}
+      .pipe $.replace 'require("sonparser")', '''
+        require(require("path").join(
+          require("path").relative(___dirname, process.cwd()),
+          "lib/"
+        ))
+      '''
+      .pipe $.replace 'console.log', '(function(){})'
+      .pipe $.header '"use strict";'
+      .pipe do $.jstester
+      .pipe $.jstester.reporter true
+
+  gulp.task 'test:examples', (cb) ->
     runSequence 'test:examples:js'
+      , 'test:examples:ts'
+      , cb
 
   gulp.task 'test', (cb) ->
-    runSequence 'test:src'
-      , 'test:typings'
-      , 'test:examples'
-      , cb
+    if runOptions.production
+      runSequence 'test:prod:src'
+        , 'test:typings'
+        , 'test:examples'
+        , cb
+    else
+      runSequence 'test:debug:src'
+        , cb

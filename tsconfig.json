@@ -8,7 +8,6 @@
   "exclude": [
     "docs",
     "lib",
-    "lib-typings",
     "test-build",
     "dist",
     "node_modules"
