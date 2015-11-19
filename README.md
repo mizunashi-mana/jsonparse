@@ -9,15 +9,6 @@ Safe parser of JSON and CSON for config parsing like ConfigParser of python.
 
 For more information, view the [documentation][main-document].
 
-## Status
-
-Current status of code: Developing
-
-So, there are not documents, and not useful.
-I think you should not use this package for your project because I will include big changes recently.
-
-However, users and reporters are always welcome. And, also developers.
-
 ## Installation
 
 ```
