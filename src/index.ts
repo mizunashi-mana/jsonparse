@@ -43,6 +43,11 @@ import {
 
 import {
   hasPropertiesObj,
+  isTuple1,
+  isTuple2,
+  isTuple3,
+  isTuple4,
+  isTuple5,
 } from "./parsers/objparsers";
 
 import {
@@ -633,6 +638,64 @@ export function hasProperties<T>(
     hasPropertiesObj<T>(
       props.map((e) => <[string, Parser<Object, any>]>[e[0], e[1].parser])
     )
+  ));
+}
+
+export function tuple1<T>(
+  parser: ConfigParser<Object, T>
+) {
+  return new ConfigParser(isTuple1(parser.parser));
+}
+
+export function tuple2<T1, T2>(
+  parser1: ConfigParser<Object, T1>,
+  parser2: ConfigParser<Object, T2>
+) {
+  return new ConfigParser(isTuple2(
+    parser1.parser,
+    parser2.parser
+  ));
+}
+
+export function tuple3<T1, T2, T3>(
+  parser1: ConfigParser<Object, T1>,
+  parser2: ConfigParser<Object, T2>,
+  parser3: ConfigParser<Object, T3>
+) {
+  return new ConfigParser(isTuple3(
+    parser1.parser,
+    parser2.parser,
+    parser3.parser
+  ));
+}
+
+export function tuple4<T1, T2, T3, T4>(
+  parser1: ConfigParser<Object, T1>,
+  parser2: ConfigParser<Object, T2>,
+  parser3: ConfigParser<Object, T3>,
+  parser4: ConfigParser<Object, T4>
+) {
+  return new ConfigParser(isTuple4(
+    parser1.parser,
+    parser2.parser,
+    parser3.parser,
+    parser4.parser
+  ));
+}
+
+export function tuple5<T1, T2, T3, T4, T5>(
+  parser1: ConfigParser<Object, T1>,
+  parser2: ConfigParser<Object, T2>,
+  parser3: ConfigParser<Object, T3>,
+  parser4: ConfigParser<Object, T4>,
+  parser5: ConfigParser<Object, T5>
+) {
+  return new ConfigParser(isTuple5(
+    parser1.parser,
+    parser2.parser,
+    parser3.parser,
+    parser4.parser,
+    parser5.parser
   ));
 }
 
