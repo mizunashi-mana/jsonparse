@@ -269,7 +269,7 @@ export function isTuple2<T1, T2>(
   parser2: Parser<Object, T2>
 ) {
   return new Parser<Object, [T1, T2]>(
-    parseTupleObject<[T1, T2]>(1, [parser1, parser2])
+    parseTupleObject<[T1, T2]>(2, [parser1, parser2])
   );
 }
 
@@ -279,7 +279,7 @@ export function isTuple3<T1, T2, T3>(
   parser3: Parser<Object, T3>
 ) {
   return new Parser<Object, [T1, T2, T3]>(
-    parseTupleObject<[T1, T2, T3]>(1, [parser1, parser2, parser3])
+    parseTupleObject<[T1, T2, T3]>(3, [parser1, parser2, parser3])
   );
 }
 
@@ -290,7 +290,7 @@ export function isTuple4<T1, T2, T3, T4>(
   parser4: Parser<Object, T4>
 ) {
   return new Parser<Object, [T1, T2, T3, T4]>(
-    parseTupleObject<[T1, T2, T3, T4]>(1, [parser1, parser2, parser3, parser4])
+    parseTupleObject<[T1, T2, T3, T4]>(4, [parser1, parser2, parser3, parser4])
   );
 }
 
@@ -302,6 +302,6 @@ export function isTuple5<T1, T2, T3, T4, T5>(
   parser5: Parser<Object, T5>
 ) {
   return new Parser<Object, [T1, T2, T3, T4, T5]>(
-    parseTupleObject<[T1, T2, T3, T4, T5]>(1, [parser1, parser2, parser3, parser4, parser5])
+    parseTupleObject<[T1, T2, T3, T4, T5]>(5, [parser1, parser2, parser3, parser4, parser5])
   );
 }

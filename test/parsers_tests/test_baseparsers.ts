@@ -217,6 +217,99 @@ describe("base parsers test", () => {
       );
     });
 
+    it("should be through only tuple value by tuple parsers", () => {
+      const tuple1Parser = sparse.tuple1(sparse.boolean);
+      const tuple2Parser = sparse.tuple2(
+        sparse.boolean,
+        sparse.string
+      );
+      const tuple3Parser = sparse.tuple3(
+        sparse.boolean,
+        sparse.string,
+        sparse.number
+      );
+      const tuple4Parser = sparse.tuple4(
+        sparse.boolean,
+        sparse.string,
+        sparse.number,
+        sparse.array(sparse.boolean)
+      );
+      const tuple5Parser = sparse.tuple5(
+        sparse.boolean,
+        sparse.string,
+        sparse.number,
+        sparse.array(sparse.boolean),
+        sparse.hasProperties([
+          ["a", sparse.string]
+        ])
+      );
+
+      assert.deepEqual(tuple1Parser.parse([true]), [true]);
+      assertThrow(
+        () => tuple1Parser.parse("not expected"),
+        ConfigParseError,
+        "\"not expected\" is not 'array'"
+      );
+      assertThrow(
+        () => tuple1Parser.parse([]),
+        ConfigParseError,
+        "[] is not 'tuple1'"
+      );
+      assertThrow(
+        () => tuple1Parser.parse(["not", "expected"]),
+        ConfigParseError,
+        "[\"not\",\"expected\"] is not 'tuple1'"
+      );
+      assertThrow(
+        () => tuple1Parser.parse(["not expected"]),
+        ConfigParseError,
+        "failed to parse elem of 'tuple1'"
+      );
+      assert.deepEqual(
+        tuple2Parser.parse([true, "str"]),
+        [true, "str"]
+      );
+      assertThrow(
+        () => tuple2Parser.parse(["not", "expected"]),
+        ConfigParseError,
+        "failed to parse elem of 'tuple2'"
+      );
+      assert.deepEqual(
+        tuple3Parser.parse([true, "str", 1]),
+        [true, "str", 1]
+      );
+      assertThrow(
+        () => tuple3Parser.parse(["not", "exp", "ected"]),
+        ConfigParseError,
+        "failed to parse elem of 'tuple3'"
+      );
+      assert.deepEqual(
+        tuple4Parser.parse([true, "str", 1, [true]]),
+        [true, "str", 1, [true]]
+      );
+      assertThrow(
+        () => tuple4Parser.parse(["not", "exp", "ect", "ed"]),
+        ConfigParseError,
+        "failed to parse elem of 'tuple4'"
+      );
+      assert.deepEqual(
+        tuple5Parser.parse([true, "str", 1, [true], {a: "str"}]),
+        [true, "str", 1, [true], {a: "str"}]
+      );
+      assertThrow(
+        () => tuple5Parser.parse(["no", "t", "exp", "ect", "ed"]),
+        ConfigParseError,
+        "failed to parse elem of 'tuple5'"
+      );
+      assertThrow(
+        () => tuple5Parser.parseWithResult(
+          ["not", "exp", "ect", "ed", {a: "str"}]
+        ).except(),
+        ConfigParseError,
+        "failed to parse elem of '[boolean, string, number, array, object]'"
+      );
+    });
+
     it("should be customize by my custom parser", () => {
       const CustomParser1 = sparse.custom<Object, boolean>(
         (makeSuccess, makeFailure) => (obj) => {
