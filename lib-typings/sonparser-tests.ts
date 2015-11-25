@@ -25,14 +25,20 @@ var objectParser: ConfigParser<Object, Object> = sparse.object;
 var arrayParser: ConfigParser<Object, number[]> = sparse.array(numberParser);
 var arrayParser2: ConfigParser<Object, number[][]> = sparse.array(sparse.array(numberParser));
 
-var customParser: ConfigParser<number, string> = sparse.custom<number, string>(
-  (success, failure) => (o) => o == num ? success(str) : failure(str, str, str)
-);
-
 var propertiesParser: ConfigParser<Object, objT> = sparse.hasProperties<objT>([
   [str, stringParser],
   [str, numberParser],
 ]);
+
+var tuple1Parser: ConfigParser<Object, [boolean]> = sparse.tuple1(booleanParser);
+var tuple2Parser: ConfigParser<Object, [boolean, string]> = sparse.tuple2(booleanParser, stringParser);
+var tuple3Parser: ConfigParser<Object, [boolean, string, number]> = sparse.tuple3(booleanParser, stringParser, numberParser);
+var tuple4Parser: ConfigParser<Object, [boolean, string, number, number[]]> = sparse.tuple4(booleanParser, stringParser, numberParser, arrayParser);
+var tuple5Parser: ConfigParser<Object, [boolean, string, number, number[], objT]> = sparse.tuple5(booleanParser, stringParser, numberParser, arrayParser, propertiesParser);
+
+var customParser: ConfigParser<number, string> = sparse.custom<number, string>(
+  (success, failure) => (o) => o == num ? success(str) : failure(str, str, str)
+);
 
 var failParser: ConfigParser<string, number> = sparse.fail<number>(str, str);
 var succeedParser: ConfigParser<string, number> = sparse.succeed(num);
