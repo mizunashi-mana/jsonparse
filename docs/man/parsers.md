@@ -15,6 +15,7 @@
 | [object parser](../examples/parsers/object.js) | `sonparser.object` | This parser checks that the type of target object is `object` (not included `array`). |
 | [array parser gen](../examples/parsers/array.js) | `sonparser.array(p)` | This generates a parser that checks the type of target object is `array` and convert each elements as element type using receive parser. |
 | [hasProperties parser gen](../examples/parsers/has_properties.js) | `sonparser.hasProperties(arr)` | This parser checks that `object` type target has specify properties and convert each properties using receive parsers. `arr` type is `[string, parser][]`, list of property name and for parser. |
+| [tuple1/2/3/4/5 parser gen](../examples/parsers/tuples.js) | `sonparser.tuple1/2/3/4/5(parser1,...)` | This generates a parser that checks the type of target object is `tuple` and convert eash elements as element type using receive parser. |
 | [custom parser gen](../examples/parsers/boolean.js) | `sonparser.custom(f)` | You can generate and customize your own parser.  See [How to customize](#custom-parser). |
 
 ### Parser methods

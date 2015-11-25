@@ -1,7 +1,7 @@
 {
   "repos": [
     {
-      "url": "https://github.com/borisyankov/DefinitelyTyped.git",
+      "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
       "ref": "master"
     }
   ],
@@ -14,25 +14,25 @@
   },
   "dependencies": {
     "source-map-support/source-map-support.d.ts": {
-      "ref": "0dd29bf8253536ae24e61c109524e924ea510046"
+      "ref": "ba424f7ee39717d51c17699a09ac8df312a7e9a1"
     },
     "mocha/mocha.d.ts": {
-      "ref": "0dd29bf8253536ae24e61c109524e924ea510046"
+      "ref": "ba424f7ee39717d51c17699a09ac8df312a7e9a1"
     },
     "chai/chai.d.ts": {
-      "ref": "0dd29bf8253536ae24e61c109524e924ea510046"
+      "ref": "ba424f7ee39717d51c17699a09ac8df312a7e9a1"
     },
     "cson/cson.d.ts": {
-      "ref": "0dd29bf8253536ae24e61c109524e924ea510046"
+      "ref": "ba424f7ee39717d51c17699a09ac8df312a7e9a1"
     },
     "node/node.d.ts": {
-      "ref": "0dd29bf8253536ae24e61c109524e924ea510046"
+      "ref": "ba424f7ee39717d51c17699a09ac8df312a7e9a1"
     },
     "es6-promises/es6-promises.d.ts": {
-      "ref": "0dd29bf8253536ae24e61c109524e924ea510046"
+      "ref": "ba424f7ee39717d51c17699a09ac8df312a7e9a1"
     },
     "chai-as-promised/chai-as-promised.d.ts": {
-      "ref": "0dd29bf8253536ae24e61c109524e924ea510046"
+      "ref": "ba424f7ee39717d51c17699a09ac8df312a7e9a1"
     }
   }
 }
