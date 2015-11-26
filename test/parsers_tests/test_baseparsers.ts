@@ -310,6 +310,43 @@ describe("base parsers test", () => {
       );
     });
 
+    it("should be through only hash value by hash parser", () => {
+      const hashParser1 = sparse.hash(sparse.boolean);
+      const hashParser2 = sparse.hash(sparse.hash(sparse.string));
+
+      assert.deepEqual(
+        hashParser1.parse({a: true, b: false}),
+        {a: true, b: false}
+      );
+      assert.deepEqual(
+        hashParser1.parse({}),
+        {}
+      );
+      assert.deepEqual(
+        hashParser1.parse({0: true, 1: false}),
+        {0: true, 1: false}
+      );
+      assertThrow(
+        () => hashParser1.parse({a: true, b: "not boolean"}),
+        ConfigParseError,
+        "failed to parse elem of 'hash'"
+      );
+      assertThrow(
+        () => hashParser1.parse("not hash"),
+        ConfigParseError,
+        "\"not hash\" is not 'object'"
+      );
+      assert.deepEqual(
+        hashParser2.parse({a: {b: "str", c: "str"}}),
+        {a: {b: "str", c: "str"}}
+      );
+      assertThrow(
+        () => hashParser1.parse({a: {b: "str", c: "str"}, b: "not boolean"}),
+        ConfigParseError,
+        "failed to parse elem of 'hash'"
+      );
+    });
+
     it("should be customize by my custom parser", () => {
       const CustomParser1 = sparse.custom<Object, boolean>(
         (makeSuccess, makeFailure) => (obj) => {

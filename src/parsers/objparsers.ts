@@ -1,3 +1,7 @@
+/// <reference path="../lib/typings.d.ts" />
+
+import * as lodash from "lodash";
+
 import {
   Parser,
   makeSuccess as makeSuccessP,
@@ -355,3 +359,42 @@ export function isTuple5<T1, T2, T3, T4, T5>(
   );
 }
 
+/**
+ * A builder of hash type parser
+ * 
+ * @param parser for parsing each elements
+ * @returns a hash type parser
+ */
+export function isHash<T>(parser: Parser<Object, T>) {
+  return new Parser<Object, {[key: string]: T;}>((obj) => {
+    const value = <{[key: string]: Object;}>obj.value;
+
+    return lodash.keys(value)
+      .map((val) => <[string, ParseResult<T>]>[
+        val, parser.parse(makeSuccessObject(obj, value[val]))
+      ])
+      .reduce((res1, res2) => res1.caseOf(
+        (f1) => res2[1].caseOf(
+          (f2) => ParseResult.fail<{[key: string]: T;}>(
+            mapFailure((sf) => sf.addChild([res2[0], f2.value]), f1)
+          ),
+          (s2) => ParseResult.fail<{[key: string]: T;}>(f1)
+        ),
+        (s1) => res2[1].caseOf(
+          (f2) => makeFailureP<Object, {[key: string]: T;}>(
+            obj,
+            "failed to parse elem of 'hash'",
+            "hash",
+            [[res2[0], f2.value]]
+          ),
+          (s2) => ParseResult.success(
+            mapSuccess((ss) => {
+              ss[res2[0]] = s2.value;
+              return ss;
+            }, clone(s1))
+          )
+        )
+      ), makeSuccessP(obj, <{[key: string]: T;}>{}))
+      ;
+  });
+}

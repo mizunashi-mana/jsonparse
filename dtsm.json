@@ -33,6 +33,9 @@
     },
     "chai-as-promised/chai-as-promised.d.ts": {
       "ref": "ba424f7ee39717d51c17699a09ac8df312a7e9a1"
+    },
+    "lodash/lodash.d.ts": {
+      "ref": "e48f0c7a0a5f9e9d35e9cfd7506461bab435cb49"
     }
   }
 }
