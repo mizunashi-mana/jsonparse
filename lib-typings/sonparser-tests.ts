@@ -36,6 +36,8 @@ var tuple3Parser: ConfigParser<Object, [boolean, string, number]> = sparse.tuple
 var tuple4Parser: ConfigParser<Object, [boolean, string, number, number[]]> = sparse.tuple4(booleanParser, stringParser, numberParser, arrayParser);
 var tuple5Parser: ConfigParser<Object, [boolean, string, number, number[], objT]> = sparse.tuple5(booleanParser, stringParser, numberParser, arrayParser, propertiesParser);
 
+var hashParser: ConfigParser<Object, {[key: string]: boolean;}> = sparse.hash(booleanParser);
+
 var customParser: ConfigParser<number, string> = sparse.custom<number, string>(
   (success, failure) => (o) => o == num ? success(str) : failure(str, str, str)
 );

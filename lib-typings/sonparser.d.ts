@@ -316,6 +316,13 @@ declare module "sonparser" {
     parser5: ConfigParser<Object, T5>
   ): ConfigParser<Object, [T1, T2, T3, T4, T5]>;
   /**
+   * build a hash type parser
+   *
+   * @param parser for parsing elements
+   * @returns a type parser for hash
+   */
+  export function hash<T>(parser: ConfigParser<Object, T>): ConfigParser<Object, {[key: string]: T;}>;
+  /**
    * build a custom parser with custom parse function
    *
    * @param fn custom parse function
