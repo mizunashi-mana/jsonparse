@@ -752,7 +752,10 @@ export function tuple5<T1, T2, T3, T4, T5>(
  * @returns a type parser for hash
  */
 export function hash<T>(parser: ConfigParser<Object, T>) {
-  return new ConfigParser(isHash(parser.parser));
+  return new ConfigParser(andParser(
+    isObject(),
+    isHash(parser.parser)
+  ));
 }
 
 /**
