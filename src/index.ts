@@ -641,12 +641,24 @@ export function hasProperties<T>(
   ));
 }
 
+/**
+ * @param T first type
+ * @param parser for parsing first element
+ * @returns a tuple1 type parser
+ */
 export function tuple1<T>(
   parser: ConfigParser<Object, T>
 ) {
   return new ConfigParser(isTuple1(parser.parser));
 }
 
+/**
+ * @param T1 first type
+ * @param T2 second type
+ * @param parser1 for parsing first element
+ * @param parser2 for parsing second element
+ * @returns a tuple2 type parser
+ */
 export function tuple2<T1, T2>(
   parser1: ConfigParser<Object, T1>,
   parser2: ConfigParser<Object, T2>
@@ -657,6 +669,15 @@ export function tuple2<T1, T2>(
   ));
 }
 
+/**
+ * @param T1 first type
+ * @param T2 second type
+ * @param T3 third type
+ * @param parser1 for parsing first element
+ * @param parser2 for parsing second element
+ * @param parser3 for parsing third element
+ * @returns a tuple3 type parser
+ */
 export function tuple3<T1, T2, T3>(
   parser1: ConfigParser<Object, T1>,
   parser2: ConfigParser<Object, T2>,
@@ -669,6 +690,17 @@ export function tuple3<T1, T2, T3>(
   ));
 }
 
+/**
+ * @param T1 first type
+ * @param T2 second type
+ * @param T3 third type
+ * @param T4 fourth type
+ * @param parser1 for parsing first element
+ * @param parser2 for parsing second element
+ * @param parser3 for parsing third element
+ * @param parser4 for parsing fourth element
+ * @returns a tuple4 type parser
+ */
 export function tuple4<T1, T2, T3, T4>(
   parser1: ConfigParser<Object, T1>,
   parser2: ConfigParser<Object, T2>,
@@ -683,6 +715,19 @@ export function tuple4<T1, T2, T3, T4>(
   ));
 }
 
+/**
+ * @param T1 first type
+ * @param T2 second type
+ * @param T3 third type
+ * @param T4 fourth type
+ * @param T5 fifth type
+ * @param parser1 for parsing first element
+ * @param parser2 for parsing second element
+ * @param parser3 for parsing third element
+ * @param parser4 for parsing fourth element
+ * @param parser5 for parsing fifth element
+ * @returns a tuple5 type parser
+ */
 export function tuple5<T1, T2, T3, T4, T5>(
   parser1: ConfigParser<Object, T1>,
   parser2: ConfigParser<Object, T2>,

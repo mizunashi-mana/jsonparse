@@ -158,6 +158,13 @@ function buildErrorChild(i: number, fl: ParseErrorStocker) {
   return <ParseErrorNode>[`[${i}]`, fl];
 }
 
+/**
+ * A concat function of tuple parse results
+ *
+ * @param TUpleResultConcat.res1 previous returned last function
+ * @param TupleResultConcat.res2 current parsed result
+ * @param TupleResultConcat.index current index
+ */
 type TupleResultConcat = (
   res1: [string[], ParseResult<any[]>],
   res2: ParseResult<any>,
@@ -165,10 +172,10 @@ type TupleResultConcat = (
 ) => [string[], ParseResult<any[]>];
 
 /**
- * A builder of concat function of array parse results
+ * A builder of concat function of tuple parse results
  *
  * @param sObj target success object
- * @returns concat function of array parse results
+ * @returns concat function of tuple parse results
  */
 function prtconcat(
   sObj: SuccessObjType<Object>
@@ -207,7 +214,14 @@ function prtconcat(
   };
 }
 
-export function parseTupleObject<T>(
+/**
+ * A type parse function for tuples
+ *
+ * @param n count of target tuple arguments
+ * @param parsers for parsing each elements of object
+ * @returns parse function
+ */
+function parseTupleObject<T>(
   n: number,
   parsers: Parser<Object, any>[]
 ) {
@@ -253,10 +267,10 @@ export function parseTupleObject<T>(
 }
 
 /**
- * A builder of array type parser
+ * A builder of 1 arg tuple type parser
  *
- * @param parser for parsing elements
- * @returns array type parser
+ * @param parser for parsing first element
+ * @returns tuple1 type parser
  */
 export function isTuple1<T>(parser: Parser<Object, T>) {
   return new Parser<Object, [T]>(
@@ -264,6 +278,13 @@ export function isTuple1<T>(parser: Parser<Object, T>) {
   );
 }
 
+/**
+ * A builder of 2 args tuple type parser
+ *
+ * @param parser1 for parsing first element
+ * @param parser2 for parsing second element
+ * @returns tuple2 type parser
+ */
 export function isTuple2<T1, T2>(
   parser1: Parser<Object, T1>,
   parser2: Parser<Object, T2>
@@ -273,6 +294,14 @@ export function isTuple2<T1, T2>(
   );
 }
 
+/**
+ * A builder of 3 args tuple type parser
+ *
+ * @param parser1 for parsing first element
+ * @param parser2 for parsing second element
+ * @param parser3 for parsing third element
+ * @returns tuple3 type parser
+ */
 export function isTuple3<T1, T2, T3>(
   parser1: Parser<Object, T1>,
   parser2: Parser<Object, T2>,
@@ -283,6 +312,15 @@ export function isTuple3<T1, T2, T3>(
   );
 }
 
+/**
+ * A builder of 4 args tuple type parser
+ *
+ * @param parser1 for parsing first element
+ * @param parser2 for parsing second element
+ * @param parser3 for parsing third element
+ * @param parser4 for parsing fourth element
+ * @returns tuple4 type parser
+ */
 export function isTuple4<T1, T2, T3, T4>(
   parser1: Parser<Object, T1>,
   parser2: Parser<Object, T2>,
@@ -294,6 +332,17 @@ export function isTuple4<T1, T2, T3, T4>(
   );
 }
 
+
+/**
+ * A builder of 5 args tuple type parser
+ *
+ * @param parser1 for parsing first element
+ * @param parser2 for parsing second element
+ * @param parser3 for parsing third element
+ * @param parser4 for parsing fourth element
+ * @param parser5 for parsing fifth element
+ * @returns tuple5 type parser
+ */
 export function isTuple5<T1, T2, T3, T4, T5>(
   parser1: Parser<Object, T1>,
   parser2: Parser<Object, T2>,
@@ -305,3 +354,4 @@ export function isTuple5<T1, T2, T3, T4, T5>(
     parseTupleObject<[T1, T2, T3, T4, T5]>(5, [parser1, parser2, parser3, parser4, parser5])
   );
 }
+
