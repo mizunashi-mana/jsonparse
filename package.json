@@ -1,6 +1,6 @@
 {
   "name": "sonparser",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Safe parser of JSON and CSON for config like ConfigParser of python",
   "main": "./lib/index.js",
   "scripts": {
