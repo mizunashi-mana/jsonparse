@@ -221,7 +221,7 @@ function prtconcat(
  * @param parsers for parsing each elements of object
  * @returns parse function
  */
-export function parseTupleObject<T>(
+function parseTupleObject<T>(
   n: number,
   parsers: Parser<Object, any>[]
 ) {
