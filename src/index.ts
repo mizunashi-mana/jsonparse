@@ -48,6 +48,7 @@ import {
   isTuple3,
   isTuple4,
   isTuple5,
+  isHash,
 } from "./parsers/objparsers";
 
 import {
@@ -742,6 +743,16 @@ export function tuple5<T1, T2, T3, T4, T5>(
     parser4.parser,
     parser5.parser
   ));
+}
+
+/**
+ * build a hash type parser
+ * 
+ * @param parser for parsing elements
+ * @returns a type parser for hash
+ */
+export function hash<T>(parser: ConfigParser<Object, T>) {
+  return new ConfigParser(isHash(parser.parser));
 }
 
 /**
