@@ -14,28 +14,28 @@
   },
   "dependencies": {
     "source-map-support/source-map-support.d.ts": {
-      "ref": "ba424f7ee39717d51c17699a09ac8df312a7e9a1"
+      "ref": "8ea42cd8bb11863ed6f242d67c502288ebc45a7b"
     },
     "mocha/mocha.d.ts": {
-      "ref": "ba424f7ee39717d51c17699a09ac8df312a7e9a1"
+      "ref": "8ea42cd8bb11863ed6f242d67c502288ebc45a7b"
     },
     "chai/chai.d.ts": {
-      "ref": "ba424f7ee39717d51c17699a09ac8df312a7e9a1"
+      "ref": "8ea42cd8bb11863ed6f242d67c502288ebc45a7b"
     },
     "cson/cson.d.ts": {
-      "ref": "ba424f7ee39717d51c17699a09ac8df312a7e9a1"
+      "ref": "8ea42cd8bb11863ed6f242d67c502288ebc45a7b"
     },
     "node/node.d.ts": {
-      "ref": "ba424f7ee39717d51c17699a09ac8df312a7e9a1"
+      "ref": "8ea42cd8bb11863ed6f242d67c502288ebc45a7b"
     },
     "es6-promises/es6-promises.d.ts": {
-      "ref": "ba424f7ee39717d51c17699a09ac8df312a7e9a1"
+      "ref": "8ea42cd8bb11863ed6f242d67c502288ebc45a7b"
     },
     "chai-as-promised/chai-as-promised.d.ts": {
-      "ref": "ba424f7ee39717d51c17699a09ac8df312a7e9a1"
+      "ref": "8ea42cd8bb11863ed6f242d67c502288ebc45a7b"
     },
     "lodash/lodash.d.ts": {
-      "ref": "e48f0c7a0a5f9e9d35e9cfd7506461bab435cb49"
+      "ref": "8ea42cd8bb11863ed6f242d67c502288ebc45a7b"
     }
   }
 }
