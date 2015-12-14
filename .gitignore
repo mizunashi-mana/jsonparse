@@ -14,3 +14,4 @@ npm-debug.log
 # for Editor
 *.swp
 *~
+.vscode/
