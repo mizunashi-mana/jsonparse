@@ -2,8 +2,8 @@ language: node_js
 node_js:
   - "5.2"
   - "5.1"
-  - "5.0"
   - "4.2"
   - "0.12"
+  - "0.10"
 env:
   - MOCHA_REPORTER="spec"
