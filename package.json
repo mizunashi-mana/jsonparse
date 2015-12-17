@@ -39,7 +39,7 @@
     "url": "https://github.com/mizunashi-mana/node-sonparser/issues"
   },
   "engines": {
-    "node": ">=0.12.0"
+    "node": ">=0.10"
   },
   "homepage": "https://github.com/mizunashi-mana/node-sonparser#readme",
   "devDependencies": {
