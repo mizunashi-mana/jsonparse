@@ -14,28 +14,28 @@
   },
   "dependencies": {
     "source-map-support/source-map-support.d.ts": {
-      "ref": "8ea42cd8bb11863ed6f242d67c502288ebc45a7b"
+      "ref": "78ba6e41543e5ababbd1dda19797601be3c1f304"
     },
     "mocha/mocha.d.ts": {
-      "ref": "8ea42cd8bb11863ed6f242d67c502288ebc45a7b"
+      "ref": "78ba6e41543e5ababbd1dda19797601be3c1f304"
     },
     "chai/chai.d.ts": {
-      "ref": "8ea42cd8bb11863ed6f242d67c502288ebc45a7b"
+      "ref": "78ba6e41543e5ababbd1dda19797601be3c1f304"
     },
     "cson/cson.d.ts": {
-      "ref": "8ea42cd8bb11863ed6f242d67c502288ebc45a7b"
+      "ref": "78ba6e41543e5ababbd1dda19797601be3c1f304"
     },
     "node/node.d.ts": {
-      "ref": "8ea42cd8bb11863ed6f242d67c502288ebc45a7b"
+      "ref": "78ba6e41543e5ababbd1dda19797601be3c1f304"
     },
     "es6-promises/es6-promises.d.ts": {
-      "ref": "8ea42cd8bb11863ed6f242d67c502288ebc45a7b"
+      "ref": "78ba6e41543e5ababbd1dda19797601be3c1f304"
     },
     "chai-as-promised/chai-as-promised.d.ts": {
-      "ref": "8ea42cd8bb11863ed6f242d67c502288ebc45a7b"
+      "ref": "78ba6e41543e5ababbd1dda19797601be3c1f304"
     },
     "lodash/lodash.d.ts": {
-      "ref": "8ea42cd8bb11863ed6f242d67c502288ebc45a7b"
+      "ref": "78ba6e41543e5ababbd1dda19797601be3c1f304"
     }
   }
 }
