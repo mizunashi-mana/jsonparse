@@ -1,13 +1,13 @@
 import {
-  ParseErrorStocker
-} from "../parseresult/parseerr";
+  ParseErrorStocker,
+} from '../parseresult/parseerr';
 
 import {
   FailObjType,
   SuccessObjType,
   ParseResult,
   mapFailure,
-} from "../parseresult/result";
+} from '../parseresult/result';
 
 import {
   Parser,
@@ -15,11 +15,11 @@ import {
   makeSuccess as makeSuccessP,
   mapParseResult,
   MapperParseResult,
-} from "../common";
+} from '../common';
 
 import {
-  JSONstringify
-} from "../lib/util/ts-util";
+  JSONstringify,
+} from '../lib/util/ts-util';
 
 /**
  * A builder of or parser using map function for failures
@@ -61,8 +61,8 @@ function mergeFailuresForOr(convObj1: FailObjType, convObj2: FailObjType) {
     let actual: string;
     obj1.report((msg1, exp1, act) => {
       obj2.report((msg2, exp2) => {
-        const convMsg1 = msg1[msg1.length - 1] === "." ? msg1 : msg1 + ".";
-        const convMsg2 = msg2[msg2.length - 1] === "." ? msg2 : msg2 + ".";
+        const convMsg1 = msg1[msg1.length - 1] === '.' ? msg1 : msg1 + '.';
+        const convMsg2 = msg2[msg2.length - 1] === '.' ? msg2 : msg2 + '.';
         failMsg = `${convMsg1} And, ${convMsg2}`;
         expected = `${exp1} | ${exp2}`;
         actual = act;
@@ -88,7 +88,9 @@ export function orParser<T, U>(parser1: Parser<T, U>, parser2: Parser<T, U>) {
  *
  * @param parser1 first parser
  * @param parser2 second parser
- * @returns a parser returns first parser value if first parser succeeded, else second parser result with first parser description
+ * @returns
+ *   a parser returns first parser value if first parser succeeded,
+ *   else second parser result with first parser description
  */
 export function orExtraParser<T, U>(parser1: Parser<T, U>, parser2: Parser<T, U>) {
   return innerOrParser(parser1, parser2, (f1, f2) => f1);
@@ -161,11 +163,11 @@ function createMsgFromExpected<T>(obj: SuccessObjType<T>, expected: string[]) {
   const objStr = JSONstringify(obj.value);
 
   const subExps = expected.slice(0, expected.length - 1);
-  const expsStr = subExps.length == 0
+  const expsStr = subExps.length === 0
     ? `'${expected[0]}'`
     : `'${subExps.join("', '")}' or '${expected[expected.length - 1]}'`
     ;
-  return subExps.length == 0
+  return subExps.length === 0
     ? `${objStr} is not ${expsStr}`
     : `${objStr} is neither ${expsStr}`
     ;
@@ -179,8 +181,8 @@ function createMsgFromExpected<T>(obj: SuccessObjType<T>, expected: string[]) {
  * @returns a parser with new description from expected
  */
 export function descFromExpectedParser<T, U>(expected: (string|string[]), parser: Parser<T, U>) {
-  const exps = typeof expected === "string" ? [expected] : expected;
-  const expsStr = exps.join(" | ");
+  const exps = typeof expected === 'string' ? [expected] : expected;
+  const expsStr = exps.join(' | ');
   return new Parser<T, U>((obj) => {
     const msg = createMsgFromExpected(obj, exps);
     const res = parser.parse(obj);

@@ -1,26 +1,26 @@
 /// <reference path="../lib/typings.d.ts" />
 
-import * as lodash from "lodash";
+import * as lodash from 'lodash';
 
 import {
   Parser,
   makeSuccess as makeSuccessP,
   makeFailure as makeFailureP,
-} from "../common";
+} from '../common';
 
-import {clone} from "../lib/util/util";
+import {clone} from '../lib/util/util';
 
 import {
   ParseResult,
   SuccessObjType,
   mapFailure,
   mapSuccess,
-} from "../parseresult/result";
+} from '../parseresult/result';
 
 import {
   ParseErrorStocker,
   ParseErrorNode,
-} from "../parseresult/parseerr";
+} from '../parseresult/parseerr';
 
 /**
  * A concat function of object parse results
@@ -61,7 +61,7 @@ function probjconcat(
       (l2) => makeFailureP<Object, {[key: string]: any}>(
         sObj,
         "failed to parse elem of 'object'",
-        "object",
+        'object',
         <[string, ParseErrorStocker][]>[[pnames[index], l2.value]]
       ),
       (r2) => {
@@ -123,11 +123,11 @@ function parsePropertiesObj<T>(
     results.push(addPropnameOnResult(prop[0], convObj));
   }
 
-  if (results.length != props.length) {
+  if (results.length !== props.length) {
     return makeFailureP<Object, T>(
       sObj,
       "failed to parse property of 'object'",
-      "object"
+      'object'
     );
   }
   return <ParseResult<T>>results
@@ -191,7 +191,7 @@ function prtconcat(
   ) => {
     const result1 = res1[0].concat(res2.caseOf(
       (f) => {
-        let expected = "";
+        let expected = '';
         f.value.report((msg, exp) => expected = exp);
         return expected;
       },
@@ -207,8 +207,8 @@ function prtconcat(
       (r1) => res2.caseOf(
         (l2) => makeFailureP<Object, any[]>(
           sObj,
-          "unknown",
-          "unknown",
+          'unknown',
+          'unknown',
           [buildErrorChild(index, l2.value)]
         ),
         (r2) => makeSuccessP(sObj, r1.value.concat([r2.value]))
@@ -234,7 +234,7 @@ function parseTupleObject<T>(
     const results: ParseResult<any>[] = [];
 
     if (value instanceof Array) {
-      if (value.length == n) {
+      if (value.length === n) {
         for (let i = 0; i < n; i++) {
           const result = parsers[i].parse(
             makeSuccessObject(obj, value[i])
@@ -244,14 +244,14 @@ function parseTupleObject<T>(
           }
           results.push(result);
         }
-        if (results.length != n) {
+        if (results.length !== n) {
           return makeFailureP<Object, T>(obj, `failed to parse elem of 'tuple${n}'`, `tuple${n}`);
         }
         const prresult2 = results.reduce(
           prtconcat(obj),
           <[string[], ParseResult<any[]>]>[[], makeSuccessP(obj, <any[]>[])]
         );
-        const expected = `[${prresult2[0].join(", ")}]`;
+        const expected = `[${prresult2[0].join(', ')}]`;
         return prresult2[1].caseOf(
           (f) => ParseResult.fail<T>(mapFailure((fv) => fv.desc(
             `failed to parse elem of '${expected}'`,
@@ -265,7 +265,7 @@ function parseTupleObject<T>(
       );
     }
     return makeFailureP<Object, T>(
-      obj, `${JSON.stringify(value)} is not 'array'`, "array"
+      obj, `${JSON.stringify(value)} is not 'array'`, 'array'
     );
   };
 }
@@ -361,30 +361,30 @@ export function isTuple5<T1, T2, T3, T4, T5>(
 
 /**
  * A builder of hash type parser
- * 
+ *
  * @param parser for parsing each elements
  * @returns a hash type parser
  */
 export function isHash<T>(parser: Parser<Object, T>) {
-  return new Parser<Object, {[key: string]: T;}>((obj) => {
-    const value = <{[key: string]: Object;}>obj.value;
+  return new Parser<Object, { [key: string]: T; }>((obj) => {
+    const value = <{ [key: string]: Object; }>obj.value;
 
     return lodash.keys(value)
       .map((val) => <[string, ParseResult<T>]>[
-        val, parser.parse(makeSuccessObject(obj, value[val]))
+        val, parser.parse(makeSuccessObject(obj, value[val])),
       ])
       .reduce((res1, res2) => res1.caseOf(
         (f1) => res2[1].caseOf(
-          (f2) => ParseResult.fail<{[key: string]: T;}>(
+          (f2) => ParseResult.fail<{ [key: string]: T; }>(
             mapFailure((sf) => sf.addChild([res2[0], f2.value]), f1)
           ),
-          (s2) => ParseResult.fail<{[key: string]: T;}>(f1)
+          (s2) => ParseResult.fail<{ [key: string]: T; }>(f1)
         ),
         (s1) => res2[1].caseOf(
-          (f2) => makeFailureP<Object, {[key: string]: T;}>(
+          (f2) => makeFailureP<Object, { [key: string]: T; }>(
             obj,
             "failed to parse elem of 'hash'",
-            "hash",
+            'hash',
             [[res2[0], f2.value]]
           ),
           (s2) => ParseResult.success(
@@ -394,7 +394,7 @@ export function isHash<T>(parser: Parser<Object, T>) {
             }, clone(s1))
           )
         )
-      ), makeSuccessP(obj, <{[key: string]: T;}>{}))
+      ), makeSuccessP(obj, <{ [key: string]: T; }>{}))
       ;
   });
 }

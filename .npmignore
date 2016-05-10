@@ -1,10 +1,8 @@
 # no publish
-dist
 docs
 src
 node_modules
 test
-test-build
 
 # documents
 CHANGELOG.md
@@ -15,7 +13,3 @@ CHANGELOG.md
 tsconfig.json
 dtsm.json
 gulp*
-
-# garbages
-*.log
-.DS_Store

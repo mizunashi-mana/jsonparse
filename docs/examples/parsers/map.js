@@ -1,5 +1,7 @@
-var sparse = require("sonparser");
-var assert = require("assert");
+'use strict';
+
+var sparse = require('sonparser');
+var assert = require('assert');
 
 /**
  * This parser converts number to is integer.
@@ -18,7 +20,7 @@ assert.strictEqual(
 
 assert.throws(
   function() {
-    return IsIntegerParser.parse("str");
+    return IsIntegerParser.parse('str');
   },
   sparse.ConfigParseError
 ); // failure

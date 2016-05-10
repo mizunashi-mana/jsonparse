@@ -1,37 +1,29 @@
-gulp = require 'gulp'
+gulp        = require 'gulp'
 gulpPlugins = do require 'gulp-load-plugins'
+gulpPlugins.runSequence = require 'run-sequence'
 
 path = require 'path'
 {argv} = require 'yargs'
 
-gulpDir = './gulp'
+# resolve gulp settings
+myGulpUtil = require './gulp/lib/util'
+pathsConf = myGulpUtil.requirePathsConf './gulp/conf/path.cson'
+argOptions = myGulpUtil.resolveArgOptions argv
 
-gulpLibDir = path.resolve gulpDir, 'lib'
-gulpConfDir = path.resolve gulpDir, 'conf'
-pathsConfPath = path.resolve gulpConfDir, 'paths.cson'
-tsoptsConfPath = path.resolve gulpConfDir, 'tsopts.cson'
+gulpConf =
+  paths: pathsConf
+  tsOptions: myGulpUtil
+    .requireTsOpts pathsConf.gulp.tsopts, argOptions.debug
+  runOptions: argOptions
+  pkgInfo: require './package.json'
 
-{
-  requirePathsConf
-  requireTsOpts
-  requireIndex
-  decorateArgOptions
-} = require path.resolve gulpLibDir, 'util'
-
-conf =
-  paths      : requirePathsConf pathsConfPath
-  tsOptions  : requireTsOpts tsoptsConfPath
-  runOptions : decorateArgOptions argv
-  pkgInfo    : require './package.json'
-
-gulpPlugins.replace =
-  requireIndex path.resolve gulpLibDir, 'gulp-replace-ex'
-gulpPlugins.jstester =
-  requireIndex path.resolve gulpLibDir, 'gulp-jstester'
+# require tasks
+gulpPlugins.docsTester =
+  require './gulp/lib/gulp-docs-tester/'
 
 requireTask = (taskname) ->
-  taskReq = require path.resolve gulpDir, 'tasks/' + taskname
-  taskReq gulp, gulpPlugins, conf
+  taskReq = require path.resolve './gulp/tasks', taskname
+  taskReq gulp, gulpPlugins, gulpConf
 
 requireTask 'lint'
 requireTask 'build'

@@ -1,5 +1,7 @@
-var sparse = require("sonparser");
-var assert = require("assert");
+'use strict';
+
+var sparse = require('sonparser');
+var assert = require('assert');
 
 /**
  * This parser converts natural number to is even.
@@ -7,9 +9,9 @@ var assert = require("assert");
 var IsEvenNatualParser = sparse.custom(function(makeSuccess, makeFailure) {
   return function(obj) {
     if (Number.isInteger(obj) && obj >= 0) {
-      return makeSuccess(obj % 2 == 0);
+      return makeSuccess(obj % 2 === 0);
     }
-    return makeFailure(obj + " is not natural number", "natural number");
+    return makeFailure(obj + ' is not natural number', 'natural number');
   };
 });
 var IsEvenNaturalNumberParser = sparse.number.and(IsEvenNatualParser);
@@ -40,7 +42,7 @@ assert.throws(
 
 assert.throws(
   function() {
-    return IsEvenNaturalNumberParser.parse("str");
+    return IsEvenNaturalNumberParser.parse('str');
   },
   sparse.ConfigParseError
 ); // failure

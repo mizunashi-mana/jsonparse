@@ -1,0 +1,34 @@
+root:
+  tsconf: 'tsconfig.json'
+  dtsmconf: 'dtsm.json'
+
+lint:
+  tslint: 'config/tslint.json'
+  eslint: 'config/eslint.yaml'
+  coffeelint: 'config/coffeelint.json'
+
+gulp:
+  main: 'gulpfile.coffee'
+  tasks: 'gulp/tasks/**/*.coffee'
+  tsopts: 'gulp/conf/tsopts.cson'
+  srcJs: 'gulp/lib/**/*.js'
+  srcCoffee: 'gulp/lib/**/*.coffee'
+
+src:
+  base: 'src'
+  index: 'src/index.ts'
+  srcTs: 'src/**/*.ts'
+  srcJs: 'src/**/*.js'
+  srcTypings: 'src/**/*.d.ts'
+  libTypings: 'lib-typings/**/*.d.ts'
+
+test:
+  srcTestTs: 'test/**/*.ts'
+  testTs: 'test/**/test_*.ts'
+  exampleTs: 'docs/examples/**/*.ts'
+  exampleJs: 'docs/examples/**/*.js'
+  testTypings: 'lib-typings/**/*-tests.d.ts'
+
+dist:
+  distDir: 'lib'
+  typedocDir: 'docs/reference'

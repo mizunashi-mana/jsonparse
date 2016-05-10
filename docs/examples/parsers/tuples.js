@@ -1,5 +1,7 @@
-var sparse = require("sonparser");
-var assert = require("assert");
+'use strict';
+
+var sparse = require('sonparser');
+var assert = require('assert');
 
 assert.deepEqual(
   sparse.tuple1(sparse.boolean)
@@ -11,8 +13,8 @@ assert.deepEqual(
   sparse.tuple2(
     sparse.boolean,
     sparse.string
-  ).parse([true, "str"]),
-  [true, "str"]
+  ).parse([true, 'str']),
+  [true, 'str']
 ); // success
 
 assert.deepEqual(
@@ -20,8 +22,8 @@ assert.deepEqual(
     sparse.boolean,
     sparse.string,
     sparse.number
-  ).parse([true, "str", 1]),
-  [true, "str", 1]
+  ).parse([true, 'str', 1]),
+  [true, 'str', 1]
 ); // success
 
 assert.deepEqual(
@@ -30,8 +32,8 @@ assert.deepEqual(
     sparse.string,
     sparse.number,
     sparse.array(sparse.number)
-  ).parse([true, "str", 1, [0]]),
-  [true, "str", 1, [0]]
+  ).parse([true, 'str', 1, [0]]),
+  [true, 'str', 1, [0]]
 ); // success
 
 assert.deepEqual(
@@ -41,8 +43,8 @@ assert.deepEqual(
     sparse.number,
     sparse.array(sparse.number),
     sparse.array(sparse.boolean)
-  ).parse([true, "str", 1, [0], [false]]),
-  [true, "str", 1, [0], [false]]
+  ).parse([true, 'str', 1, [0], [false]]),
+  [true, 'str', 1, [0], [false]]
 ); // success
 
 assert.throws(
@@ -51,7 +53,7 @@ assert.throws(
       sparse.boolean,
       sparse.string,
       sparse.number
-    ).parse("not expected");
+    ).parse('not expected');
   },
   sparse.ConfigParseError
 ); // failure
@@ -62,7 +64,7 @@ assert.throws(
       sparse.boolean,
       sparse.string,
       sparse.number
-    ).parse([true, "str", 1, "extra"]);
+    ).parse([true, 'str', 1, 'extra']);
   },
   sparse.ConfigParseError
 ); // failure
@@ -73,7 +75,7 @@ assert.throws(
       sparse.boolean,
       sparse.string,
       sparse.number
-    ).parse(["not", "expected", 1]);
+    ).parse(['not', 'expected', 1]);
   },
   sparse.ConfigParseError
 ); // failure

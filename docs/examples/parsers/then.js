@@ -1,5 +1,7 @@
-var sparse = require("sonparser");
-var assert = require("assert");
+'use strict';
+
+var sparse = require('sonparser');
+var assert = require('assert');
 
 /**
  * Then parser returns last result as it is.
@@ -7,8 +9,8 @@ var assert = require("assert");
 assert.strictEqual(
   sparse.boolean.then(function(obj) {
     assert.strictEqual(obj, true);
-  }, function(msg, exp, act) {
-    throw new Error("This function will not be called.");
+  }, function() {
+    throw new Error('This function will not be called.');
   }).parse(true),
   true
 ); // success
@@ -18,12 +20,12 @@ assert.strictEqual(
  */
 assert.throws(
   function() {
-    return sparse.boolean.then(function(obj) {
-      throw new Error("This function will not be called.");
+    return sparse.boolean.then(function() {
+      throw new Error('This function will not be called.');
     }, function(msg, exp, act) {
-      console.log("Error: " + msg);
-      console.log("Error: Expected " + exp + ", but actual " + act + ".");
-    }).parse("str");
+      console.log('Error: ' + msg);
+      console.log('Error: Expected ' + exp + ', but actual ' + act + '.');
+    }).parse('str');
   },
   sparse.ConfigParseError
 ); // failure

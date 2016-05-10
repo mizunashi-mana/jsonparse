@@ -1,7 +1,11 @@
-var clone = module.exports.clone = function(obj, deepcopy) {
-  var i, attr, copy, dcopyf;
+'use strict';
 
-  if (obj === null || typeof obj !== "object") return obj;
+module.exports.clone = function clone(obj, deepcopy) {
+  var i, attr, copy, dcopyf, len;
+
+  if (obj === null || typeof obj !== 'object') {
+    return obj;
+  }
 
   dcopyf = !!deepcopy;
   copy = obj.constructor();
@@ -16,33 +20,39 @@ var clone = module.exports.clone = function(obj, deepcopy) {
   }
 
   for (attr in obj) {
-    if (obj.hasOwnProperty(attr)) copy[attr] = dcopyf ? clone(obj[attr]) : obj[attr];
+    if (obj.hasOwnProperty(attr)) {
+      copy[attr] = dcopyf ? clone(obj[attr]) : obj[attr];
+    }
   }
   return copy;
 };
 
-var objClone = module.exports.objClone = function(obj) {
+module.exports.objClone = function objClone(obj) {
   try {
     return JSON.parse(JSON.stringify(obj));
-  } catch(e) {
+  } catch (e) {
     return obj;
   }
 };
 
-var inherits = module.exports.inherits = function(ctor, superCtor) {
+module.exports.inherits = function inherits(ctor, superCtor) {
 
-  if (ctor === undefined || ctor === null)
-    throw new TypeError("The constructor to `inherits` must not be " +
-                        "null or undefined.");
+  if (typeof ctor === 'undefined' || ctor === null) {
+    throw new TypeError('The constructor to `inherits` must not be ' +
+                        'null or undefined.');
+  }
 
-  if (superCtor === undefined || superCtor === null)
-    throw new TypeError("The super constructor to `inherits` must not " +
-                        "be null or undefined.");
+  if (typeof superCtor === 'undefined' || superCtor === null) {
+    throw new TypeError('The super constructor to `inherits` must not ' +
+                        'be null or undefined.');
+  }
 
-  if (superCtor.prototype === undefined)
-    throw new TypeError("The super constructor to `inherits` must " +
-                        "have a prototype.");
+  if (typeof superCtor.prototype === 'undefined') {
+    throw new TypeError('The super constructor to `inherits` must ' +
+                        'have a prototype.');
+  }
 
+  /* eslint-disable no-underscore-dangle */
   ctor.super_ = superCtor;
   ctor.prototype = Object.create(superCtor.prototype, {
     constructor: {

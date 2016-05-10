@@ -1,19 +1,21 @@
-var sparse = require("sonparser");
-var assert = require("assert");
+'use strict';
+
+var sparse = require('sonparser');
+var assert = require('assert');
 
 assert.strictEqual(
-  sparse.string.parse(""),
-  ""
+  sparse.string.parse(''),
+  ''
 ); // success
 
 assert.strictEqual(
-  sparse.string.parse("str"),
-  "str"
+  sparse.string.parse('str'),
+  'str'
 ); // success
 
 assert.strictEqual(
-  sparse.string.parse("0"),
-  "0"
+  sparse.string.parse('0'),
+  '0'
 ); // success
 
 assert.throws(

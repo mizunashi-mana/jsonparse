@@ -1,6 +1,6 @@
-import {ParseErrorStocker} from "./parseerr";
+import {ParseErrorStocker} from './parseerr';
 
-import {id} from "../lib/util/ts-util";
+import {id} from '../lib/util/ts-util';
 
 /**
  * Result types
@@ -92,7 +92,7 @@ export class ParseResult<S> {
    * @param value of success
    * @returns success parse result
    */
-  static success<S>(value: SuccessObjType<S>) {
+  public static success<S>(value: SuccessObjType<S>) {
     return new ParseResult<S>(ResultType.Success, undefined, value);
   }
 
@@ -102,7 +102,7 @@ export class ParseResult<S> {
    * @param value of fail
    * @returns fail parse result
    */
-  static fail<S>(value: FailObjType) {
+  public static fail<S>(value: FailObjType) {
     return new ParseResult<S>(ResultType.Failure, value);
   }
 
@@ -114,7 +114,7 @@ export class ParseResult<S> {
    * @param f.arg2 second success result
    * @returns safe function merging two result value
    */
-  static bind2<T1, T2, T3>(
+  public static bind2<T1, T2, T3>(
     f: (arg1: SuccessObjType<T1>, arg2: SuccessObjType<T2>) => ParseResult<T3>
   ) {
     return (
@@ -130,7 +130,7 @@ export class ParseResult<S> {
    *
    * @returns is this success
    */
-  isSuccess(): boolean {
+  public isSuccess(): boolean {
     return this.t === ResultType.Success;
   }
 
@@ -141,7 +141,7 @@ export class ParseResult<S> {
    * @param f.r this success object
    * @returns fail on fail and bind value on success
    */
-  chain<T>(f: (r: SuccessObjType<S>) => ParseResult<T>) {
+  public chain<T>(f: (r: SuccessObjType<S>) => ParseResult<T>) {
     return this.isSuccess()
       ? f(this.rv)
       : ParseResult.fail<T>(this.lv)
@@ -154,7 +154,7 @@ export class ParseResult<S> {
    * @param t unit value
    * @returns success include unit value
    */
-  of<T>(t: SuccessObjType<T>) {
+  public of<T>(t: SuccessObjType<T>) {
     return ParseResult.success<T>(t);
   }
 
@@ -165,7 +165,7 @@ export class ParseResult<S> {
    * @param f.r this success object
    * @returns fail on fail and map value on success
    */
-  lift<T>(f: (r: SuccessObjType<S>) => SuccessObjType<T>) {
+  public lift<T>(f: (r: SuccessObjType<S>) => SuccessObjType<T>) {
     return this.chain((val) => this.of<T>(f(val)));
   }
 
@@ -177,7 +177,7 @@ export class ParseResult<S> {
    * @param f.l this failure object
    * @returns this value on success and converted success value on fail
    */
-  catch(f: (l: FailObjType) => SuccessObjType<S>) {
+  public catch(f: (l: FailObjType) => SuccessObjType<S>) {
     return ParseResult.success<S>(
       this.isSuccess()
       ? this.rv
@@ -188,7 +188,7 @@ export class ParseResult<S> {
   /**
    * no comment
    */
-  caseOf<T>(
+  public caseOf<T>(
     fl: (l: FailObjType) => T,
     fr: (r: SuccessObjType<S>) => T
   ): T {
@@ -201,7 +201,7 @@ export class ParseResult<S> {
   /**
    * clone this object
    */
-  clone() {
+  public clone() {
     return this.isSuccess()
       ? ParseResult.success<S>(id(this.rv))
       : ParseResult.fail<S>(id(this.lv))
@@ -214,7 +214,7 @@ export class ParseResult<S> {
    * @param def default value
    * @returns return this value on success and default value on fail
    */
-  valueSuccess(def: SuccessObjType<S>): SuccessObjType<S> {
+  public valueSuccess(def: SuccessObjType<S>): SuccessObjType<S> {
     return this.isSuccess()
       ? this.rv
       : def
@@ -227,7 +227,7 @@ export class ParseResult<S> {
    * @param def default value
    * @returns return this failure on fail and default value on success
    */
-  valueFailure(def: FailObjType): FailObjType {
+  public valueFailure(def: FailObjType): FailObjType {
     return this.isSuccess()
       ? def
       : this.lv

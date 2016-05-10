@@ -1,47 +1,68 @@
 module.exports = (gulp, $, conf) ->
   path   = require 'path'
   merge  = require 'merge2'
-  runSequence = require 'run-sequence'
+  extend = require 'extend'
 
-  {paths, tsOptions, runOptions, pkgInfo} = conf
+  {
+    paths
+    tsOptions
+    runOptions
+    pkgInfo
+  } = conf
 
-  distMapDir = path.relative paths.distDir.debug.jsDir
-    , paths.distDir.debug.mapDir
+  tsOpts = extend {}, tsOptions
+  tsOpts = extend tsOpts,
+    noEmitOnError: true
 
   tsProject =
-    $.typescript.createProject paths.rootconfs.tsconf, tsOptions
+    $.typescript.createProject paths.root.tsconf, tsOpts
 
   gulp.task 'build:doc', ->
-    tsConfig = require paths.rootconfs.tsconf
+    tsConfig = require path.resolve paths.root.tsconf
 
     gulp.src [
-      paths.srcDir.srcTs
-      paths.srcDir.srcDts
+      paths.src.srcTs
+      paths.dtsm.typings
     ]
       .pipe $.typedoc
         module: tsConfig.compilerOptions.module
         target: tsConfig.compilerOptions.target
         includeDeclarations: true
-        out: paths.docsDir.distDir.refsDir
+
+        out: paths.dist.typedocDir
+
         name: pkgInfo.name
         version: true
-        verbose: true
+
+        ignoreCompilerErrors: false
+
+  gulp.task 'build:debug:js', ->
+    gulp.src [
+      paths.src.srcJs
+      paths.src.srcTypings
+    ], {base: paths.src.base}
+      .pipe $.if runOptions.sourcemaps
+      , do $.sourcemaps.init
+      .pipe $.if runOptions.sourcemaps
+      , $.sourcemaps.write '.',
+        sourceRoot: path.join process.cwd(), 'src'
+      .pipe gulp.dest paths.dist.distDir
 
   gulp.task 'build:debug:ts', ->
     reqSMapFilter = $.filter [
-      path.relative paths.srcDir.base, paths.srcDir.srcIndex
+      path.relative paths.src.base, paths.src.index
     ], {restore: true}
 
     tsResult = gulp.src [
-      paths.srcDir.srcTs
-      paths.srcDir.typings
-    ], {base: paths.srcDir.base}
+      paths.src.srcTs
+      paths.dtsm.typings
+    ], {base: paths.src.base}
       .pipe reqSMapFilter
       .pipe $.if runOptions.sourcemaps, $.header '''
         ///<reference path="<%=
           pathModule.relative(pathModule.dirname(file.path), process.cwd())
         %>/typings/source-map-support/source-map-support.d.ts" />
-        import * as sourceMapSupport from "source-map-support";
+        import * as sourceMapSupport from 'source-map-support';
         sourceMapSupport.install();
       ''', {pathModule: path}
       .pipe reqSMapFilter.restore
@@ -51,80 +72,42 @@ module.exports = (gulp, $, conf) ->
 
     merge [
       tsResult.dts
-        .pipe gulp.dest paths.distDir.debug.dtsDir
       tsResult.js
         .pipe $.if runOptions.sourcemaps
-        , $.sourcemaps.write distMapDir
-          ,
-            sourceRoot: path.join process.cwd(), 'src'
-        .pipe gulp.dest paths.distDir.debug.jsDir
+        , $.sourcemaps.write '.',
+          sourceRoot: path.join process.cwd(), 'src'
     ]
-
-  gulp.task 'build:debug:typings', ->
-    merge [
-      gulp.src [
-        paths.srcDir.srcDts
-      ], {base: paths.srcDir.base}
-        .pipe gulp.dest paths.distDir.debug.dtsDir
-      gulp.src [
-        paths.srcDir.typings
-      ], {base: do process.cwd}
-        .pipe gulp.dest paths.distDir.debug.base
-    ]
-
-  gulp.task 'build:debug:js', ->
-    gulp.src [
-      paths.srcDir.srcJs
-    ], {base: paths.srcDir.base}
-      .pipe $.if runOptions.sourcemaps
-      , do $.sourcemaps.init
-      .pipe $.header ''
-      .pipe $.if runOptions.sourcemaps
-      , $.sourcemaps.write distMapDir
-        ,
-          sourceRoot: path.join do process.cwd, 'src'
-      .pipe gulp.dest paths.distDir.debug.jsDir
-
-  gulp.task 'build:debug', (cb) ->
-    runSequence 'build:debug:ts'
-      , [
-        'build:debug:typings'
-        'build:debug:js'
-      ]
-      , cb
-
-  gulp.task 'build:prod:ts', ->
-    tsResult = gulp.src [
-      paths.srcDir.srcTs
-      paths.srcDir.typings
-    ], {base: paths.srcDir.base}
-      .pipe $.typescript tsProject
-
-    merge [
-      tsResult.dts
-      tsResult.js
-    ]
-      .pipe gulp.dest paths.distDir.prod.base
-
-  gulp.task 'build:prod:typings', ->
-    gulp.src [
-      paths.srcDir.srcDts
-    ], {base: paths.srcDir.base}
-      .pipe gulp.dest paths.distDir.prod.base
+      .pipe gulp.dest paths.dist.distDir
 
   gulp.task 'build:prod:js', ->
     gulp.src [
-      paths.srcDir.srcJs
-    ], {base: paths.srcDir.base}
-      .pipe gulp.dest paths.distDir.prod.base
+      paths.src.srcJs
+      paths.src.srcTypings
+    ], {base: paths.src.base}
+      .pipe gulp.dest paths.dist.distDir
 
-  gulp.task 'build:prod', (cb) ->
-    runSequence 'build:prod:ts'
-      , [
-        'build:prod:typings'
-        'build:prod:js'
-      ]
-      , cb
+  gulp.task 'build:prod:ts', ->
+    tsResult = gulp.src [
+      paths.src.srcTs
+      paths.dtsm.typings
+    ], {base: paths.src.base}
+      .pipe $.typescript tsProject
+
+    merge [
+      tsResult.js
+      tsResult.dts
+    ]
+      .pipe gulp.dest paths.dist.distDir
+
+  gulp.task 'build:debug', [
+    'build:debug:ts'
+    'build:debug:js'
+  ]
+
+  gulp.task 'build:prod', [
+    'build:prod:ts'
+    'build:prod:js'
+  ]
 
   gulp.task 'build'
   ,

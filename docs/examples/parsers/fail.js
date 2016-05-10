@@ -1,10 +1,12 @@
-var sparse = require("sonparser");
-var assert = require("assert");
+'use strict';
+
+var sparse = require('sonparser');
+var assert = require('assert');
 
 assert.throws(
   function() {
-    return sparse.fail("any fail!").parse("anything!");
+    return sparse.fail('any fail!').parse('anything!');
   },
   sparse.ConfigParseError,
-  "any fail!"
+  'any fail!'
 ); // failure with message

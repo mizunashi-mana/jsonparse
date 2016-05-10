@@ -1,5 +1,6 @@
-var sparse = require("sonparser");
-var assert = require("assert");
+'use strict';
+
+var sparse = require('sonparser');
 
 var listReporter = sparse.reporters.listReporter;
 
@@ -15,7 +16,7 @@ var listShConsoleReporter = listReporter(
  * this : "not boolean" is not 'boolean'
  */
 sparse.boolean
-  .parseWithResult("not boolean").report(listConsoleReporter);
+  .parseWithResult('not boolean').report(listConsoleReporter);
 
 /**
  * Output:
@@ -26,21 +27,21 @@ sparse.boolean
  * this.pP2 : "not object" is not 'object'
  */
 sparse.hasProperties([
-  ["pB", sparse.boolean],
-  ["pP1", sparse.hasProperties([
-    ["pB", sparse.boolean],
-    ["pA", sparse.array(sparse.boolean)],
+  ['pB', sparse.boolean],
+  ['pP1', sparse.hasProperties([
+    ['pB', sparse.boolean],
+    ['pA', sparse.array(sparse.boolean)],
   ])],
-  ["pP2", sparse.hasProperties([
-    ["pB", sparse.boolean],
+  ['pP2', sparse.hasProperties([
+    ['pB', sparse.boolean],
   ])],
 ]).parseWithResult({
-  "pB": "not boolean",
-  "pP1": {
-    "pB": "not boolean",
-    "pA": [0, true, "str"],
+  pB: 'not boolean',
+  pP1: {
+    pB: 'not boolean',
+    pA: [0, true, 'str'],
   },
-  "pP2": "not object",
+  pP2: 'not object',
 }).report(listConsoleReporter);
 
 /**
@@ -50,19 +51,19 @@ sparse.hasProperties([
  * this.pP2 : "not object" is not 'object'
  */
 sparse.hasProperties([
-  ["pB", sparse.boolean],
-  ["pP1", sparse.hasProperties([
-    ["pB", sparse.boolean],
-    ["pA", sparse.array(sparse.boolean)],
+  ['pB', sparse.boolean],
+  ['pP1', sparse.hasProperties([
+    ['pB', sparse.boolean],
+    ['pA', sparse.array(sparse.boolean)],
   ])],
-  ["pP2", sparse.hasProperties([
-    ["pB", sparse.boolean],
+  ['pP2', sparse.hasProperties([
+    ['pB', sparse.boolean],
   ])],
 ]).parseWithResult({
-  "pB": "not boolean",
-  "pP1": {
-    "pB": "not boolean",
-    "pA": [0, true, "str"],
+  pB: 'not boolean',
+  pP1: {
+    pB: 'not boolean',
+    pA: [0, true, 'str'],
   },
-  "pP2": "not object",
+  pP2: 'not object',
 }).report(listShConsoleReporter);

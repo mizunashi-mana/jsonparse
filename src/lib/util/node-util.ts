@@ -1,8 +1,8 @@
 /// <reference path="../typings.d.ts" />
 
-import * as fs from "fs";
-import * as path from "path";
-import * as CSON from "cson";
+import * as fs from 'fs';
+import * as path from 'path';
+import * as CSON from 'cson';
 
 /**
  * convert JSON string to JSON object
@@ -71,41 +71,41 @@ class SONParseResult<L, R> {
     this.rv = right;
   }
 
-  static left<L, R>(lv: L) {
+  public static left<L, R>(lv: L) {
     return new SONParseResult<L, R>(ResultType.Left, lv);
   }
 
-  static right<L, R>(rv: R) {
+  public static right<L, R>(rv: R) {
     return new SONParseResult<L, R>(ResultType.Right, undefined, rv);
   }
 
-  of<T>(t: T) {
+  public of<T>(t: T) {
     return SONParseResult.right<L, T>(t);
   }
 
-  isRight() {
+  public isRight() {
     return this.t === ResultType.Right;
   }
 
-  chain<T>(f: (r: R) => SONParseResult<L, T>) {
+  public chain<T>(f: (r: R) => SONParseResult<L, T>) {
     return this.isRight()
       ? f(this.rv)
       : SONParseResult.left<L, T>(this.lv)
       ;
   }
 
-  lift<T>(f: (r: R) => T) {
+  public lift<T>(f: (r: R) => T) {
     return this.chain((v) => this.of<T>(f(v)));
   }
 
-  value(def: L) {
+  public value(def: L) {
     return this.isRight()
       ? def
       : this.lv
       ;
   }
 
-  trycatch(f: (r: R) => L) {
+  public trycatch(f: (r: R) => L) {
     return this.chain((v) => {
       try {
         return SONParseResult.left<L, R>((f(v)));
@@ -121,8 +121,8 @@ class SONParseResult<L, R> {
  * SON file table for [[parseSONFile]]
  */
 const parseSONTable: [string, (content: string) => Object][] = [
-  ["json", parseJSONString],
-  ["cson", parseCSONString],
+  ['json', parseJSONString],
+  ['cson', parseCSONString],
 ];
 
 /**
@@ -133,9 +133,9 @@ const parseSONTable: [string, (content: string) => Object][] = [
  * @returns parse result from [[parseSONTable]]
  */
 function parseSONContent(filename: string, content: string): SONParseResult<Object, string> {
-  const sResult = parseSONTable.map((e) => "." + e[0]).indexOf(path.extname(filename));
+  const sResult = parseSONTable.map((e) => '.' + e[0]).indexOf(path.extname(filename));
 
-  if (sResult >= 0){
+  if (sResult >= 0) {
     // found in table
     return SONParseResult.left<Object, string>(parseSONTable[sResult][1](content));
   } else {

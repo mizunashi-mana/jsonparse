@@ -4,26 +4,26 @@ import {
   makeSuccess as makeSuccessP,
   mapParseResult,
   MapperParseResult,
-} from "../common";
+} from '../common';
 
 import {
   ParseResult,
   SuccessObjType,
   mapFailure,
   mapSuccess,
-} from "../parseresult/result";
+} from '../parseresult/result';
 
 import {
-  ParseErrorStocker
-} from "../parseresult/parseerr";
+  ParseErrorStocker,
+} from '../parseresult/parseerr';
 
 import {
-  descFromExpectedParser
-} from "./baseparsers";
+  descFromExpectedParser,
+} from './baseparsers';
 
 import {
-  exists
-} from "../lib/util/ts-util";
+  exists,
+} from '../lib/util/ts-util';
 
 /**
  * Wrapper for type parsers
@@ -53,11 +53,11 @@ function buildTypeParser<T>(
  */
 export function isNumber() {
   return buildTypeParser<number>((makeSuccess, makeFailure) => {
-    return (obj) => typeof obj === "number"
+    return (obj) => typeof obj === 'number'
       ? makeSuccess(obj)
       : makeFailure()
       ;
-  }, "number");
+  }, 'number');
 }
 
 /**
@@ -67,11 +67,11 @@ export function isNumber() {
  */
 export function isString() {
   return buildTypeParser<string>((makeSuccess, makeFailure) => {
-    return (obj) => typeof obj === "string"
+    return (obj) => typeof obj === 'string'
       ? makeSuccess(obj)
       : makeFailure()
       ;
-  }, "string");
+  }, 'string');
 }
 
 /**
@@ -81,11 +81,11 @@ export function isString() {
  */
 export function isBoolean() {
   return buildTypeParser<boolean>((makeSuccess, makeFailure) => {
-    return (obj) => typeof obj === "boolean"
+    return (obj) => typeof obj === 'boolean'
       ? makeSuccess(obj)
       : makeFailure()
       ;
-  }, "boolean");
+  }, 'boolean');
 }
 
 /**
@@ -136,7 +136,7 @@ function prconcat<T>(
       (l2) => makeFailureP<Object, T[]>(
         sObj,
         "failed to parse elem of 'array'",
-        "array",
+        'array',
         [buildErrorChild(index, l2.value)]
       ),
       (r2) => makeSuccessP(sObj, r1.value.concat([r2.value]))
@@ -178,8 +178,8 @@ function parseArrayObj<T>(
     }
     results.push(convObj);
   }
-  if (results.length != arr.length) {
-    return makeFailureP<Object, T[]>(sObj, "failed to parse elem of 'array'", "array");
+  if (results.length !== arr.length) {
+    return makeFailureP<Object, T[]>(sObj, "failed to parse elem of 'array'", 'array');
   }
   return results.reduce(
     prconcat<T>(sObj),
@@ -198,7 +198,7 @@ export function isArray<T>(parser: Parser<Object, T>) {
     const value = obj.value;
     return value instanceof Array
       ? parseArrayObj(value, parser, obj)
-      : makeFailureP<Object, T[]>(obj, `${JSON.stringify(obj.value)} is not 'array'`, "array")
+      : makeFailureP<Object, T[]>(obj, `${JSON.stringify(obj.value)} is not 'array'`, 'array')
       ;
   });
 }
@@ -212,11 +212,11 @@ export function isArray<T>(parser: Parser<Object, T>) {
  */
 export function isObject() {
   return buildTypeParser<Object>((makeSuccess, makeFailure) => {
-    return (obj) => typeof obj === "object" && !(obj instanceof Array)
+    return (obj) => typeof obj === 'object' && !(obj instanceof Array)
       ? makeSuccess(obj)
       : makeFailure()
       ;
-  }, "object");
+  }, 'object');
 }
 
 /**
@@ -231,5 +231,5 @@ export function isNothing<T>(value: T) {
       ? makeFailure()
       : makeSuccess(value)
       ;
-  }, ["undefined", "null"]);
+  }, ['undefined', 'null']);
 }

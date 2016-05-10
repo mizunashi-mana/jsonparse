@@ -1,4 +1,4 @@
-import {clone} from "./util";
+import {clone} from './util';
 
 /**
  * A builder of repeat string
@@ -9,10 +9,10 @@ import {clone} from "./util";
  */
 export function repeat(count: number, str: string): string {
   if (count <= 0) {
-    return "";
+    return '';
   }
   const repU = repeat(Math.floor(count / 2), str);
-  return repU + repU + ((count % 2) == 1 ? str : "");
+  return repU + repU + ((count % 2) === 1 ? str : '');
 }
 
 /**
@@ -22,7 +22,7 @@ export function repeat(count: number, str: string): string {
  * @returns escaping source
  */
 export function escapeRegExp(str: string) {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 /**
@@ -53,7 +53,7 @@ export function exists<T>(a: T) {
  */
 export function JSONstringify(obj: Object) {
   return obj === undefined
-    ? "undefined"
+    ? 'undefined'
     : JSON.stringify(obj)
     ;
 }

@@ -1,56 +1,51 @@
 path = require 'path'
 CSON = require 'cson'
+extend = require 'extend'
+
+requireConf = (confPath) ->
+  CSON.requireFile confPath
 
 requirePathsConf = (confFilePath) ->
-  pathsConf = CSON.requireFile confFilePath
-  parsePaths = (obj, base) ->
-    if typeof obj is 'string'
-      if base?
-        path.resolve base, obj
-      else
-        path.resolve obj
+  pathsConf = requireConf confFilePath
+
+  pathsConf.dtsm = requireDtsmConf pathsConf.root.dtsmconf
+
+  pathsConf
+
+requireTsOpts = (confFilePath, isDebug = false) ->
+  optsConf = requireConf confFilePath
+
+  tsOpts = optsConf.main
+  tsOpts.typescript =
+    if tsOpts.typescript? is 'pkg'
+      require 'typescript'
     else
-      ret = {}
-      baseDir =
-        if obj.base?
-          parsePaths obj.base, base
-        else
-          base
-      for key, pathsObj of obj
-        ret[key] =
-          unless key is 'base'
-            parsePaths pathsObj, baseDir
-          else
-            baseDir
-      ret
+      undefined
 
-  parsePaths pathsConf
+  extend tsOpts
+    , if isDebug then optsConf.debug else optsConf.product
 
-requireTsOpts = (confFilePath) ->
-  optsConf = CSON.requireFile confFilePath
-  if optsConf.typescript? is 'pkg'
-    optsConf.typescript = require 'typescript'
-  else
-    optsConf.typescript = undefined
+  tsOpts
 
-  optsConf
-
-decorateArgOptions = (argv) ->
+resolveArgOptions = (argv) ->
   argv.debug      = false if argv.production
+
   argv.sourcemaps = false if argv.production
   argv.sourcemaps = true if argv.debug
 
   argv
 
-requireIndex = (pkgname) ->
-  if pkgname[0] is '.' or pkgname[0] is '/'
-    require pkgname + '/'
-  else
-    require pkgname
+requireDtsmConf = (confPath) ->
+  dtsmConf = require path.resolve confPath
+
+  {
+    dir: dtsmConf.path
+    typings: "#{dtsmConf.path}/*/**/*.d.ts"
+  }
 
 module.exports = {
+  requireConf
   requirePathsConf
   requireTsOpts
-  requireIndex
-  decorateArgOptions
+  resolveArgOptions
 }
