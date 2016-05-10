@@ -1,7 +1,7 @@
 /// <reference path="sonparser.d.ts" />
 
-import * as sparse from "sonparser";
-import * as events from "events";
+import * as sparse from 'sonparser';
+import * as events from 'events';
 
 var bool: boolean;
 var num: number;

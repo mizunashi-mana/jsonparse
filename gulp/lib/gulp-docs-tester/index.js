@@ -4,19 +4,11 @@ var gutil = require('gulp-util');
 var gdata = require('gulp-data');
 var path = require('path');
 
+var runJsFile = require('./context').runJsFile;
+
 module.exports = function tester() {
   return gdata(function(file) {
-    try {
-      file.docsTester = {
-        status: true,
-        value: null,
-      };
-    } catch (e) {
-      file.docsTester = {
-        status: false,
-        err: e,
-      };
-    }
+    file.docsTester = runJsFile(file.path, file.contents);
   });
 }
 
@@ -35,16 +27,35 @@ module.exports.reporter = function testerReporter(isFail) {
         failures.push(result);
       }
 
-      console.log(
+      /*
+      console.error(
         result.err.stack.split('    at Module.require (module.js:')[0]
       );
+      */
       gutil.log(
         '[' + gutil.colors.cyan('gulp-docs-tester') + ']',
         '[' + path.relative(process.cwd(), file.path) + ']',
-        gutil.colors.red('error')
+        gutil.colors.red('error'),
+        result.err.message
       )
     }
   });
+
+  if (isEmitFail) {
+    resultStream = resultStream.on('end', function() {
+      var isfail = failures.length > 0;
+      var spaces = '  ';
+
+      gutil.log('jstesting...');
+
+      gutil.log(gutil.colors.green(spaces + (count - failures.length) + ' passing'));
+      gutil.log(gutil.colors.red(spaces + failures.length + ' failing'));
+
+      if (isfail) {
+        throw new gutil.PluginError('gulp-docs-tester', 'emit failure');
+      }
+    });
+  }
 
   return resultStream;
 }

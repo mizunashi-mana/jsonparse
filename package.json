@@ -64,7 +64,7 @@
     "gulp-mocha": "^2.2.0",
     "gulp-sourcemaps": "^1.6.0",
     "gulp-tslint": "^5.0.0",
-    "gulp-typedoc": "sierrasoftworks/gulp-typedoc#v1.8.10",
+    "gulp-typedoc": "^2.0.0",
     "gulp-typescript": "^2.13.4",
     "gulp-util": "^3.0.7",
     "merge2": "^1.0.2",
@@ -74,7 +74,8 @@
     "run-sequence": "^1.1.5",
     "source-map-support": "^0.4.0",
     "ts-node": "^0.7.2",
-    "tslint": "^3.9.0",
+    "tslint": "^3.10.0",
+    "typedoc": "^0.3.12",
     "typescript": "^1.7.3",
     "yargs": "^4.7.0"
   },
