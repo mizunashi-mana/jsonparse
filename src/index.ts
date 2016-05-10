@@ -1,18 +1,18 @@
-/// <reference path="./lib/typings.d.ts" />
+/// <reference path="lib/typings.d.ts" />
 
 import {
   BaseCustomError,
-} from "./lib/customerror/node-customerror";
+} from './lib/customerror/node-customerror';
 
 import {
   parseSONFileSync,
   parseSONFile,
-} from "./lib/util/node-util";
+} from './lib/util/node-util';
 
 import {
   Parser,
   MapperParseResult,
-} from "./common";
+} from './common';
 
 import {
   successParser,
@@ -30,7 +30,7 @@ import {
   descFromExpectedParser,
   seq2Parser,
   bindParser,
-} from "./parsers/baseparsers";
+} from './parsers/baseparsers';
 
 import {
   isBoolean,
@@ -39,7 +39,7 @@ import {
   isObject,
   isArray,
   isNothing,
-} from "./parsers/basetypes";
+} from './parsers/basetypes';
 
 import {
   hasPropertiesObj,
@@ -49,18 +49,18 @@ import {
   isTuple4,
   isTuple5,
   isHash,
-} from "./parsers/objparsers";
+} from './parsers/objparsers';
 
 import {
   ParseResult,
   SuccessObjType,
   mapSuccess,
-} from "./parseresult/result";
+} from './parseresult/result';
 
 import {
   ParseErrorNode,
   ParseErrorStocker,
-} from "./parseresult/parseerr";
+} from './parseresult/parseerr';
 
 import {
   Monad,
@@ -68,14 +68,14 @@ import {
   MonadPlus,
   Monoid,
   Applicative,
-} from "./lib/basetypes/basetypes";
+} from './lib/basetypes/basetypes';
 
 import {
   nestReporter as nestReporterInstance,
   listReporter as listReporterInstance,
   jsonReporter as jsonReporterInstance,
   customReporter as customReporterInstance,
-} from "./reporter/reporters";
+} from './reporter/reporters';
 
 /**
  * Error class of ConfigParser
@@ -124,7 +124,7 @@ export class ConfigParserResult<T> implements Functor<T>, Applicative<T>, Monad<
    *
    * @returns is this success
    */
-  isSuccess(): boolean {
+  public isSuccess(): boolean {
     return this.v.isSuccess();
   }
 
@@ -143,9 +143,9 @@ export class ConfigParserResult<T> implements Functor<T>, Applicative<T>, Monad<
    * @param reporter a reporter (default: nest console reporter)
    * @returns this object as it is
    */
-  report(reporter?: ReporterType): ConfigParserResult<T> {
+  public report(reporter?: ReporterType): ConfigParserResult<T> {
     if (!this.isSuccess()) {
-      const reporterF = typeof reporter === "undefined"
+      const reporterF = typeof reporter === 'undefined'
         ? nestReporterInstance(console.log)
         : reporter
         ;
@@ -161,10 +161,10 @@ export class ConfigParserResult<T> implements Functor<T>, Applicative<T>, Monad<
    * @param msg failure message (default: config parser error message)
    * @returns success value
    */
-  except(msg?: string): T {
+  public except(msg?: string): T {
     if (!this.isSuccess()) {
       this.v.valueFailure(undefined).value.report((errMsg) => {
-        const message = typeof msg === "undefined"
+        const message = typeof msg === 'undefined'
           ? errMsg
           : msg
           ;
@@ -190,7 +190,7 @@ export class ConfigParserResult<T> implements Functor<T>, Applicative<T>, Monad<
    * @param val default value
    * @returns success value on success and default value on failure
    */
-  toSuccess(val: T): T {
+  public toSuccess(val: T): T {
     return this.v.valueSuccess({value: val, flags: undefined}).value;
   }
 
@@ -200,7 +200,7 @@ export class ConfigParserResult<T> implements Functor<T>, Applicative<T>, Monad<
    * @param err default value
    * @returns error on failure and default value on success
    */
-  toError(err: Error): Error {
+  public toError(err: Error): Error {
     let reserr: Error = err;
     if (!this.isSuccess()) {
       this.v.valueFailure(undefined).value.report((errMsg) => {
@@ -219,7 +219,7 @@ export class ConfigParserResult<T> implements Functor<T>, Applicative<T>, Monad<
    * @param onFailure.err convert error
    * @returns convert success on success and error on failure
    */
-  caseOf<R>(onSuccess: (obj: T) => R, onFailure: (err: ConfigParseError) => R): R {
+  public caseOf<R>(onSuccess: (obj: T) => R, onFailure: (err: ConfigParseError) => R): R {
     return this.v.caseOf(
       (obj) => {
         let msg: string;
@@ -237,7 +237,7 @@ export class ConfigParserResult<T> implements Functor<T>, Applicative<T>, Monad<
    *
    * @returns a promise return converted value
    */
-  toPromise() {
+  public toPromise() {
     return new Promise<T>((resolve, reject) => {
       this.caseOf(
         (convObj) => resolve(convObj),
@@ -251,30 +251,30 @@ export class ConfigParserResult<T> implements Functor<T>, Applicative<T>, Monad<
    */
 
   // functor
-  map<R>(fn: (obj: T) => R): ConfigParserResult<R> {
+  public map<R>(fn: (obj: T) => R): ConfigParserResult<R> {
     return new ConfigParserResult<R>(this.v.lift((obj) => mapSuccess(fn, obj)));
   }
-  fmap = this.map;
-  lift = this.fmap;
+  public fmap = this.map;
+  public lift = this.fmap;
 
   // applicative
-  of<R>(val: R): ConfigParserResult<R> {
+  public of<R>(val: R): ConfigParserResult<R> {
     return new ConfigParserResult<R>(this.v.lift((obj) => mapSuccess((inObj) => val, obj)));
   };
-  unit = this.of;
+  public unit = this.of;
 
-  ap<R>(u: ConfigParserResult<(t: T) => R>): ConfigParserResult<R> {
+  public ap<R>(u: ConfigParserResult<(t: T) => R>): ConfigParserResult<R> {
     return u.chain<R>((fn) => this.map(fn));
   };
 
   // monad
-  bind<R>(f: (t: T) => ConfigParserResult<R>): ConfigParserResult<R> {
+  public bind<R>(f: (t: T) => ConfigParserResult<R>): ConfigParserResult<R> {
     return this.v.caseOf(
       (obj) => new ConfigParserResult(ParseResult.fail<R>(obj)),
       (obj) => f(obj.value)
     );
   }
-  chain = this.bind;
+  public chain = this.bind;
 }
 
 /**
@@ -286,8 +286,8 @@ export class ConfigParserResult<T> implements Functor<T>, Applicative<T>, Monad<
 export class ConfigParser<T, U> implements
   ConfigParserMonoid<T, U>, ConfigParserFunctor<T, U>,
   ConfigParserApplicative<T, U>, ConfigParserMonad<T, U>,
-  ConfigParserMonadPlus<T, U>
-{
+  ConfigParserMonadPlus<T, U> {
+
   /**
    * ConfigParser has a parser object.
    *
@@ -308,7 +308,7 @@ export class ConfigParser<T, U> implements
    * @param parser second parser
    * @returns a or parser of this parser and arg parser
    */
-  or(parser: ConfigParser<T, U>) {
+  public or(parser: ConfigParser<T, U>) {
     return new ConfigParser(orParser(
       this.parser,
       parser.parser
@@ -321,7 +321,7 @@ export class ConfigParser<T, U> implements
    * @param parser second parser
    * @returns a and parser of this parser and arg parser
    */
-  and<R>(parser: ConfigParser<U, R>) {
+  public and<R>(parser: ConfigParser<U, R>) {
     return new ConfigParser(andParser(
       this.parser,
       parser.parser
@@ -335,7 +335,7 @@ export class ConfigParser<T, U> implements
    * @param fn.obj target converted object
    * @returns a map parser of this with arg function
    */
-  map<R>(fn: (obj: U) => R) {
+  public map<R>(fn: (obj: U) => R) {
     return new ConfigParser(mapParser(
       (innerObj) => mapSuccess(fn, innerObj),
       this.parser
@@ -349,7 +349,7 @@ export class ConfigParser<T, U> implements
    * @param fn.obj target converted success inner object
    * @returns a map parser of this with arg function
    */
-  innerMap<R>(fn: (obj: SuccessObjType<U>) => SuccessObjType<R>) {
+  public innerMap<R>(fn: (obj: SuccessObjType<U>) => SuccessObjType<R>) {
     return new ConfigParser(mapParser(fn, this.parser));
   }
 
@@ -360,7 +360,7 @@ export class ConfigParser<T, U> implements
    * @param exp expected type
    * @returns a description parser of this
    */
-  desc(msg: string, exp?: string) {
+  public desc(msg: string, exp?: string) {
     return new ConfigParser(descParser(descBuilder(msg, exp), this.parser));
   }
 
@@ -370,7 +370,7 @@ export class ConfigParser<T, U> implements
    * @param exp expected type or types
    * @returns a description parser of this from expected
    */
-  descFromExpected(exp: (string|string[])) {
+  public descFromExpected(exp: (string|string[])) {
     return new ConfigParser(descFromExpectedParser(exp, this.parser));
   }
 
@@ -385,11 +385,11 @@ export class ConfigParser<T, U> implements
    * @param onFail.act actual type
    * @returns a receive parser of this
    */
-  then(
+  public then(
     onSuccess: (obj: U) => any,
     onFail?: (msg: string, exp?: string, act?: string) => any
   ) {
-    const onFailure = typeof onFail === "undefined"
+    const onFailure = typeof onFail === 'undefined'
       ? () => { return; }
       : onFail
       ;
@@ -409,7 +409,7 @@ export class ConfigParser<T, U> implements
    * @param onFail.act actual type
    * @returns a catch parser of this
    */
-  catch(onFail: (msg: string, exp?: string, act?: string) => any) {
+  public catch(onFail: (msg: string, exp?: string, act?: string) => any) {
     return new ConfigParser(thenCatchParser((innerObj) => innerObj.value.report(onFail), this.parser));
   }
 
@@ -419,7 +419,7 @@ export class ConfigParser<T, U> implements
    * @param def default value
    * @returns this parsed value on success and default value on fail
    */
-  default(def: U) {
+  public default(def: U) {
     return new ConfigParser(catchParser(
       (obj) => ({
         value: def,
@@ -435,7 +435,7 @@ export class ConfigParser<T, U> implements
    * @param def default value
    * @returns this parsed value on success and default value on fail and this value is nothing
    */
-  option(def: U) {
+  public option(def: U) {
     return new ConfigParser(orExtraParser(
       this.parser,
       isNothing(def)
@@ -448,7 +448,7 @@ export class ConfigParser<T, U> implements
    * @param parser second parser
    * @returns a parser returns two length array from first and second parsed value
    */
-  seq2<R>(parser: ConfigParser<T, R>): ConfigParser<T, [U, R]> {
+  public seq2<R>(parser: ConfigParser<T, R>): ConfigParser<T, [U, R]> {
     return new ConfigParser(seq2Parser(this.parser, parser.parser));
   }
 
@@ -470,7 +470,7 @@ export class ConfigParser<T, U> implements
    * @returns parsed value
    * @throws ConfigParseError failed to parse
    */
-  parse(obj: T): U {
+  public parse(obj: T): U {
     const res = this.parser.parse({
       value: obj,
       flags: {
@@ -492,7 +492,7 @@ export class ConfigParser<T, U> implements
    * @param obj target object
    * @returns result object ([[ConfigParserResult]])
    */
-  parseWithResult(obj: T): ConfigParserResult<U> {
+  public parseWithResult(obj: T): ConfigParserResult<U> {
     const res = this.parser.parse({
       value: obj,
       flags: {
@@ -508,7 +508,7 @@ export class ConfigParser<T, U> implements
    * @param obj target object
    * @returns a promise returning parsed value on success and error on fail
    */
-  parseAsync(obj: T): Promise<U> {
+  public parseAsync(obj: T): Promise<U> {
     return new Promise<U>((resolve, reject) => {
       const res = this.parseWithResult(obj);
       res.caseOf(
@@ -526,51 +526,51 @@ export class ConfigParser<T, U> implements
   get mempty() {
     return <ConfigParser<T, U>>emptyFail;
   };
-  empty = this.mempty;
+  public empty = this.mempty;
 
-  mappend = this.or;
-  append = this.mappend;
+  public mappend = this.or;
+  public append = this.mappend;
 
-  mconcat(ps: ConfigParser<T, U>[]): ConfigParser<T, U> {
+  public mconcat(ps: ConfigParser<T, U>[]): ConfigParser<T, U> {
     return ps.reduce((a, b) => a.mappend(b), this);
   }
-  concat = this.mconcat;
+  public concat = this.mconcat;
 
   // Functor
-  fmap = this.map;
-  lift = this.fmap;
+  public fmap = this.map;
+  public lift = this.fmap;
 
   // Applicative
-  of<R>(val: R) {
+  public of<R>(val: R) {
     return <ConfigParser<U, R>>succeed(val);
   };
-  unit = this.of;
+  public unit = this.of;
 
-  ap<R>(u: ConfigParser<T, (t: U) => R>): ConfigParser<T, R> {
+  public ap<R>(u: ConfigParser<T, (t: U) => R>): ConfigParser<T, R> {
     return u.seq2(this).map((obj) => obj[0](obj[1]));
   }
 
   // Monad
   // of <- using Applicative
 
-  bind<R>(f: (t: U) => ConfigParser<T, R>): ConfigParser<T, R> {
+  public bind<R>(f: (t: U) => ConfigParser<T, R>): ConfigParser<T, R> {
     return new ConfigParser(bindParser(
       (obj) => f(obj.value[0]).parser.parse(mapSuccess((inObj) => inObj[1], obj)),
       this.seq2(custom<T, T>((mkS, mkF) => (obj) => mkS(obj))).parser
     ));
   }
-  chain = this.bind;
+  public chain = this.bind;
 
   // MonadPlus
-  mzero = this.mempty;
-  zero = this.mzero;
+  public mzero = this.mempty;
+  public zero = this.mzero;
 
-  mplus = this.mappend;
-  plus = this.mplus;
+  public mplus = this.mappend;
+  public plus = this.mplus;
 }
 
 // keep the fail instance
-emptyFail = fail("empty");
+emptyFail = fail('empty');
 
 /**
  * helper function for type parser
@@ -747,7 +747,7 @@ export function tuple5<T1, T2, T3, T4, T5>(
 
 /**
  * build a hash type parser
- * 
+ *
  * @param parser for parsing elements
  * @returns a type parser for hash
  */

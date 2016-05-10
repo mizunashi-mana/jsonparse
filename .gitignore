@@ -1,17 +1,7 @@
-/dist/
 /typings/
 /lib/
-/test-build/
 /docs/reference/
 
 # for NPM
 node_modules/
-npm-debug.log
-
-# for Mac
-.DS_Store*
-
-# for Editor
-*.swp
-*~
-.vscode/
+npm-*.log

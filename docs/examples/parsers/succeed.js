@@ -1,12 +1,14 @@
-var sparse = require("sonparser");
-var assert = require("assert");
+'use strict';
+
+var sparse = require('sonparser');
+var assert = require('assert');
 
 assert.strictEqual(
-  sparse.succeed(true).parse("anything!"),
+  sparse.succeed(true).parse('anything!'),
   true
 ); // success
 
 assert.deepEqual(
-  sparse.succeed({"a": "a"}).parse("anything!"),
-  {"a": "a"}
+  sparse.succeed({a: 'a'}).parse('anything!'),
+  {a: 'a'}
 ); // success

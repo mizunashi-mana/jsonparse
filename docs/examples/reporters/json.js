@@ -1,5 +1,6 @@
-var sparse = require("sonparser");
-var assert = require("assert");
+'use strict';
+
+var sparse = require('sonparser');
 
 var jsonReporter = sparse.reporters.jsonReporter;
 
@@ -23,7 +24,7 @@ var jsonOLShConsoleReporter = jsonReporter(
  * ```
  */
 sparse.boolean
-  .parseWithResult("not boolean").report(jsonConsoleReporter);
+  .parseWithResult('not boolean').report(jsonConsoleReporter);
 
 /**
  * Output:
@@ -42,21 +43,21 @@ sparse.boolean
  * ```
  */
 sparse.hasProperties([
-  ["pB", sparse.boolean],
-  ["pP1", sparse.hasProperties([
-    ["pB", sparse.boolean],
-    ["pA", sparse.array(sparse.boolean)],
+  ['pB', sparse.boolean],
+  ['pP1', sparse.hasProperties([
+    ['pB', sparse.boolean],
+    ['pA', sparse.array(sparse.boolean)],
   ])],
-  ["pP2", sparse.hasProperties([
-    ["pB", sparse.boolean],
+  ['pP2', sparse.hasProperties([
+    ['pB', sparse.boolean],
   ])],
 ]).parseWithResult({
-  "pB": "not boolean",
-  "pP1": {
-    "pB": "not boolean",
-    "pA": [0, true, "str"],
+  pB: 'not boolean',
+  pP1: {
+    pB: 'not boolean',
+    pA: [0, true, 'str'],
   },
-  "pP2": "not object",
+  pP2: 'not object',
 }).report(jsonConsoleReporter);
 
 /**
@@ -70,21 +71,21 @@ sparse.hasProperties([
  * ```
  */
 sparse.hasProperties([
-  ["pB", sparse.boolean],
-  ["pP1", sparse.hasProperties([
-    ["pB", sparse.boolean],
-    ["pA", sparse.array(sparse.boolean)],
+  ['pB', sparse.boolean],
+  ['pP1', sparse.hasProperties([
+    ['pB', sparse.boolean],
+    ['pA', sparse.array(sparse.boolean)],
   ])],
-  ["pP2", sparse.hasProperties([
-    ["pB", sparse.boolean],
+  ['pP2', sparse.hasProperties([
+    ['pB', sparse.boolean],
   ])],
 ]).parseWithResult({
-  "pB": "not boolean",
-  "pP1": {
-    "pB": "not boolean",
-    "pA": [0, true, "str"],
+  pB: 'not boolean',
+  pP1: {
+    pB: 'not boolean',
+    pA: [0, true, 'str'],
   },
-  "pP2": "not object",
+  pP2: 'not object',
 }).report(jsonShConsoleReporter);
 
 /**
@@ -94,21 +95,21 @@ sparse.hasProperties([
  * ```
  */
 sparse.hasProperties([
-  ["pB", sparse.boolean],
-  ["pP1", sparse.hasProperties([
-    ["pB", sparse.boolean],
-    ["pA", sparse.array(sparse.boolean)],
+  ['pB', sparse.boolean],
+  ['pP1', sparse.hasProperties([
+    ['pB', sparse.boolean],
+    ['pA', sparse.array(sparse.boolean)],
   ])],
-  ["pP2", sparse.hasProperties([
-    ["pB", sparse.boolean],
+  ['pP2', sparse.hasProperties([
+    ['pB', sparse.boolean],
   ])],
 ]).parseWithResult({
-  "pB": "not boolean",
-  "pP1": {
-    "pB": "not boolean",
-    "pA": [0, true, "str"],
+  pB: 'not boolean',
+  pP1: {
+    pB: 'not boolean',
+    pA: [0, true, 'str'],
   },
-  "pP2": "not object",
+  pP2: 'not object',
 }).report(jsonOLConsoleReporter);
 
 /**
@@ -118,19 +119,19 @@ sparse.hasProperties([
  * ```
  */
 sparse.hasProperties([
-  ["pB", sparse.boolean],
-  ["pP1", sparse.hasProperties([
-    ["pB", sparse.boolean],
-    ["pA", sparse.array(sparse.boolean)],
+  ['pB', sparse.boolean],
+  ['pP1', sparse.hasProperties([
+    ['pB', sparse.boolean],
+    ['pA', sparse.array(sparse.boolean)],
   ])],
-  ["pP2", sparse.hasProperties([
-    ["pB", sparse.boolean],
+  ['pP2', sparse.hasProperties([
+    ['pB', sparse.boolean],
   ])],
 ]).parseWithResult({
-  "pB": "not boolean",
-  "pP1": {
-    "pB": "not boolean",
-    "pA": [0, true, "str"],
+  pB: 'not boolean',
+  pP1: {
+    pB: 'not boolean',
+    pA: [0, true, 'str'],
   },
-  "pP2": "not object",
+  pP2: 'not object',
 }).report(jsonOLShConsoleReporter);

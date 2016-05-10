@@ -1,4 +1,4 @@
-declare module "sonparser" {
+declare module 'sonparser' {
 
   namespace ftypes {
 

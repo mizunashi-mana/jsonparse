@@ -1,17 +1,17 @@
 import {
   ParseErrorStocker,
   ParseErrorNode,
-} from "./parseresult/parseerr";
+} from './parseresult/parseerr';
 
 import {
   ParseResult,
   SuccessObjType,
   mapSuccess,
-} from "./parseresult/result";
+} from './parseresult/result';
 
 import {
   JSONstringify,
-} from "./lib/util/ts-util";
+} from './lib/util/ts-util';
 
 /**
  * base function type of [[Parser]]
@@ -56,19 +56,19 @@ export function makeFailure<T, U>(
   arg4?: string|ParseErrorNode[],
   arg5?: ParseErrorNode[]
 ): ParseResult<U> {
-  const message = typeof msg === "string"
+  const message = typeof msg === 'string'
     ? msg
-    : "failed to parse"
+    : 'failed to parse'
     ;
-  const expected = typeof exp === "string"
+  const expected = typeof exp === 'string'
     ? exp
-    : "unknown"
+    : 'unknown'
     ;
-  const actual = typeof arg4 === "string"
+  const actual = typeof arg4 === 'string'
     ? arg4
     : JSONstringify(obj.value)
     ;
-  const childs = typeof arg4 === "string"
+  const childs = typeof arg4 === 'string'
     ? arg5
     : arg4
     ;
@@ -132,7 +132,7 @@ export class Parser<T, U> {
    * @param obj source object
    * @returns result of parsing
    */
-  parse(obj: SuccessObjType<T>): ParseResult<U> {
+  public parse(obj: SuccessObjType<T>): ParseResult<U> {
     return this.action(obj);
   }
 }

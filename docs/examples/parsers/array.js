@@ -1,5 +1,7 @@
-var sparse = require("sonparser");
-var assert = require("assert");
+'use strict';
+
+var sparse = require('sonparser');
+var assert = require('assert');
 
 var strArray = sparse.array(sparse.string);
 
@@ -9,13 +11,13 @@ assert.deepEqual(
 ); // success
 
 assert.deepEqual(
-  strArray.parse(["0", "true", "str"]),
-  ["0", "true", "str"]
+  strArray.parse(['0', 'true', 'str']),
+  ['0', 'true', 'str']
 ); // success
 
 assert.throws(
   function() {
-    return strArray.parse([0, true, "str"]);
+    return strArray.parse([0, true, 'str']);
   },
   sparse.ConfigParseError
 ); // failure
@@ -30,8 +32,8 @@ assert.throws(
 var checkArray = sparse.array(sparse.base);
 
 assert.deepEqual(
-  checkArray.parse([true, 0, "str", {}, []]),
-  [true, 0, "str", {}, []]
+  checkArray.parse([true, 0, 'str', {}, []]),
+  [true, 0, 'str', {}, []]
 ); // success
 
 assert.throws(
@@ -61,8 +63,8 @@ assert.deepEqual(
 ); // success
 
 assert.deepEqual(
-  str2DimArray.parse([["str"], ["a", "b"], []]),
-  [["str"], ["a", "b"], []]
+  str2DimArray.parse([['str'], ['a', 'b'], []]),
+  [['str'], ['a', 'b'], []]
 ); // success
 
 assert.throws(
@@ -74,14 +76,14 @@ assert.throws(
 
 assert.throws(
   function() {
-    return str2DimArray.parse([{}, ["str"]]);
+    return str2DimArray.parse([{}, ['str']]);
   },
   sparse.ConfigParseError
 ); // failure
 
 assert.throws(
   function() {
-    return str2DimArray.parse([[{}], ["str"]]);
+    return str2DimArray.parse([[{}], ['str']]);
   },
   sparse.ConfigParseError
 ); // failure

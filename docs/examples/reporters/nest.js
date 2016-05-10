@@ -1,5 +1,6 @@
-var sparse = require("sonparser");
-var assert = require("assert");
+'use strict';
+
+var sparse = require('sonparser');
 
 var nestReporter = sparse.reporters.nestReporter;
 
@@ -15,7 +16,7 @@ var nestShConsoleReporter = nestReporter(
  * this : "not boolean" is not 'boolean'
  */
 sparse.boolean
-  .parseWithResult("not boolean").report(nestConsoleReporter);
+  .parseWithResult('not boolean').report(nestConsoleReporter);
 
 /**
  * Output:
@@ -29,21 +30,21 @@ sparse.boolean
  * └── .pP2 : "not object" is not 'object'
  */
 sparse.hasProperties([
-  ["pB", sparse.boolean],
-  ["pP1", sparse.hasProperties([
-    ["pB", sparse.boolean],
-    ["pA", sparse.array(sparse.boolean)],
+  ['pB', sparse.boolean],
+  ['pP1', sparse.hasProperties([
+    ['pB', sparse.boolean],
+    ['pA', sparse.array(sparse.boolean)],
   ])],
-  ["pP2", sparse.hasProperties([
-    ["pB", sparse.boolean],
+  ['pP2', sparse.hasProperties([
+    ['pB', sparse.boolean],
   ])],
 ]).parseWithResult({
-  "pB": "not boolean",
-  "pP1": {
-    "pB": "not boolean",
-    "pA": [0, true, "str"],
+  pB: 'not boolean',
+  pP1: {
+    pB: 'not boolean',
+    pA: [0, true, 'str'],
   },
-  "pP2": "not object",
+  pP2: 'not object',
 }).report(nestConsoleReporter);
 
 /**
@@ -54,19 +55,19 @@ sparse.hasProperties([
  * └── .pP2 : "not object" is not 'object'
  */
 sparse.hasProperties([
-  ["pB", sparse.boolean],
-  ["pP1", sparse.hasProperties([
-    ["pB", sparse.boolean],
-    ["pA", sparse.array(sparse.boolean)],
+  ['pB', sparse.boolean],
+  ['pP1', sparse.hasProperties([
+    ['pB', sparse.boolean],
+    ['pA', sparse.array(sparse.boolean)],
   ])],
-  ["pP2", sparse.hasProperties([
-    ["pB", sparse.boolean],
+  ['pP2', sparse.hasProperties([
+    ['pB', sparse.boolean],
   ])],
 ]).parseWithResult({
-  "pB": "not boolean",
-  "pP1": {
-    "pB": "not boolean",
-    "pA": [0, true, "str"],
+  pB: 'not boolean',
+  pP1: {
+    pB: 'not boolean',
+    pA: [0, true, 'str'],
   },
-  "pP2": "not object",
+  pP2: 'not object',
 }).report(nestShConsoleReporter);

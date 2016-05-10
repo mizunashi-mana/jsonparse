@@ -1,17 +1,19 @@
-var sparse = require("sonparser");
-var assert = require("assert");
+'use strict';
+
+var sparse = require('sonparser');
+var assert = require('assert');
 
 /**
  * This parser converts "bool string" to boolean
  */
 var boolStrParser = sparse.custom(function(makeSuccess, makeFailure) {
   return function(obj) {
-    if(["true", "yes", "on"].indexOf(obj) != -1) {
+    if (['true', 'yes', 'on'].indexOf(obj) !== -1) {
       return makeSuccess(true);
-    } else if(["false", "no", "off"].indexOf(obj) != -1) {
+    } else if (['false', 'no', 'off'].indexOf(obj) !== -1) {
       return makeSuccess(false);
     }
-    return makeFailure(JSON.stringify(obj) + " is not bool string", "bool string(yes/no)");
+    return makeFailure(JSON.stringify(obj) + ' is not bool string', 'bool string(yes/no)');
   };
 });
 var convertBoolParser = sparse.boolean.or(boolStrParser);
@@ -22,12 +24,12 @@ assert.strictEqual(
 ); // success
 
 assert.strictEqual(
-  convertBoolParser.parse("no"),
+  convertBoolParser.parse('no'),
   false
 ); // success
 
 assert.strictEqual(
-  sparse.boolean.or(boolStrParser).parse("on"),
+  sparse.boolean.or(boolStrParser).parse('on'),
   boolStrParser.or(sparse.boolean).parse(true)
 ); // success
 
@@ -40,7 +42,7 @@ assert.throws(
 
 assert.throws(
   function() {
-    return convertBoolParser.parse("str");
+    return convertBoolParser.parse('str');
   },
   sparse.ConfigParseError
 ); // failure

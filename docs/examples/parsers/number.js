@@ -1,5 +1,7 @@
-var sparse = require("sonparser");
-var assert = require("assert");
+'use strict';
+
+var sparse = require('sonparser');
+var assert = require('assert');
 
 assert.strictEqual(
   sparse.number.parse(0),
@@ -20,7 +22,7 @@ assert.throws(
 
 assert.throws(
   function() {
-    return sparse.number.parse("10");
+    return sparse.number.parse('10');
   },
   sparse.ConfigParseError
 ); // failure

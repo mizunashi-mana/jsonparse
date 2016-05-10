@@ -1,5 +1,7 @@
-var sparse = require("sonparser");
-var assert = require("assert");
+'use strict';
+
+var sparse = require('sonparser');
+var assert = require('assert');
 
 assert.deepEqual(
   sparse.object.parse({}),
@@ -7,13 +9,13 @@ assert.deepEqual(
 ); // success
 
 assert.deepEqual(
-  sparse.object.parse({"a": "a"}),
-  {"a": "a"}
+  sparse.object.parse({a: 'a'}),
+  {a: 'a'}
 ); // success
 
 assert.deepEqual(
-  sparse.object.parse({"0": "a", "length": "1"}),
-  {"0": "a", "length": "1"}
+  sparse.object.parse({0: 'a', length: '1'}),
+  {0: 'a', length: '1'}
 ); // success
 
 assert.throws(
@@ -32,14 +34,14 @@ assert.throws(
 
 assert.throws(
   function() {
-    return sparse.object.parse("str");
+    return sparse.object.parse('str');
   },
   sparse.ConfigParseError
 ); // failure
 
 assert.throws(
   function() {
-    return sparse.object.parse([0,1]);
+    return sparse.object.parse([0, 1]);
   },
   sparse.ConfigParseError
 ); // failure

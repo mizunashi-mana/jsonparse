@@ -1,9 +1,9 @@
 /// <reference path="ftypes.d.ts" />
-/// <reference path="../typings/es6-promises/es6-promises.d.ts" />
+/// <reference path="../typings/es6-promise/es6-promise.d.ts" />
 /// <reference path="../typings/node/node.d.ts" />
 
-declare module "sonparser" {
-  import * as events from "events";
+declare module 'sonparser' {
+  import * as events from 'events';
 
   /**
    * Error class of ConfigParser
@@ -12,7 +12,7 @@ declare module "sonparser" {
     /**
      * @param msg error message
      */
-    new (msg?: string): ConfigParseError;
+    public new (msg?: string): ConfigParseError;
   }
 
   export interface ConfigParserMonoid<T, U> extends ftypes.Monoid<U> {}
@@ -46,20 +46,20 @@ declare module "sonparser" {
      *
      * @returns is this success
      */
-    isSuccess(): boolean;
+    public isSuccess(): boolean;
     /**
      * an alias of [[isSuccess]]
      *
      * @returns is this success
      */
-    status: boolean;
+    public status: boolean;
     /**
      * report on failure using given reporter
      *
      * @param reporter a reporter (default: nest console reporter)
      * @returns this object as it is
      */
-    report(reporter?: ReporterType): ConfigParserResult<T>;
+    public report(reporter?: ReporterType): ConfigParserResult<T>;
     /**
      * except success method,
      * return converted object on success and throw error
@@ -67,28 +67,28 @@ declare module "sonparser" {
      * @param msg failure message (default: config parser error message)
      * @returns success value
      */
-    except(msg?: string): T;
+    public except(msg?: string): T;
     /**
      * an alias of [[except]]
      * if fail, throw default error
      *
      * @returns success value
      */
-    ok: T;
+    public ok: T;
     /**
      * convert result to success value
      *
      * @param val default value
      * @returns success value on success and default value on failure
      */
-    toSuccess(val: T): T;
+    public toSuccess(val: T): T;
     /**
      * convert result to error
      *
      * @param err default value
      * @returns error on failure and default value on success
      */
-    toError(err: Error): Error;
+    public toError(err: Error): Error;
     /**
      * convert result to other by casing
      *
@@ -98,24 +98,24 @@ declare module "sonparser" {
      * @param onFailure.err convert error
      * @returns convert success on success and error on failure
      */
-    caseOf<R>(onSuccess: (obj: T) => R, onFailure: (err: ConfigParseError) => R): R;
+    public caseOf<R>(onSuccess: (obj: T) => R, onFailure: (err: ConfigParseError) => R): R;
     /**
      * convert result to promise
      *
      * @returns a promise return converted value
      */
-    toPromise(): Promise<T>;
+    public toPromise(): Promise<T>;
     /**
      * Fantasy area
      */
-    map<R>(fn: (obj: T) => R): ConfigParserResult<R>;
-    fmap: <R>(fn: (obj: T) => R) => ConfigParserResult<R>;
-    lift: <R>(fn: (obj: T) => R) => ConfigParserResult<R>;
-    of<R>(val: R): ConfigParserResult<R>;
-    unit: <R>(val: R) => ConfigParserResult<R>;
-    ap<R>(u: ConfigParserResult<(t: T) => R>): ConfigParserResult<R>;
-    bind<R>(f: (t: T) => ConfigParserResult<R>): ConfigParserResult<R>;
-    chain: <R>(f: (t: T) => ConfigParserResult<R>) => ConfigParserResult<R>;
+    public map<R>(fn: (obj: T) => R): ConfigParserResult<R>;
+    public fmap: <R>(fn: (obj: T) => R) => ConfigParserResult<R>;
+    public lift: <R>(fn: (obj: T) => R) => ConfigParserResult<R>;
+    public of<R>(val: R): ConfigParserResult<R>;
+    public unit: <R>(val: R) => ConfigParserResult<R>;
+    public ap<R>(u: ConfigParserResult<(t: T) => R>): ConfigParserResult<R>;
+    public bind<R>(f: (t: T) => ConfigParserResult<R>): ConfigParserResult<R>;
+    public chain: <R>(f: (t: T) => ConfigParserResult<R>) => ConfigParserResult<R>;
   }
 
   /**
@@ -134,14 +134,14 @@ declare module "sonparser" {
      * @param parser second parser
      * @returns a or parser of this parser and arg parser
      */
-    or(parser: ConfigParser<T, U>): ConfigParser<T, U>;
+    public or(parser: ConfigParser<T, U>): ConfigParser<T, U>;
     /**
      * build a and parser of this
      *
      * @param parser second parser
      * @returns a and parser of this parser and arg parser
      */
-    and<R>(parser: ConfigParser<U, R>): ConfigParser<T, R>;
+    public and<R>(parser: ConfigParser<U, R>): ConfigParser<T, R>;
     /**
      * build a map parser of this
      *
@@ -149,7 +149,7 @@ declare module "sonparser" {
      * @param fn.obj target converted object
      * @returns a map parser of this with arg function
      */
-    map<R>(fn: (obj: U) => R): ConfigParser<T, R>;
+    public map<R>(fn: (obj: U) => R): ConfigParser<T, R>;
     /**
      * build a description parser of this
      *
@@ -157,14 +157,14 @@ declare module "sonparser" {
      * @param exp expected type
      * @returns a description parser of this
      */
-    desc(msg: string, exp?: string): ConfigParser<T, U>;
+    public desc(msg: string, exp?: string): ConfigParser<T, U>;
     /**
      * build a description parser of this from only expected
      *
      * @param exp expected type or types
      * @returns a description parser of this from expected
      */
-    descFromExpected(exp: (string | string[])): ConfigParser<T, U>;
+    public descFromExpected(exp: (string | string[])): ConfigParser<T, U>;
     /**
      * build a receive parser of this
      *
@@ -176,7 +176,9 @@ declare module "sonparser" {
      * @param onFail.act actual type
      * @returns a receive parser of this
      */
-    then(onSuccess: (obj: U) => any, onFail?: (msg: string, exp?: string, act?: string) => any): ConfigParser<T, U>;
+    public then(
+      onSuccess: (obj: U) => any, onFail?: (msg: string, exp?: string, act?: string) => any
+    ): ConfigParser<T, U>;
     /**
      * build a catch parser of this
      *
@@ -186,28 +188,28 @@ declare module "sonparser" {
      * @param onFail.act actual type
      * @returns a catch parser of this
      */
-    catch(onFail: (msg: string, exp?: string, act?: string) => any): ConfigParser<T, U>;
+    public catch(onFail: (msg: string, exp?: string, act?: string) => any): ConfigParser<T, U>;
     /**
      * build a default parser of this
      *
      * @param def default value
      * @returns this parsed value on success and default value on fail
      */
-    default(def: U): ConfigParser<T, U>;
+    public default(def: U): ConfigParser<T, U>;
     /**
      * build a optional parser of this
      *
      * @param def default value
      * @returns this parsed value on success and default value on fail and this value is nothing
      */
-    option(def: U): ConfigParser<Object, U>;
+    public option(def: U): ConfigParser<Object, U>;
     /**
      * build a seq parser
      *
      * @param parser second parser
      * @returns a parser returns two length array from first and second parsed value
      */
-    seq2<R>(parser: ConfigParser<T, R>): ConfigParser<T, [U, R]>;
+    public seq2<R>(parser: ConfigParser<T, R>): ConfigParser<T, [U, R]>;
     /**
      * parse object and return parsed value on success and throw error on fail
      *
@@ -215,41 +217,41 @@ declare module "sonparser" {
      * @returns parsed value
      * @throws ConfigParseError failed to parse
      */
-    parse(obj: T): U;
+    public parse(obj: T): U;
     /**
      * parse object and return parsed value with parse status
      *
      * @param obj target object
      * @returns result object ([[ConfigParserResult]])
      */
-    parseWithResult(obj: T): ConfigParserResult<U>;
+    public parseWithResult(obj: T): ConfigParserResult<U>;
     /**
      * parse object and return parsed value on promise
      *
      * @param obj target object
      * @returns a promise returning parsed value on success and error on fail
      */
-    parseAsync(obj: T): Promise<U>;
+    public parseAsync(obj: T): Promise<U>;
     /**
      * Fantasy area
      */
-    mempty: ConfigParser<T, U>;
-    empty: ConfigParser<T, U>;
-    mappend: (parser: ConfigParser<T, U>) => ConfigParser<T, U>;
-    append: (parser: ConfigParser<T, U>) => ConfigParser<T, U>;
-    mconcat(ps: ConfigParser<T, U>[]): ConfigParser<T, U>;
-    concat: (ps: ConfigParser<T, U>[]) => ConfigParser<T, U>;
-    fmap: <R>(fn: (obj: U) => R) => ConfigParser<T, R>;
-    lift: <R>(fn: (obj: U) => R) => ConfigParser<T, R>;
-    of<R>(val: R): ConfigParser<U, R>;
-    unit: <R>(val: R) => ConfigParser<U, R>;
-    ap<R>(u: ConfigParser<T, (t: U) => R>): ConfigParser<T, R>;
-    bind<R>(f: (t: U) => ConfigParser<T, R>): ConfigParser<T, R>;
-    chain: <R>(f: (t: U) => ConfigParser<T, R>) => ConfigParser<T, R>;
-    mzero: ConfigParser<T, U>;
-    zero: ConfigParser<T, U>;
-    mplus: (parser: ConfigParser<T, U>) => ConfigParser<T, U>;
-    plus: (parser: ConfigParser<T, U>) => ConfigParser<T, U>;
+    public mempty: ConfigParser<T, U>;
+    public empty: ConfigParser<T, U>;
+    public mappend: (parser: ConfigParser<T, U>) => ConfigParser<T, U>;
+    public append: (parser: ConfigParser<T, U>) => ConfigParser<T, U>;
+    public mconcat(ps: ConfigParser<T, U>[]): ConfigParser<T, U>;
+    public concat: (ps: ConfigParser<T, U>[]) => ConfigParser<T, U>;
+    public fmap: <R>(fn: (obj: U) => R) => ConfigParser<T, R>;
+    public lift: <R>(fn: (obj: U) => R) => ConfigParser<T, R>;
+    public of<R>(val: R): ConfigParser<U, R>;
+    public unit: <R>(val: R) => ConfigParser<U, R>;
+    public ap<R>(u: ConfigParser<T, (t: U) => R>): ConfigParser<T, R>;
+    public bind<R>(f: (t: U) => ConfigParser<T, R>): ConfigParser<T, R>;
+    public chain: <R>(f: (t: U) => ConfigParser<T, R>) => ConfigParser<T, R>;
+    public mzero: ConfigParser<T, U>;
+    public zero: ConfigParser<T, U>;
+    public mplus: (parser: ConfigParser<T, U>) => ConfigParser<T, U>;
+    public plus: (parser: ConfigParser<T, U>) => ConfigParser<T, U>;
   }
   /** a parser of base of base for chain root */
   export const base: ConfigParser<Object, Object>;
@@ -366,7 +368,7 @@ declare module "sonparser" {
    * @param parser for parsing elements
    * @returns a type parser for hash
    */
-  export function hash<T>(parser: ConfigParser<Object, T>): ConfigParser<Object, {[key: string]: T;}>;
+  export function hash<T>(parser: ConfigParser<Object, T>): ConfigParser<Object, { [key: string]: T; }>;
   /**
    * build a custom parser with custom parse function
    *

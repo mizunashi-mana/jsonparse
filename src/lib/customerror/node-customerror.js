@@ -1,8 +1,8 @@
-var BaseCustomError = module.exports.BaseCustomError = function(message) {
-  "use strict";
+'use strict';
 
+var BaseCustomError = module.exports.BaseCustomError = function(message) {
   if (!(this instanceof BaseCustomError)) {
-    throw new Error("Call constructor using new");
+    throw new Error('Call constructor using new');
   }
   Error.call(this);
 
@@ -10,14 +10,13 @@ var BaseCustomError = module.exports.BaseCustomError = function(message) {
   this.initializeError(this.constructor);
 };
 
-require("../util/util").inherits(BaseCustomError, Error);
+require('../util/util').inherits(BaseCustomError, Error);
 
-BaseCustomError.prototype.initializeError = function (extendConstructor) {
-  "use strict";
-
+BaseCustomError.prototype.initializeError = function(extendConstructor) {
   if (!extendConstructor) {
+
     // defaults
-    this.name = "Error";
+    this.name = 'Error';
   } else {
     this.name = extendConstructor.name;
   }

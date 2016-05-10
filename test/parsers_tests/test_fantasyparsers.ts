@@ -1,34 +1,34 @@
-/// <reference path="../../lib/lib/typings.d.ts" />
+/// <reference path="../lib/typings.ts" />
 
 import {
   assert,
   assertThrow,
-} from "../lib/chai_setup";
+} from '../lib/chai_setup';
 
-import * as sparse from "../../lib/";
+import * as sparse from '../../lib/';
 const {
   ConfigParseError,
 } = sparse;
 
-describe("fantasy methods test", () => {
+describe('fantasy methods test', () => {
 
-  describe("monoid test", () => {
+  describe('monoid test', () => {
 
-    it("should equal fail, empty and mempty", () => {
+    it('should equal fail, empty and mempty', () => {
       assertThrow(
-        () => sparse.base.mempty.parse("anything!"),
+        () => sparse.base.mempty.parse('anything!'),
         ConfigParseError,
-        "empty"
+        'empty'
       );
       assertThrow(
-        () => sparse.base.empty.parse("anything!"),
+        () => sparse.base.empty.parse('anything!'),
         ConfigParseError,
-        "empty"
+        'empty'
       );
     });
 
-    it("should equal or, append and mappend", () => {
-      const boolNumberParser = sparse.number.map((num) => num != 0);
+    it('should equal or, append and mappend', () => {
+      const boolNumberParser = sparse.number.map((num) => num !== 0);
 
       assert.strictEqual(
         sparse.boolean.mappend(boolNumberParser).parse(false),
@@ -39,7 +39,7 @@ describe("fantasy methods test", () => {
         true
       );
       assertThrow(
-        () => sparse.boolean.mappend(boolNumberParser).parse("not expected!"),
+        () => sparse.boolean.mappend(boolNumberParser).parse('not expected!'),
         ConfigParseError
       );
       assert.strictEqual(
@@ -48,19 +48,19 @@ describe("fantasy methods test", () => {
       );
     });
 
-    it("should equal sequential or, concat and mconcat", () => {
-      const boolNumberParser = sparse.number.map((num) => num != 0);
+    it('should equal sequential or, concat and mconcat', () => {
+      const boolNumberParser = sparse.number.map((num) => num !== 0);
       const boolStringParser = sparse.string.and(
         sparse.custom<string, boolean>(
           (success, failure) => (obj) => {
-            return ["true", "yes", "on"].indexOf(obj) != -1
+            return ['true', 'yes', 'on'].indexOf(obj) !== -1
               ? success(true)
-              : ["false", "no", "off"].indexOf(obj) != -1
+              : ['false', 'no', 'off'].indexOf(obj) !== -1
               ? success(false)
               : failure()
               ;
           }
-        ).descFromExpected("boolString")
+        ).descFromExpected('boolString')
       );
 
       assert.strictEqual(
@@ -72,11 +72,11 @@ describe("fantasy methods test", () => {
         true
       );
       assert.strictEqual(
-        sparse.boolean.mconcat([boolNumberParser, boolStringParser]).parse("off"),
+        sparse.boolean.mconcat([boolNumberParser, boolStringParser]).parse('off'),
         false
       );
       assertThrow(
-        () => sparse.boolean.mconcat([boolNumberParser, boolStringParser]).parse("not expected!"),
+        () => sparse.boolean.mconcat([boolNumberParser, boolStringParser]).parse('not expected!'),
         ConfigParseError
       );
       assert.strictEqual(
@@ -87,15 +87,15 @@ describe("fantasy methods test", () => {
 
   });
 
-  describe("functor test", () => {
+  describe('functor test', () => {
 
-    it("should equal map, fmap and lift", () => {
+    it('should equal map, fmap and lift', () => {
       assert.strictEqual(
         sparse.boolean.fmap((b) => b ? 0 : 1).parse(true),
         0
       );
       assertThrow(
-        () => sparse.boolean.fmap((b) => b ? 0 : 1).parse("not expected!"),
+        () => sparse.boolean.fmap((b) => b ? 0 : 1).parse('not expected!'),
         ConfigParseError
       );
       assert.strictEqual(
@@ -106,11 +106,11 @@ describe("fantasy methods test", () => {
 
   });
 
-  describe("applicative test", () => {
+  describe('applicative test', () => {
 
-    it("should equal succeed, of and unit", () => {
+    it('should equal succeed, of and unit', () => {
       assert.strictEqual(
-        sparse.base.of(0).parse("anything"),
+        sparse.base.of(0).parse('anything'),
         0
       );
       assert.strictEqual(
@@ -123,7 +123,7 @@ describe("fantasy methods test", () => {
       );
     });
 
-    it("should be exists ap", () => {
+    it('should be exists ap', () => {
       assert.strictEqual(
         sparse.boolean.ap(
           sparse.boolean.of((b: boolean) => b ? 0 : 1)
@@ -133,7 +133,7 @@ describe("fantasy methods test", () => {
       assertThrow(
         () => sparse.boolean.ap(
           sparse.boolean.of((b: boolean) => b ? 0 : 1)
-        ).parse("not expected"),
+        ).parse('not expected'),
         ConfigParseError
       );
     });
@@ -141,11 +141,11 @@ describe("fantasy methods test", () => {
   });
 
 
-  describe("monad test", () => {
+  describe('monad test', () => {
 
-    it("should equal succeed, of and unit", () => {
+    it('should equal succeed, of and unit', () => {
       assert.strictEqual(
-        sparse.base.of(0).parse("anything"),
+        sparse.base.of(0).parse('anything'),
         0
       );
       assert.strictEqual(
@@ -158,7 +158,7 @@ describe("fantasy methods test", () => {
       );
     });
 
-    it("should be exists bind and chain", () => {
+    it('should be exists bind and chain', () => {
       const failEmpty = <sparse.ConfigParser<boolean, number>>sparse.base.empty;
       const bindParser = sparse.boolean.bind(
         (obj) => obj ? sparse.boolean.of(0) : failEmpty
@@ -172,7 +172,7 @@ describe("fantasy methods test", () => {
         ConfigParseError
       );
       assertThrow(
-        () => bindParser.parse("not expected"),
+        () => bindParser.parse('not expected'),
         ConfigParseError
       );
       assert.strictEqual(
@@ -185,11 +185,11 @@ describe("fantasy methods test", () => {
 
   });
 
-  describe("monadplus test", () => {
+  describe('monadplus test', () => {
 
-    it("should equal fail, mzero and zero", () => {
+    it('should equal fail, mzero and zero', () => {
       assertThrow(
-        () => sparse.boolean.mzero.parse("anything"),
+        () => sparse.boolean.mzero.parse('anything'),
         ConfigParseError
       );
       assertThrow(
@@ -202,8 +202,8 @@ describe("fantasy methods test", () => {
       );
     });
 
-    it("should equal or, mplus and plus", () => {
-      const boolNumberParser = sparse.number.map((num) => num != 0);
+    it('should equal or, mplus and plus', () => {
+      const boolNumberParser = sparse.number.map((num) => num !== 0);
 
       assert.strictEqual(
         sparse.boolean.mplus(boolNumberParser).parse(false),
@@ -214,7 +214,7 @@ describe("fantasy methods test", () => {
         true
       );
       assertThrow(
-        () => sparse.boolean.mplus(boolNumberParser).parse("not expected!"),
+        () => sparse.boolean.mplus(boolNumberParser).parse('not expected!'),
         ConfigParseError
       );
       assert.strictEqual(

@@ -1,29 +1,28 @@
 module.exports = (gulp, $, conf) ->
   merge = require 'merge2'
-  runSequence = require 'run-sequence'
 
   {paths} = conf
 
   gulp.task 'lint:gulp:coffee', ->
     gulp.src [
-      paths.gulp.file
+      paths.gulp.main
       paths.gulp.tasks
+      paths.gulp.srcCoffee
     ]
-      .pipe do $.coffeelint
+      .pipe $.coffeelint paths.lint.coffeelint
       .pipe do $.coffeelint.reporter
       .pipe $.coffeelint.reporter 'fail'
 
   gulp.task 'lint:gulp:js', ->
     gulp.src [
-      paths.gulp.libDir.srcJs
-      "!#{paths.gulp.libDir.isrcJs}"
+      paths.gulp.srcJs
     ]
-      .pipe do $.eslint
+      .pipe $.eslint paths.lint.eslint
       .pipe do $.eslint.format
       .pipe do $.eslint.failAfterError
 
   gulp.task 'lint:gulp', (cb) ->
-    runSequence 'lint:gulp:coffee'
+    $.runSequence 'lint:gulp:coffee'
       , 'lint:gulp:js'
       , cb
 
@@ -32,49 +31,50 @@ module.exports = (gulp, $, conf) ->
 
   gulp.task 'lint:docs:ts', ->
     gulp.src [
-      paths.docsDir.examples.srcTs
+      paths.test.exampleTs
     ]
-      .pipe do $.tslint
+      .pipe $.tslint
+        configuration: paths.lint.tslint
       .pipe $.tslint.report 'verbose'
 
   gulp.task 'lint:docs:js', ->
     gulp.src [
-      paths.docsDir.examples.srcJs
+      paths.test.exampleJs
     ]
-      .pipe $.header '/* eslint-disable vars-on-top */'
-      .pipe do $.eslint
+      .pipe $.eslint paths.lint.eslint
       .pipe do $.eslint.format
       .pipe do $.eslint.failAfterError
 
   gulp.task 'lint:docs', (cb) ->
-    runSequence 'lint:docs:ts'
+    $.runSequence 'lint:docs:ts'
       , 'lint:docs:js'
       , cb
 
   gulp.task 'lint:src:ts', ->
     gulp.src [
-      paths.srcDir.srcTs
-      paths.tests.srcDir.srcTs
-      paths.srcDir.libTypings
+      paths.src.srcTs
+      paths.test.srcTestTs
+      paths.src.libTypings
     ]
-      .pipe do $.tslint
+      .pipe $.tslint
+        configuration: paths.lint.tslint
       .pipe $.tslint.report 'verbose'
 
   gulp.task 'lint:src:js', ->
     gulp.src [
-      paths.srcDir.srcJs
+      paths.src.srcJs
     ]
-      .pipe do $.eslint
+      .pipe $.eslint paths.lint.eslint
       .pipe do $.eslint.format
       .pipe do $.eslint.failAfterError
 
   gulp.task 'lint:src', (cb) ->
-    runSequence 'lint:src:ts'
+    $.runSequence 'lint:src:ts'
       , 'lint:src:js'
       , cb
 
   gulp.task 'lint', (cb) ->
-    runSequence 'lint:gulp'
+    $.runSequence 'lint:gulp'
       #, 'lint:config'
       , 'lint:docs'
       , 'lint:src'

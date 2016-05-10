@@ -1,9 +1,11 @@
-var sparse = require("sonparser");
-var assert = require("assert");
+'use strict';
+
+var sparse = require('sonparser');
+var assert = require('assert');
 
 var flag;
 var FlagParser = sparse.boolean
-  .desc("`flag` should be boolean object.");
+  .desc('`flag` should be boolean object.');
 
 flag = true;
 assert.strictEqual(
@@ -11,11 +13,11 @@ assert.strictEqual(
   true
 ); // success
 
-flag = "true";
+flag = 'true';
 assert.throws(
   function() {
     return FlagParser.parse(flag);
   },
   sparse.ConfigParseError,
-  "`flag` should be boolean object."
+  '`flag` should be boolean object.'
 ); // failure with custom description

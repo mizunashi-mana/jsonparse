@@ -1,5 +1,7 @@
-var sparse = require("sonparser");
-var assert = require("assert");
+'use strict';
+
+var sparse = require('sonparser');
+var assert = require('assert');
 
 /**
  * This parser sets default value(true) on last parse failed.
@@ -18,6 +20,6 @@ assert.strictEqual(
 
 // set default on failure
 assert.strictEqual(
-  defaultTrueParser.parse("unexpected"),
+  defaultTrueParser.parse('unexpected'),
   true
 ); // success

@@ -1,4 +1,10 @@
-noExternalResolve : true
-declaration       : true
-sortOutput        : true
-typescript        : 'pkg'
+main:
+  noExternalResolve : true
+  sortOutput        : true
+  typescript        : 'pkg'
+
+product:
+  declaration: true
+
+debug:
+  declaration: true

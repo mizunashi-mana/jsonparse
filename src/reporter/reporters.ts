@@ -1,17 +1,17 @@
 /// <reference path="../lib/typings.d.ts" />
 
 import {
-  EventEmitter
-} from "events";
+  EventEmitter,
+} from 'events';
 
 import {
   ReporterType,
-} from "../";
+} from '../';
 
 import {
   ParseErrorNode,
   ParseErrorStocker,
-} from "../parseresult/parseerr";
+} from '../parseresult/parseerr';
 
 /**
  * converting string for [[propertyJoin]] or more...
@@ -20,9 +20,9 @@ import {
  * @returns converted string
  */
 function convertPropertyNameForConcat(pname: string) {
-  return pname[0] === "["
+  return pname[0] === '['
     ? pname
-    : "." + pname
+    : '.' + pname
     ;
 }
 
@@ -34,7 +34,7 @@ function convertPropertyNameForConcat(pname: string) {
  * @returns joined property
  */
 function propertyJoin(base: string, pname: string) {
-  return base === "" ? pname : base + convertPropertyNameForConcat(pname);
+  return base === '' ? pname : base + convertPropertyNameForConcat(pname);
 }
 
 /**
@@ -54,14 +54,14 @@ export function nestReporter(
     prefix: string,
     last: boolean
   ) => (msg: string, exp: string, act: string, childs: ParseErrorNode[]) => {
-    if (typeof depth !== "undefined" && depthCount > depth) {
+    if (typeof depth !== 'undefined' && depthCount > depth) {
       return;
     }
-    const prefixStr = depthCount == 0 ? ""
+    const prefixStr = depthCount === 0 ? ''
       : prefix
-      + (last ? "└─" : "├─")
-      + (childs.length == 0 || depth == depthCount ? "─" : "┬")
-      + " "
+      + (last ? '└─' : '├─')
+      + (childs.length === 0 || depth === depthCount ? '─' : '┬')
+      + ' '
       ;
     const descName = depthCount === 0
       ? pname
@@ -71,14 +71,14 @@ export function nestReporter(
 
     const chlast = childs.length - 1;
     childs.forEach((e, i) => {
-      const nPrefix = depthCount == 0 ? ""
+      const nPrefix = depthCount === 0 ? ''
         : prefix
-        + (last ? "  " : "│ ")
+        + (last ? '  ' : '│ ')
         ;
-      e[1].report(reportF(e[0], depthCount + 1, nPrefix, i == chlast));
+      e[1].report(reportF(e[0], depthCount + 1, nPrefix, i === chlast));
     });
   };
-  return reportF("this", 0, "", true);
+  return reportF('this', 0, '', true);
 }
 
 /**
@@ -98,7 +98,7 @@ export function listReporter(
     depthCount: number
   ) => (msg: string, exp: string, act: string, childs: ParseErrorNode[]) => {
     const propertyFullName = propertyJoin(basename, pname);
-    if (typeof depth !== "undefined" && depthCount === depth || childs.length === 0) {
+    if (typeof depth !== 'undefined' && depthCount === depth || childs.length === 0) {
       logFunc(`${propertyFullName} : ${msg}`);
       return;
     }
@@ -106,7 +106,7 @@ export function listReporter(
       e[1].report(reportF(e[0], propertyFullName, depthCount + 1));
     });
   };
-  return reportF("this", "", 0);
+  return reportF('this', '', 0);
 }
 
 /**
@@ -140,7 +140,7 @@ export function jsonReporter(
     isOneLine?: boolean;
   } = undefined;
   let depth: number = undefined;
-  if (typeof arg1 === "number") {
+  if (typeof arg1 === 'number') {
     depth = arg1;
   } else {
     flags = arg1;
@@ -150,7 +150,7 @@ export function jsonReporter(
   const convertErrorToObject = (err: ParseErrorStocker, depthCount: number) => {
     let result: string | {[key: string]: any};
     err.report((msg, exp, act, childs) => {
-      if (typeof depth !== "undefined" && depth == depthCount || childs.length == 0) {
+      if (typeof depth !== 'undefined' && depth === depthCount || childs.length === 0) {
         result = msg;
       } else {
         result = {};
@@ -168,11 +168,11 @@ export function jsonReporter(
     const result: Object = convertErrorToObject(
       new ParseErrorStocker(msg, exp, act, childs), 0
     );
-    if (typeof flags !== "undefined" && flags.isOneLine === true) {
+    if (typeof flags !== 'undefined' && flags.isOneLine === true) {
       logFunc(JSON.stringify(result));
     } else {
       JSON.stringify(result, null, 2)
-        .split("\n").forEach((e) => logFunc(e));
+        .split('\n').forEach((e) => logFunc(e));
     }
   };
 }
@@ -210,9 +210,9 @@ export type customReportFunc = (
  */
 export function customReporter(reportFunc: customReportFunc, emitterObj?: EventEmitter): ReporterType {
   const emitFunc: Function = (
-    typeof emitterObj === "undefined"
+    typeof emitterObj === 'undefined'
     ? (name: string, arg1: any) => {
-      if (name == "error") {
+      if (name === 'error') {
         throw arg1;
       }
     }
@@ -239,13 +239,13 @@ export function customReporter(reportFunc: customReportFunc, emitterObj?: EventE
   };
 
   return (msg: string, exp: string, act: string, childs: ParseErrorNode[]) => {
-    try{
-      emitFunc("start", msg, exp, act);
-      emitFunc("begin", msg, exp, act);
-      reportF("this", "", 0)(msg, exp, act, childs);
-      emitFunc("end", msg, exp, act);
-    } catch(e) {
-      emitFunc("error", e);
+    try {
+      emitFunc('start', msg, exp, act);
+      emitFunc('begin', msg, exp, act);
+      reportF('this', '', 0)(msg, exp, act, childs);
+      emitFunc('end', msg, exp, act);
+    } catch (e) {
+      emitFunc('error', e);
     }
   };
 }

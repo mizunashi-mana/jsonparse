@@ -1,5 +1,7 @@
-var sparse = require("sonparser");
-var assert = require("assert");
+'use strict';
+
+var sparse = require('sonparser');
+var assert = require('assert');
 
 var nestConsoleReporter = sparse.reporters.nestReporter(console.log);
 
@@ -9,6 +11,7 @@ var nestConsoleReporter = sparse.reporters.nestReporter(console.log);
 var booleanParser = sparse.boolean;
 
 var resultCheckBoolean = booleanParser.parse(true);
+
 assert.strictEqual(
   resultCheckBoolean,
   true
@@ -16,13 +19,14 @@ assert.strictEqual(
 
 assert.throws(
   function() {
-    return booleanParser.parse("not boolean!");
+    return booleanParser.parse('not boolean!');
   },
   sparse.ConfigParseError
 );
 
 // if you don't want to use try-catch
 var resultCheckBooleanSafetySuccess = booleanParser.parseWithResult(false);
+
 assert.strictEqual(
   resultCheckBooleanSafetySuccess.status,
   true
@@ -32,7 +36,8 @@ assert.strictEqual(
   false
 );
 
-var resultCheckBooleanSafetyFailure = booleanParser.parseWithResult("not boolean!");
+var resultCheckBooleanSafetyFailure = booleanParser.parseWithResult('not boolean!');
+
 assert.strictEqual(
   resultCheckBooleanSafetyFailure.status,
   false
@@ -44,8 +49,9 @@ assert.strictEqual(
  * this : "not boolean!" is not 'boolean'
  */
 try {
-  booleanParser.parseWithResult("not boolean!", nestConsoleReporter);
+  booleanParser.parseWithResult('not boolean!', nestConsoleReporter);
 } catch (e) {
+
   // catch Error
 }
 
@@ -53,57 +59,58 @@ try {
  * check and convert my object
  */
 var myObjectParser = sparse.hasProperties([
-  ["private", sparse.boolean.option(false)],
-  ["name", sparse.string],
-  ["version", sparse.string],
-  ["description", sparse.string],
-  ["keywords", sparse.array(sparse.string).option([])],
-  ["scripts", sparse.object],
-  ["repository", sparse.hasProperties([
-    ["type", sparse.string],
-    ["url", sparse.string],
+  ['private', sparse.boolean.option(false)],
+  ['name', sparse.string],
+  ['version', sparse.string],
+  ['description', sparse.string],
+  ['keywords', sparse.array(sparse.string).option([])],
+  ['scripts', sparse.object],
+  ['repository', sparse.hasProperties([
+    ['type', sparse.string],
+    ['url', sparse.string],
   ]).option({
-    "type": "git",
-    "url": "",
+    type: 'git',
+    url: '',
   })],
 ]);
 
 var resultCheckMyObject = myObjectParser.parse({
-  "name": "example-sonparser",
-  "version": "0.0.0",
-  "description": "An example of sonparser",
-  "keywords": [
-    "example",
-    "more", "complexible",
+  name: 'example-sonparser',
+  version: '0.0.0',
+  description: 'An example of sonparser',
+  keywords: [
+    'example',
+    'more', 'complexible',
   ],
-  "scripts": {
-    "test": "echo \"not implements!\" && exit 1",
+  scripts: {
+    test: 'echo "not implements!" && exit 1',
   },
 });
+
 assert.deepEqual(
   resultCheckMyObject,
   {
-    "private": false,
-    "name": "example-sonparser",
-    "version": "0.0.0",
-    "description": "An example of sonparser",
-    "keywords": [
-      "example",
-      "more", "complexible",
+    private: false,
+    name: 'example-sonparser',
+    version: '0.0.0',
+    description: 'An example of sonparser',
+    keywords: [
+      'example',
+      'more', 'complexible',
     ],
-    "scripts": {
-      "test": "echo \"not implements!\" && exit 1",
+    scripts: {
+      test: 'echo "not implements!" && exit 1',
     },
-    "repository": {
-      "type": "git",
-      "url": "",
+    repository: {
+      type: 'git',
+      url: '',
     },
   }
 );
 
 assert.throws(
   function() {
-    return myObjectParser.parse("not my object!");
+    return myObjectParser.parse('not my object!');
   },
   sparse.ConfigParseError
 );
@@ -122,20 +129,21 @@ assert.throws(
  */
 try {
   myObjectParser.parseWithResult({
-    "private": "not boolean!",
-    "name": "example-sonparser",
-    "version": 0,
-    "description": "An example of sonparser",
-    "keywords": [
-      "example",
+    private: 'not boolean!',
+    name: 'example-sonparser',
+    version: 0,
+    description: 'An example of sonparser',
+    keywords: [
+      'example',
       true,
     ],
-    "repository": {
-      "type": 0,
-      "url": "",
+    repository: {
+      type: 0,
+      url: '',
     },
   }).report(nestConsoleReporter)
     .except(); // throw Error
 } catch (e) {
+
   // catch Error
 }
