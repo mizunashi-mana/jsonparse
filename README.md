@@ -6,7 +6,8 @@ Safe parser of JSON and CSON for config parsing like ConfigParser of python.
 [![Build status][travis-image]][travis-url]
 [![License][license-image]][license-url]
 [![Downloads][downloads-image]][downloads-url]
-[![Dependency status][gemnasium-image]][gemnasium-url]
+[![Dependency status][dependency-image]][dependency-url]
+[![devDependency status][devdependency-image]][devdependency-url]
 
 For more information, view the [documentation][main-document].
 
@@ -125,5 +126,8 @@ result = ExampleTsConfParser.parse({
 [main-document]: docs/man/README.md
 [fantasy-land-logo]: https://github.com/fantasyland/fantasy-land/raw/master/logo.png
 [fantasy-land-url]: https://github.com/fantasyland/fantasy-land
-[gemnasium-image]: https://gemnasium.com/badges/github.com/mizunashi-mana/node-sonparser.svg
-[gemnasium-url]: https://gemnasium.com/github.com/mizunashi-mana/node-sonparser
+[dependency-image]: https://david-dm.org/mizunashi-mana/node-sonparser.svg
+[dependency-url]: https://david-dm.org/mizunashi-mana/node-sonparser#info=dependencies
+[devdependency-image]: https://david-dm.org/mizunashi-mana/node-sonparser/dev-status.svg
+[devdependency-url]: https://david-dm.org/mizunashi-mana/node-sonparser#info=devDependencies
+
